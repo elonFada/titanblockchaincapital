@@ -1,21 +1,20 @@
 <!doctype html>
-<html class="dark" lang="en">
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <title>TitanBlockchainCapital | Admin Login</title>
-
+    <!-- Tailwind + Fonts + Icons -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
     <link
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-
+    <!-- Favicon placeholders (optional but kept from original) -->
     <link
       rel="apple-touch-icon"
       sizes="180x180"
@@ -35,15 +34,12 @@
     />
     <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
     <link rel="manifest" href="images/site.webmanifest" />
-
     <script>
       tailwind.config = {
         darkMode: "class",
         theme: {
           extend: {
-            screens: {
-              xs: "480px",
-            },
+            screens: { xs: "480px" },
             colors: {
               primary: "#e4b84f",
               "primary-deep": "#bb8920",
@@ -70,8 +66,8 @@
         },
       };
     </script>
-
     <style>
+      /* Global background + premium glass styles matching the original vision */
       body {
         font-family: "Manrope", sans-serif;
         overflow-x: hidden;
@@ -164,142 +160,94 @@
         box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.08) !important;
         outline: none;
       }
+
+      /* Custom checkbox style to match dark/glass aesthetic */
+      input[type="checkbox"] {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+      input[type="checkbox"]:checked {
+        background-color: #e4b84f;
+        border-color: #e4b84f;
+      }
     </style>
   </head>
-
-  <body class="bg-background-dark text-white font-display min-h-screen">
-    <main class="min-h-screen flex items-center justify-center px-4 py-10">
+  <body
+    class="bg-background-dark text-white font-display min-h-screen flex items-center justify-center"
+  >
+    <!-- Single centered container: absolute center, no side columns, just a clean card in the middle -->
+    <div class="w-full max-w-md px-4 py-6 sm:py-10">
+      <!-- Main card: completely centered, compact yet elegant, with premium glass effect -->
       <div
-        class="w-full max-w-6xl grid lg:grid-cols-[1.05fr_0.95fr] gap-6 lg:gap-8 items-stretch"
+        class="premium-panel premium-border rounded-3xl p-6 sm:p-8 md:p-9 w-full transition-all duration-300 shadow-2xl shadow-black/30"
       >
-        <section
-          class="premium-panel premium-border rounded-3xl p-6 sm:p-8 lg:p-10 flex flex-col justify-between"
-        >
+        <div class="text-center mb-2">
+          <div
+            class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-200 text-[11px] font-bold uppercase tracking-widest"
+          >
+            <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+            Secure Access
+          </div>
+        </div>
+
+        <div class="mt-4 text-center">
+          <h1
+            class="text-white text-3xl sm:text-4xl font-extrabold tracking-tight"
+          >
+            Welcome back
+          </h1>
+          <p class="text-slate-400 text-sm leading-6 mt-2 max-w-xs mx-auto">
+            Sign in to access the TitanBlockchainCapital admin dashboard.
+          </p>
+        </div>
+
+        <form class="mt-8 space-y-5" action="admin-dashboard.html">
+          <!-- Email field -->
           <div>
-            <div class="flex items-center gap-3">
-              <img
-                src="images/logo.png"
-                alt="Titan Logo"
-                class="h-12 w-12 rounded-2xl object-cover"
-              />
-              <div>
-                <p class="text-white text-lg font-black">
-                  TITAN <span class="text-primary">BLOCKCHAINCAPITAL</span>
-                </p>
-                <p class="text-slate-400 text-sm">
-                  Administrative access panel
-                </p>
-              </div>
-            </div>
-
-            <div class="mt-10">
-              <div
-                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-bold uppercase tracking-widest"
-              >
-                Secure Admin Access
-              </div>
-
-              <h1
-                class="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mt-5"
-              >
-                Manage users,
-                <span class="text-primary">deposits</span>, withdrawals and bot
-                payments.
-              </h1>
-
-              <p
-                class="text-slate-300 text-sm sm:text-base leading-7 mt-5 max-w-2xl"
-              >
-                Use the admin panel to review user registrations, approve
-                deposit submissions, mark withdrawals as paid, verify trading
-                bot payments, and monitor wallet details across all accounts.
-              </p>
-            </div>
-          </div>
-
-          <div class="grid sm:grid-cols-3 gap-4 mt-10">
-            <div class="glass-card rounded-3xl p-5">
-              <p class="text-slate-400 text-sm">Users</p>
-              <p class="text-white text-2xl font-black mt-2">1,248</p>
-            </div>
-            <div class="glass-card rounded-3xl p-5">
-              <p class="text-slate-400 text-sm">Pending Deposits</p>
-              <p class="text-white text-2xl font-black mt-2">18</p>
-            </div>
-            <div class="glass-card rounded-3xl p-5">
-              <p class="text-slate-400 text-sm">Pending Withdrawals</p>
-              <p class="text-white text-2xl font-black mt-2">9</p>
-            </div>
-          </div>
-        </section>
-
-        <section
-          class="premium-panel premium-border rounded-3xl p-6 sm:p-8 lg:p-10 flex items-center"
-        >
-          <div class="w-full">
-            <div
-              class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-200 text-[11px] font-bold uppercase tracking-widest"
+            <label
+              class="block text-sm font-semibold text-slate-200 mb-2 flex items-center gap-1.5"
             >
-              Admin Login
-            </div>
-
-            <h2 class="text-white text-3xl sm:text-4xl font-black mt-5">
-              Welcome back
-            </h2>
-            <p class="text-slate-400 text-sm leading-7 mt-3">
-              Sign in to access the TitanBlockchainCapital admin dashboard.
-            </p>
-
-            <form class="mt-8 space-y-5" action="admin-dashboard.html">
-              <div>
-                <label class="block text-sm font-semibold text-slate-200 mb-2">
-                  Admin Email
-                </label>
-                <input
-                  type="email"
-                  placeholder="Enter admin email"
-                  class="form-input w-full rounded-2xl px-4 py-4 text-sm"
-                />
-              </div>
-
-              <div>
-                <label class="block text-sm font-semibold text-slate-200 mb-2">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  placeholder="Enter password"
-                  class="form-input w-full rounded-2xl px-4 py-4 text-sm"
-                />
-              </div>
-
-              <div class="flex items-center justify-between gap-3 flex-wrap">
-                <label class="flex items-center gap-2 text-sm text-slate-300">
-                  <input
-                    type="checkbox"
-                    class="rounded border-white/10 bg-white/5 text-primary focus:ring-primary/30"
-                  />
-                  Remember me
-                </label>
-
-                <a href="#" class="text-sm text-primary font-semibold">
-                  Forgot password?
-                </a>
-              </div>
-
-              <button
-                type="submit"
-                class="w-full py-4 text-black font-bold rounded-2xl gold-gradient shadow-xl shadow-primary/20 hover:scale-[1.01] transition-transform"
-              >
-                Login to Admin Panel
-              </button>
-            </form>
+              <i data-lucide="mail" class="w-4 h-4 text-primary/80"></i>
+              Admin Email
+            </label>
+            <input
+              type="email"
+              placeholder="sorochijoshua30@gmail.com"
+              value="sorochijoshua30@gmail.com"
+              class="form-input w-full rounded-2xl px-4 py-3.5 text-sm focus:ring-1 transition-all"
+            />
           </div>
-        </section>
+
+          <!-- Password field -->
+          <div>
+            <label
+              class="block text-sm font-semibold text-slate-200 mb-2 flex items-center gap-1.5"
+            >
+              <i data-lucide="lock" class="w-4 h-4 text-primary/80"></i>
+              Password
+            </label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value="demo123"
+              class="form-input w-full rounded-2xl px-4 py-3.5 text-sm"
+            />
+          </div>
+
+          <!-- Login Button -->
+          <button
+            type="submit"
+            class="w-full py-3.5 text-black font-extrabold rounded-2xl gold-gradient shadow-xl shadow-primary/20 hover:scale-[1.01] transition-all duration-200 flex items-center justify-center gap-2 text-base mt-2"
+          >
+            <i data-lucide="log-in" class="w-5 h-5"></i>
+            Login to Admin Panel
+          </button>
+        </form>
       </div>
-    </main>
+    </div>
 
     <script>
+      // Initialize Lucide icons dynamically
       lucide.createIcons();
     </script>
   </body>
