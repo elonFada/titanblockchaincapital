@@ -88,7 +88,7 @@
           linear-gradient(180deg, #060913 0%, #070b14 45%, #09101b 100%);
       }
 
-      body.sidebar-open {
+      body.modal-open {
         overflow: hidden;
       }
 
@@ -145,24 +145,6 @@
         backdrop-filter: blur(14px);
       }
 
-      .locked-card {
-        position: relative;
-        overflow: hidden;
-      }
-
-      .locked-card::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: rgba(6, 9, 19, 0.45);
-        backdrop-filter: blur(2px);
-      }
-
-      .locked-card-content {
-        position: relative;
-        z-index: 2;
-      }
-
       .status-pulse {
         box-shadow: 0 0 0 0 rgba(228, 184, 79, 0.5);
         animation: pulseGlow 2s infinite;
@@ -178,6 +160,26 @@
         100% {
           box-shadow: 0 0 0 0 rgba(228, 184, 79, 0);
         }
+      }
+
+      .modal-overlay {
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.25s ease;
+      }
+
+      .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-card {
+        transform: translateY(16px) scale(0.98);
+        transition: all 0.25s ease;
+      }
+
+      .modal-overlay.active .modal-card {
+        transform: translateY(0) scale(1);
       }
     </style>
   </head>
@@ -201,6 +203,7 @@
               TITAN <span class="text-primary">BLOCKCHAINCAPITAL</span>
             </h2>
           </div>
+
           <div class="flex items-center gap-3">
             <span
               class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider"
@@ -209,12 +212,13 @@
               Awaiting Approval
             </span>
 
-            <a
-              href="login.html"
+            <button
+              id="logoutBtn"
+              type="button"
               class="px-4 py-2 text-sm font-bold text-white bg-surface-dark hover:bg-slate-700 rounded-lg transition-all"
             >
               Logout
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -224,7 +228,6 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="relative">
           <div class="grid lg:grid-cols-[280px_1fr] gap-6 lg:gap-8">
-            <!-- Main content -->
             <section class="space-y-6">
               <div
                 class="premium-panel premium-border rounded-3xl p-6 sm:p-8 lg:p-10"
@@ -318,8 +321,168 @@
       </div>
     </main>
 
+    <!-- Logout Modal -->
+    <div
+      id="logoutModal"
+      class="modal-overlay fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4"
+    >
+      <div
+        class="modal-card premium-panel premium-border rounded-3xl w-full max-w-md p-6 sm:p-7 shadow-2xl shadow-black/50"
+      >
+        <div class="flex items-start gap-4">
+          <div
+            class="h-12 w-12 rounded-2xl gold-gradient flex items-center justify-center shrink-0"
+          >
+            <i data-lucide="log-out" class="w-6 h-6 text-black"></i>
+          </div>
+
+          <div class="flex-1">
+            <h3 class="text-white text-xl font-bold">Confirm Logout</h3>
+            <p class="text-slate-400 text-sm sm:text-base leading-7 mt-2">
+              Are you sure you want to log out of your account?
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+          <button
+            id="cancelLogoutBtn"
+            type="button"
+            class="w-full px-5 py-3 rounded-2xl border border-white/10 bg-white/5 text-white font-semibold hover:bg-white/10 transition-all"
+          >
+            No, Stay Here
+          </button>
+
+          <button
+            id="confirmLogoutBtn"
+            type="button"
+            class="w-full px-5 py-3 rounded-2xl gold-gradient text-black font-bold hover:scale-[1.01] transition-all"
+          >
+            Yes, Logout
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script>
       lucide.createIcons();
+    </script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const logoutBtn = document.getElementById("logoutBtn");
+        const logoutModal = document.getElementById("logoutModal");
+        const cancelLogoutBtn = document.getElementById("cancelLogoutBtn");
+        const confirmLogoutBtn = document.getElementById("confirmLogoutBtn");
+
+        function getPageUrl(page) {
+          const isLocal =
+            window.location.hostname === "localhost" ||
+            window.location.hostname === "127.0.0.1";
+
+          return isLocal ? `/frontend/${page}` : `/${page}`;
+        }
+
+        function openLogoutModal() {
+          logoutModal.classList.add("active");
+          document.body.classList.add("modal-open");
+        }
+
+        function closeLogoutModal() {
+          logoutModal.classList.remove("active");
+          document.body.classList.remove("modal-open");
+        }
+
+        function clearAuthStorage() {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userInfo");
+          sessionStorage.removeItem("token");
+          sessionStorage.removeItem("userInfo");
+          sessionStorage.removeItem("pendingVerificationEmail");
+          sessionStorage.removeItem("pendingVerificationToken");
+          sessionStorage.removeItem("pendingVerificationPhone");
+          sessionStorage.removeItem("pendingCountryCode");
+        }
+
+        async function logoutUser() {
+          try {
+            await window.API.post("/user/logout", {});
+          } catch (error) {
+            console.warn(
+              "Logout request failed, clearing local session anyway.",
+            );
+          }
+
+          clearAuthStorage();
+          window.location.href = getPageUrl("login.html");
+        }
+
+        async function guardPendingPage() {
+          const token = localStorage.getItem("token");
+          const userInfoRaw = localStorage.getItem("userInfo");
+          const userInfo = userInfoRaw ? JSON.parse(userInfoRaw) : null;
+
+          if (!token || !userInfo) {
+            window.location.href = getPageUrl("login.html");
+            return;
+          }
+
+          if (!userInfo.isVerified) {
+            window.location.href = getPageUrl("otp.html");
+            return;
+          }
+
+          try {
+            const profileResponse = await window.API.get("/user/profile");
+            const liveUser = profileResponse?.data || userInfo;
+
+            localStorage.setItem("userInfo", JSON.stringify(liveUser));
+
+            if (liveUser.kycStatus === "verified") {
+              window.location.href = getPageUrl("dashboard.html");
+              return;
+            }
+
+            if (liveUser.kycStatus !== "submitted") {
+              window.location.href = getPageUrl("registration-fee.html");
+              return;
+            }
+          } catch (error) {
+            console.warn(
+              "Unable to refresh live profile, using stored user info.",
+            );
+
+            if (userInfo.kycStatus === "verified") {
+              window.location.href = getPageUrl("dashboard.html");
+              return;
+            }
+
+            if (userInfo.kycStatus !== "submitted") {
+              window.location.href = getPageUrl("registration-fee.html");
+              return;
+            }
+          }
+        }
+
+        await guardPendingPage();
+
+        logoutBtn?.addEventListener("click", openLogoutModal);
+        cancelLogoutBtn?.addEventListener("click", closeLogoutModal);
+        confirmLogoutBtn?.addEventListener("click", logoutUser);
+
+        logoutModal?.addEventListener("click", (e) => {
+          if (e.target === logoutModal) {
+            closeLogoutModal();
+          }
+        });
+
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && logoutModal.classList.contains("active")) {
+            closeLogoutModal();
+          }
+        });
+      });
     </script>
   </body>
 </html>
