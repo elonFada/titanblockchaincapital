@@ -72,7 +72,8 @@
           linear-gradient(180deg, #060913 0%, #070b14 45%, #09101b 100%);
       }
 
-      body.sidebar-open {
+      body.sidebar-open,
+      body.modal-open {
         overflow: hidden;
       }
 
@@ -154,6 +155,7 @@
         border: 1px solid rgba(255, 255, 255, 0.08) !important;
         color: white !important;
         appearance: none;
+        font-size: 16px !important;
       }
 
       .form-input::placeholder {
@@ -205,6 +207,26 @@
         animation: menuIconWiggle 2.2s ease-in-out infinite;
         transform-origin: center;
       }
+
+      .modal-overlay {
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.25s ease;
+      }
+
+      .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-card {
+        transform: translateY(16px) scale(0.98);
+        transition: all 0.25s ease;
+      }
+
+      .modal-overlay.active .modal-card {
+        transform: translateY(0) scale(1);
+      }
     </style>
   </head>
 
@@ -228,12 +250,13 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <a
-              href="admin-dashboard.html"
+            <button
+              id="logoutBtn"
+              type="button"
               class="px-3 xs:px-4 py-2 text-xs xs:text-sm font-bold text-white bg-surface-dark hover:bg-slate-700 rounded-lg transition-all"
             >
-              Dashboard
-            </a>
+              Logout
+            </button>
           </div>
         </div>
       </div>
@@ -361,17 +384,19 @@
                     <h1
                       class="text-white text-2xl xs:text-3xl sm:text-4xl font-black leading-tight tracking-tight"
                     >
-                      All users
+                      All Users
                     </h1>
                     <p
                       class="text-slate-300 text-sm xs:text-base sm:text-lg leading-relaxed mt-4 max-w-2xl"
                     >
-                      View and approve all users registration fee payment
+                      Review registration fee payments, verify users, and manage
+                      account status in one place.
                     </p>
                   </div>
 
                   <div class="w-full lg:max-w-md">
                     <input
+                      id="userSearchInput"
                       type="text"
                       placeholder="Search by name, email, wallet or user ID..."
                       class="form-input w-full rounded-2xl px-4 py-4 text-sm"
@@ -381,23 +406,27 @@
               </div>
 
               <div
-                class="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5"
+                class="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-5"
               >
                 <div class="glass-card rounded-3xl p-5 sm:p-6">
-                  <p class="text-slate-400 text-sm">Total Users</p>
-                  <p class="text-white text-3xl font-black mt-3">248</p>
-                  <p class="text-emerald-400 text-sm mt-2">+12 new this week</p>
-                </div>
-
-                <div class="glass-card rounded-3xl p-5 sm:p-6">
                   <p class="text-slate-400 text-sm">Verified Users</p>
-                  <p class="text-white text-3xl font-black mt-3">203</p>
+                  <p
+                    id="verifiedUsersCount"
+                    class="text-white text-3xl font-black mt-3"
+                  >
+                    0
+                  </p>
                   <p class="text-emerald-400 text-sm mt-2">Active accounts</p>
                 </div>
 
                 <div class="glass-card rounded-3xl p-5 sm:p-6">
                   <p class="text-slate-400 text-sm">Pending Verification</p>
-                  <p class="text-white text-3xl font-black mt-3">31</p>
+                  <p
+                    id="pendingUsersCount"
+                    class="text-white text-3xl font-black mt-3"
+                  >
+                    0
+                  </p>
                   <p class="text-yellow-400 text-sm mt-2">Needs review</p>
                 </div>
               </div>
@@ -447,121 +476,77 @@
                       </tr>
                     </thead>
 
-                    <tbody class="divide-y divide-white/10">
-                      <!-- ROW 1 -->
+                    <tbody
+                      id="paymentRequestsTableBody"
+                      class="divide-y divide-white/10"
+                    >
                       <tr>
-                        <td class="py-4 pr-4">
-                          <p class="text-white font-bold">Samuel Joshua</p>
-                        </td>
-
-                        <td class="py-4 pr-4 text-slate-300">
-                          samueljoshua@email.com
-                        </td>
-
-                        <td class="py-4 pr-4">
-                          <a
-                            href="#"
-                            target="_blank"
-                            class="text-blue-400 underline text-sm font-semibold"
-                          >
-                            View Proof
-                          </a>
-                        </td>
-
-                        <td class="py-4">
-                          <div class="flex gap-2">
-                            <!-- Approve -->
-                            <button
-                              class="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-bold hover:bg-emerald-500/20 transition-all duration-200"
-                            >
-                              Approve
-                            </button>
-
-                            <!-- Reject -->
-                            <button
-                              class="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all duration-200"
-                            >
-                              Reject
-                            </button>
-                          </div>
+                        <td colspan="4" class="py-8 text-center text-slate-400">
+                          Loading payment requests...
                         </td>
                       </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
-                      <!-- ROW 2 -->
-                      <tr>
-                        <td class="py-4 pr-4">
-                          <p class="text-white font-bold">Daniel Robert</p>
-                        </td>
+              <div
+                class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
+              >
+                <div
+                  class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 sm:mb-6"
+                >
+                  <div>
+                    <h3
+                      class="text-white text-xl sm:text-2xl font-black tracking-tight"
+                    >
+                      All Users
+                    </h3>
+                    <p class="text-slate-400 text-sm mt-2">
+                      View all users and their current registration status.
+                    </p>
+                  </div>
+                </div>
 
-                        <td class="py-4 pr-4 text-slate-300">
-                          danielrobert@email.com
-                        </td>
-
-                        <td class="py-4 pr-4">
-                          <a
-                            href="#"
-                            target="_blank"
-                            class="text-blue-400 underline text-sm font-semibold"
-                          >
-                            View Proof
-                          </a>
-                        </td>
-
-                        <td class="py-4">
-                          <div class="flex gap-2">
-                            <!-- Approve -->
-                            <button
-                              class="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-bold hover:bg-emerald-500/20 transition-all duration-200"
-                            >
-                              Approve
-                            </button>
-
-                            <!-- Reject -->
-                            <button
-                              class="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all duration-200"
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        </td>
+                <div class="table-scroll overflow-x-auto">
+                  <table class="min-w-[950px] w-full">
+                    <thead>
+                      <tr class="border-b border-white/10 text-left">
+                        <th
+                          class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
+                        >
+                          Username
+                        </th>
+                        <th
+                          class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
+                        >
+                          Email
+                        </th>
+                        <th
+                          class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
+                        >
+                          Phone
+                        </th>
+                        <th
+                          class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
+                        >
+                          Status
+                        </th>
+                        <th
+                          class="pb-4 text-slate-400 text-xs uppercase tracking-widest"
+                        >
+                          Joined
+                        </th>
                       </tr>
+                    </thead>
 
-                      <!-- ROW 3 -->
+                    <tbody
+                      id="allUsersTableBody"
+                      class="divide-y divide-white/10"
+                    >
                       <tr>
-                        <td class="py-4 pr-4">
-                          <p class="text-white font-bold">Grace Peter</p>
-                        </td>
-
-                        <td class="py-4 pr-4 text-slate-300">
-                          gracep@email.com
-                        </td>
-
-                        <td class="py-4 pr-4">
-                          <a
-                            href="#"
-                            target="_blank"
-                            class="text-blue-400 underline text-sm font-semibold"
-                          >
-                            View Proof
-                          </a>
-                        </td>
-
-                        <td class="py-4">
-                          <div class="flex gap-2">
-                            <!-- Approve -->
-                            <button
-                              class="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-bold hover:bg-emerald-500/20 transition-all duration-200"
-                            >
-                              Approve
-                            </button>
-
-                            <!-- Reject -->
-                            <button
-                              class="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all duration-200"
-                            >
-                              Reject
-                            </button>
-                          </div>
+                        <td colspan="5" class="py-8 text-center text-slate-400">
+                          Loading users...
                         </td>
                       </tr>
                     </tbody>
@@ -574,6 +559,54 @@
       </div>
     </main>
 
-    <script src="js/admin.js"></script>
+    <!-- Logout Modal -->
+    <div
+      id="logoutModal"
+      class="modal-overlay fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4"
+    >
+      <div
+        class="modal-card premium-panel premium-border rounded-3xl w-full max-w-md p-6 sm:p-7 shadow-2xl shadow-black/50"
+      >
+        <div class="flex items-start gap-4">
+          <div
+            class="h-12 w-12 rounded-2xl gold-gradient flex items-center justify-center shrink-0"
+          >
+            <i data-lucide="log-out" class="w-6 h-6 text-black"></i>
+          </div>
+
+          <div class="flex-1">
+            <h3 class="text-white text-xl font-bold">Confirm Logout</h3>
+            <p class="text-slate-400 text-sm sm:text-base leading-7 mt-2">
+              Are you sure you want to log out of the admin panel?
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+          <button
+            id="cancelLogoutBtn"
+            type="button"
+            class="w-full px-5 py-3 rounded-2xl border border-white/10 bg-white/5 text-white font-semibold hover:bg-white/10 transition-all"
+          >
+            No, Stay Here
+          </button>
+
+          <button
+            id="confirmLogoutBtn"
+            type="button"
+            class="w-full px-5 py-3 rounded-2xl gold-gradient text-black font-bold hover:scale-[1.01] transition-all"
+          >
+            Yes, Logout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/all-users.js"></script>
   </body>
 </html>
