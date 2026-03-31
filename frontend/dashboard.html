@@ -1,0 +1,1216 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>TitanBlockchainCapital | Client Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="images/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="images/favicon-16x16.png"
+    />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <link rel="manifest" href="images/site.webmanifest" />
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            screens: {
+              xs: "480px",
+            },
+            colors: {
+              primary: "#e4b84f",
+              "primary-deep": "#bb8920",
+              accent: "#4b7cff",
+              "accent-2": "#74e0ff",
+              success: "#22c55e",
+              danger: "#ef4444",
+              warning: "#f59e0b",
+              "background-dark": "#060913",
+              "surface-dark": "#10172a",
+              "surface-dark-2": "#151f36",
+              "border-dark": "rgba(255,255,255,0.08)",
+            },
+            fontFamily: {
+              display: ["Manrope", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+            boxShadow: {
+              glow: "0 20px 80px rgba(228,184,79,0.18)",
+              blue: "0 20px 80px rgba(75,124,255,0.18)",
+              soft: "0 20px 60px rgba(0,0,0,0.4)",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      body {
+        font-family: "Manrope", sans-serif;
+        overflow-x: hidden;
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(228, 184, 79, 0.08),
+            transparent 24%
+          ),
+          radial-gradient(
+            circle at left 20%,
+            rgba(75, 124, 255, 0.1),
+            transparent 28%
+          ),
+          radial-gradient(
+            circle at bottom left,
+            rgba(116, 224, 255, 0.08),
+            transparent 24%
+          ),
+          linear-gradient(180deg, #060913 0%, #070b14 45%, #09101b 100%);
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      #chatMessages::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      #chatMessages::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+      }
+
+      .chat-modal-open {
+        overflow: hidden;
+      }
+
+      .premium-panel {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.03)
+        );
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .premium-border {
+        position: relative;
+      }
+
+      .premium-border::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          135deg,
+          rgba(228, 184, 79, 0.45),
+          rgba(75, 124, 255, 0.18),
+          rgba(255, 255, 255, 0.03)
+        );
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+
+      .gold-gradient {
+        background: linear-gradient(
+          135deg,
+          #f6dea0 0%,
+          #e4b84f 48%,
+          #b47a15 100%
+        );
+      }
+
+      .glass-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(14px);
+      }
+
+      .mini-chart {
+        height: 180px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 1.25rem;
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.04) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            180deg,
+            rgba(75, 124, 255, 0.08),
+            rgba(228, 184, 79, 0.05)
+          );
+        background-size:
+          100% 32px,
+          32px 100%,
+          100% 100%;
+      }
+
+      .mini-chart svg {
+        position: absolute;
+        inset: 0;
+      }
+
+      .table-scroll::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+      }
+
+      .table-scroll::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+      }
+
+      .badge-dot {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45);
+        animation: pulseGlow 2s infinite;
+      }
+
+      @keyframes pulseGlow {
+        0% {
+          box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45);
+        }
+        70% {
+          box-shadow: 0 0 0 12px rgba(34, 197, 94, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+        }
+      }
+
+      .sidebar-link.active {
+        background: rgba(228, 184, 79, 0.1);
+        border-color: rgba(228, 184, 79, 0.22);
+      }
+
+      .sidebar-link.active span,
+      .sidebar-link.active i {
+        color: #e4b84f;
+      }
+
+      @media (max-width: 420px) {
+        .mini-chart {
+          height: 150px;
+        }
+      }
+    </style>
+    <style>
+      @keyframes menuFloatPulse {
+        0%,
+        100% {
+          transform: translateY(0) scale(1);
+          box-shadow:
+            0 18px 40px rgba(228, 184, 79, 0.18),
+            0 0 0 0 rgba(228, 184, 79, 0.22);
+        }
+        50% {
+          transform: translateY(-6px) scale(1.04);
+          box-shadow:
+            0 24px 48px rgba(228, 184, 79, 0.28),
+            0 0 0 14px rgba(228, 184, 79, 0);
+        }
+      }
+
+      @keyframes menuIconWiggle {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(-8deg);
+        }
+        50% {
+          transform: rotate(0deg);
+        }
+        75% {
+          transform: rotate(8deg);
+        }
+      }
+
+      .menu-attention {
+        animation: menuFloatPulse 2.2s ease-in-out infinite;
+      }
+
+      .menu-attention i,
+      .menu-attention svg {
+        animation: menuIconWiggle 2.2s ease-in-out infinite;
+        transform-origin: center;
+      }
+
+      .menu-attention:hover {
+        animation-play-state: paused;
+      }
+
+      .menu-attention:hover i,
+      .menu-attention:hover svg {
+        animation-play-state: paused;
+      }
+    </style>
+  </head>
+
+  <body class="bg-background-dark text-white font-display">
+    <header
+      class="sticky top-0 z-40 border-b border-white/10 bg-background-dark/80 backdrop-blur-md"
+    >
+      <div class="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div class="h-16 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img
+              src="images/logo.png"
+              alt="Titan Logo"
+              class="h-9 w-9 sm:h-10 sm:w-10 rounded-xl object-cover shrink-0"
+            />
+
+            <h2
+              class="text-white text-[13px] xs:text-sm sm:text-xl font-extrabold tracking-tight whitespace-nowrap truncate"
+            >
+              TITAN <span class="text-primary">BLOCKCHAINCAPITAL</span>
+            </h2>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button
+              class="hidden sm:inline-flex h-10 w-10 rounded-xl bg-white/5 border border-white/10 items-center justify-center text-slate-300"
+              aria-label="Notifications"
+            >
+              <i data-lucide="bell" class="w-5 h-5"></i>
+            </button>
+
+            <a
+              href="login.html"
+              class="px-3 xs:px-4 py-2 text-xs xs:text-sm font-bold text-white bg-surface-dark hover:bg-slate-700 rounded-lg transition-all"
+            >
+              Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="py-4 xs:py-6 sm:py-8 lg:py-10 pb-24 lg:pb-10">
+      <div class="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div class="relative">
+          <button
+            id="mobileSidebarToggle"
+            class="menu-attention lg:hidden fixed bottom-20 right-4 xs:bottom-24 xs:right-5 xs:bottom-5 xs:right-5 z-50 h-12 w-12 xs:h-14 xs:w-14 rounded-full gold-gradient flex items-center justify-center shadow-2xl shadow-primary/20"
+            aria-label="Open menu"
+          >
+            <i data-lucide="menu" class="w-5 h-5 xs:w-6 xs:h-6 text-black"></i>
+          </button>
+
+          <!-- Live Chat Button -->
+          <button
+            id="openChatModal"
+            class="lg:hidden fixed bottom-4 right-4 xs:bottom-6 xs:right-5 z-50 h-12 w-12 xs:h-14 xs:w-14 rounded-full bg-white/10 border border-white/20 backdrop-blur-md flex items-center justify-center shadow-xl hover:bg-white/20 transition-all"
+            aria-label="Live chat"
+          >
+            <i
+              data-lucide="message-circle"
+              class="w-5 h-5 xs:w-6 xs:h-6 text-white"
+            ></i>
+          </button>
+
+          <div
+            id="mobileSidebarOverlay"
+            class="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px] opacity-0 invisible transition-all duration-300"
+          ></div>
+
+          <div class="grid lg:grid-cols-[280px_1fr] gap-4 sm:gap-6 lg:gap-8">
+            <aside
+              id="dashboardSidebar"
+              class="premium-panel premium-border rounded-r-3xl lg:rounded-3xl p-4 sm:p-5 lg:p-6 h-screen lg:h-fit w-[86%] max-w-[320px] lg:w-auto fixed lg:static top-0 left-0 z-50 lg:z-auto -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto"
+            >
+              <div
+                class="flex items-center justify-between pb-5 border-b border-white/10"
+              >
+                <div class="flex items-center gap-3 min-w-0">
+                  <img
+                    src="images/logo.png"
+                    alt="Titan Logo"
+                    class="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-cover shrink-0"
+                  />
+                  <div class="min-w-0">
+                    <p class="text-white font-bold truncate">Client Account</p>
+                    <p class="text-slate-400 text-sm truncate">Verified User</p>
+                  </div>
+                </div>
+
+                <button
+                  id="mobileSidebarClose"
+                  class="lg:hidden h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 shrink-0"
+                  aria-label="Close menu"
+                >
+                  <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+              </div>
+
+              <nav class="mt-6 space-y-3">
+                <a
+                  href="#"
+                  class="sidebar-link active flex items-center justify-between p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <div class="flex items-center gap-3 min-w-0">
+                    <i
+                      data-lucide="layout-dashboard"
+                      class="w-5 h-5 text-slate-300 shrink-0"
+                    ></i>
+                    <span class="text-sm font-semibold text-white truncate"
+                      >Dashboard</span
+                    >
+                  </div>
+                </a>
+
+                <a
+                  href="deposit.html"
+                  class="sidebar-link flex items-center justify-between p-4 glass-card rounded-2xl border border-white/10 hover:border-primary/20 transition-colors"
+                >
+                  <div class="flex items-center gap-3 min-w-0">
+                    <i
+                      data-lucide="wallet"
+                      class="w-5 h-5 text-slate-300 shrink-0"
+                    ></i>
+                    <span class="text-sm font-semibold text-white truncate"
+                      >Deposit</span
+                    >
+                  </div>
+                </a>
+
+                <a
+                  href="withdrawal.html"
+                  class="sidebar-link flex items-center justify-between p-4 glass-card rounded-2xl border border-white/10 hover:border-primary/20 transition-colors"
+                >
+                  <div class="flex items-center gap-3 min-w-0">
+                    <i
+                      data-lucide="arrow-up-right"
+                      class="w-5 h-5 text-slate-300 shrink-0"
+                    ></i>
+                    <span class="text-sm font-semibold text-white truncate"
+                      >Withdraw</span
+                    >
+                  </div>
+                </a>
+
+                <a
+                  href="tradingbot.html"
+                  class="sidebar-link flex items-center justify-between p-4 glass-card rounded-2xl border border-white/10 hover:border-primary/20 transition-colors"
+                >
+                  <div class="flex items-center gap-3 min-w-0">
+                    <i
+                      data-lucide="bot"
+                      class="w-5 h-5 text-slate-300 shrink-0"
+                    ></i>
+                    <span class="text-sm font-semibold text-white truncate"
+                      >Trading Bot</span
+                    >
+                  </div>
+                </a>
+
+                <a
+                  href="profile.html"
+                  class="sidebar-link flex items-center justify-between p-4 glass-card rounded-2xl border border-white/10 hover:border-primary/20 transition-colors"
+                >
+                  <div class="flex items-center gap-3 min-w-0">
+                    <i
+                      data-lucide="user-circle-2"
+                      class="w-5 h-5 text-slate-300 shrink-0"
+                    ></i>
+                    <span class="text-sm font-semibold text-white truncate"
+                      >Profile</span
+                    >
+                  </div>
+                </a>
+              </nav>
+            </aside>
+
+            <section class="space-y-4 sm:space-y-6 min-w-0">
+              <div class="space-y-5 sm:space-y-6">
+                <!-- TOP BIG LAYOUT -->
+                <div
+                  class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8 xl:p-10"
+                >
+                  <!-- header -->
+                  <div
+                    class="flex items-center justify-between mb-6 sm:mb-8 gap-3 flex-wrap"
+                  >
+                    <div
+                      class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] xs:text-[11px] font-bold uppercase tracking-widest"
+                    >
+                      Live Trading Dashboard
+                    </div>
+
+                    <a
+                      href="trade.html"
+                      class="menu-attention inline-flex items-center gap-2 px-4 xs:px-5 py-2 text-xs xs:text-sm font-bold rounded-xl gold-gradient text-black shadow-lg shadow-primary/20 hover:scale-[1.03] active:scale-[0.97] transition-all whitespace-nowrap"
+                    >
+                      <i data-lucide="line-chart" class="w-4 h-4"></i>
+                      Trade
+                    </a>
+                  </div>
+
+                  <!-- BIG BALANCE CARD -->
+                  <div class="glass-card rounded-3xl p-4 xs:p-5 sm:p-6 xl:p-7">
+                    <div
+                      class="grid grid-cols-1 lg:grid-cols-[1.45fr_0.95fr] gap-4 sm:gap-6 items-stretch"
+                    >
+                      <!-- LEFT -->
+                      <div class="flex flex-col justify-between min-w-0">
+                        <div>
+                          <p class="text-slate-400 text-sm">Account Balance</p>
+                          <h2
+                            class="text-white text-2xl xs:text-3xl sm:text-4xl xl:text-5xl font-black mt-2 break-words"
+                          >
+                            $24,580.00
+                          </h2>
+                        </div>
+                      </div>
+
+                      <!-- RIGHT BUTTONS -->
+                      <div class="flex flex-col justify-center gap-3 sm:gap-4">
+                        <a
+                          href="deposit.html"
+                          class="px-5 sm:px-6 py-3 text-black font-bold rounded-2xl gold-gradient shadow-xl shadow-primary/20 text-center"
+                        >
+                          Make Deposit
+                        </a>
+
+                        <a
+                          href="withdrawal.html"
+                          class="px-5 sm:px-6 py-3 bg-white/5 border border-white/10 text-white font-bold rounded-2xl hover:bg-white/10 transition-all text-center"
+                        >
+                          Request Withdrawal
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 4 SMALL CARDS BELOW -->
+                <div
+                  class="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5"
+                >
+                  <!-- CARD -->
+                  <div
+                    class="glass-card rounded-3xl p-5 sm:p-6 min-w-0 xl:min-h-[230px] xl:flex xl:flex-col"
+                  >
+                    <div
+                      class="flex items-center justify-between gap-3 xl:min-h-[56px]"
+                    >
+                      <p class="text-slate-400 text-sm xl:leading-8">
+                        Total Deposit
+                      </p>
+                      <i
+                        data-lucide="arrow-down-left"
+                        class="w-5 h-5 text-primary"
+                      ></i>
+                    </div>
+
+                    <p
+                      class="text-white text-2xl font-black mt-4 xl:mt-6 xl:leading-none"
+                    >
+                      $12,500.00
+                    </p>
+
+                    <p
+                      class="text-emerald-400 text-sm mt-2 xl:mt-5 xl:leading-6"
+                    >
+                      +8.4% this month
+                    </p>
+                  </div>
+
+                  <!-- CARD -->
+                  <div
+                    class="glass-card rounded-3xl p-5 sm:p-6 min-w-0 xl:min-h-[230px] xl:flex xl:flex-col"
+                  >
+                    <div
+                      class="flex items-center justify-between gap-3 xl:min-h-[56px]"
+                    >
+                      <p class="text-slate-400 text-sm xl:leading-8">
+                        Total Withdrawal
+                      </p>
+                      <i
+                        data-lucide="arrow-up-right"
+                        class="w-5 h-5 text-primary"
+                      ></i>
+                    </div>
+
+                    <p
+                      class="text-white text-2xl font-black mt-4 xl:mt-6 xl:leading-none"
+                    >
+                      $4,800.00
+                    </p>
+
+                    <p class="text-slate-400 text-sm mt-2 xl:mt-5 xl:leading-6">
+                      Processed successfully
+                    </p>
+                  </div>
+
+                  <!-- CARD -->
+                  <div
+                    class="glass-card rounded-3xl p-5 sm:p-6 min-w-0 xl:min-h-[230px] xl:flex xl:flex-col"
+                  >
+                    <div
+                      class="flex items-center justify-between gap-3 xl:min-h-[56px]"
+                    >
+                      <p class="text-slate-400 text-sm xl:leading-8">
+                        Open Positions
+                      </p>
+                      <i
+                        data-lucide="candlestick-chart"
+                        class="w-5 h-5 text-primary"
+                      ></i>
+                    </div>
+
+                    <p
+                      class="text-white text-2xl font-black mt-4 xl:mt-6 xl:leading-none"
+                    >
+                      12
+                    </p>
+
+                    <p class="text-slate-400 text-sm mt-2 xl:mt-5 xl:leading-6">
+                      Across Total Assets Trading
+                    </p>
+                  </div>
+
+                  <!-- CARD -->
+                  <div
+                    class="glass-card rounded-3xl p-5 sm:p-6 min-w-0 xl:min-h-[230px] xl:flex xl:flex-col"
+                  >
+                    <div
+                      class="flex items-center justify-between gap-3 xl:min-h-[56px]"
+                    >
+                      <p class="text-slate-400 text-sm xl:leading-8">
+                        Monthly Profit
+                      </p>
+                      <i
+                        data-lucide="trending-up"
+                        class="w-5 h-5 text-primary"
+                      ></i>
+                    </div>
+
+                    <p
+                      class="text-white text-2xl font-black mt-4 xl:mt-6 xl:leading-none"
+                    >
+                      $3,240.00
+                    </p>
+
+                    <p
+                      class="text-emerald-400 text-sm mt-2 xl:mt-5 xl:leading-6"
+                    >
+                      Profitable performance
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid xl:grid-cols-[1.15fr_0.85fr] gap-4 sm:gap-6">
+                <!-- Trading Bot -->
+                <div
+                  class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
+                >
+                  <div class="flex items-center gap-3 mb-4">
+                    <i data-lucide="bot" class="w-5 h-5 text-primary"></i>
+                    <h3 class="text-white text-lg sm:text-xl font-black">
+                      Trading Bot
+                    </h3>
+                  </div>
+
+                  <div
+                    class="rounded-2xl bg-white/5 border border-white/10 p-4 sm:p-5"
+                  >
+                    <div class="flex items-start justify-between gap-4">
+                      <div class="min-w-0">
+                        <p class="text-white font-bold text-base sm:text-lg">
+                          Automated Trading Support
+                        </p>
+                        <p class="text-slate-400 text-sm mt-2 leading-7">
+                          The trading bot helps you place trades faster, take
+                          advantage of market opportunities more efficiently,
+                          and maintain a more disciplined and structured trading
+                          experience.
+                        </p>
+                      </div>
+
+                      <div
+                        class="h-11 w-11 sm:h-12 sm:w-12 rounded-2xl gold-gradient flex items-center justify-center shrink-0"
+                      >
+                        <i
+                          data-lucide="cpu"
+                          class="w-5 h-5 sm:w-6 sm:h-6 text-black"
+                        ></i>
+                      </div>
+                    </div>
+
+                    <div class="mt-5 flex flex-col xs:flex-row flex-wrap gap-3">
+                      <a
+                        href="tradingbot.html"
+                        class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-semibold hover:bg-white/10 transition-colors text-center"
+                      >
+                        Activate Bot
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Chart Card -->
+                <div
+                  class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
+                >
+                  <div class="flex items-center gap-3 mb-4">
+                    <i data-lucide="activity" class="w-5 h-5 text-primary"></i>
+                    <h3 class="text-white text-lg sm:text-xl font-black">
+                      Performance Chart
+                    </h3>
+                  </div>
+
+                  <div class="mini-chart">
+                    <svg
+                      viewBox="0 0 800 240"
+                      fill="none"
+                      preserveAspectRatio="none"
+                    >
+                      <!-- line -->
+                      <path
+                        d="M0 180 C60 170, 90 130, 140 140 C200 155, 230 110, 280 120 C340 135, 380 90, 440 100 C500 115, 540 70, 600 85 C660 100, 700 60, 760 75 C780 80, 790 70, 800 65"
+                        stroke="#e4b84f"
+                        stroke-width="4"
+                        stroke-linecap="round"
+                      />
+
+                      <!-- fill -->
+                      <path
+                        d="M0 180 C60 170, 90 130, 140 140 C200 155, 230 110, 280 120 C340 135, 380 90, 440 100 C500 115, 540 70, 600 85 C660 100, 700 60, 760 75 C780 80, 790 70, 800 65 V240 H0 Z"
+                        fill="url(#chartFill2)"
+                        opacity="0.9"
+                      />
+
+                      <defs>
+                        <linearGradient
+                          id="chartFill2"
+                          x1="0"
+                          y1="0"
+                          x2="0"
+                          y2="1"
+                        >
+                          <stop
+                            offset="0%"
+                            stop-color="#e4b84f"
+                            stop-opacity="0.3"
+                          />
+                          <stop
+                            offset="100%"
+                            stop-color="#e4b84f"
+                            stop-opacity="0"
+                          />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  </div>
+
+                  <!-- bottom stats -->
+                  <div class="mt-5 flex items-center justify-between text-sm">
+                    <span class="text-slate-400">Growth</span>
+                    <span class="text-emerald-400 font-bold">+12.8%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="w-full">
+                <div
+                  class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8 min-w-0 w-full"
+                >
+                  <div
+                    class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-5 sm:mb-6"
+                  >
+                    <div class="min-w-0">
+                      <h3
+                        class="text-white text-xl sm:text-2xl font-black tracking-tight"
+                      >
+                        Recent Transactions
+                      </h3>
+                      <p class="text-slate-400 text-sm mt-2">
+                        View your latest activity and tap any transaction to see
+                        full details.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="space-y-3">
+                    <!-- Transaction Item -->
+                    <div
+                      class="transaction-item rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
+                    >
+                      <button
+                        type="button"
+                        class="transaction-toggle w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
+                      >
+                        <div class="min-w-0">
+                          <p class="text-white font-bold text-sm sm:text-base">
+                            Deposit
+                          </p>
+                          <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                            24 Mar 2026 • USDT (TRC20)
+                          </p>
+                        </div>
+
+                        <div class="flex items-center gap-3 shrink-0">
+                          <p
+                            class="text-emerald-400 font-bold text-sm sm:text-base"
+                          >
+                            +$5,000
+                          </p>
+                        </div>
+                      </button>
+                    </div>
+
+                    <!-- Transaction Item -->
+                    <div
+                      class="transaction-item rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
+                    >
+                      <button
+                        type="button"
+                        class="transaction-toggle w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
+                      >
+                        <div class="min-w-0">
+                          <p class="text-white font-bold text-sm sm:text-base">
+                            Withdrawal
+                          </p>
+                          <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                            21 Mar 2026 • BTC
+                          </p>
+                        </div>
+
+                        <div class="flex items-center gap-3 shrink-0">
+                          <p
+                            class="text-red-400 font-bold text-sm sm:text-base"
+                          >
+                            -$1,200
+                          </p>
+                        </div>
+                      </button>
+                    </div>
+
+                    <!-- Transaction Item -->
+                    <div
+                      class="transaction-item rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
+                    >
+                      <button
+                        type="button"
+                        class="transaction-toggle w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
+                      >
+                        <div class="min-w-0">
+                          <p class="text-white font-bold text-sm sm:text-base">
+                            Profit Credit
+                          </p>
+                          <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                            18 Mar 2026 • System
+                          </p>
+                        </div>
+
+                        <div class="flex items-center gap-3 shrink-0">
+                          <p
+                            class="text-emerald-400 font-bold text-sm sm:text-base"
+                          >
+                            +$840
+                          </p>
+                        </div>
+                      </button>
+                    </div>
+
+                    <!-- Transaction Item -->
+                    <div
+                      class="transaction-item rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
+                    >
+                      <button
+                        type="button"
+                        class="transaction-toggle w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
+                      >
+                        <div class="min-w-0">
+                          <p class="text-white font-bold text-sm sm:text-base">
+                            Deposit
+                          </p>
+                          <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                            15 Mar 2026 • Ethereum
+                          </p>
+                        </div>
+
+                        <div class="flex items-center gap-3 shrink-0">
+                          <p
+                            class="text-emerald-400 font-bold text-sm sm:text-base"
+                          >
+                            +$2,500
+                          </p>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Chat Modal -->
+    <div
+      id="chatModal"
+      class="fixed inset-0 z-[70] bg-black/70 backdrop-blur-[3px] opacity-0 invisible transition-all duration-300"
+    >
+      <div
+        class="min-h-screen flex items-end sm:items-center justify-center p-3 xs:p-4 sm:p-6"
+      >
+        <div
+          id="chatModalCard"
+          class="w-full max-w-md premium-panel premium-border rounded-3xl overflow-hidden transform translate-y-8 sm:translate-y-4 scale-[0.98] opacity-0 transition-all duration-300 shadow-2xl"
+        >
+          <!-- Header -->
+          <div class="px-4 xs:px-5 sm:px-6 py-4 border-b border-white/10">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex items-center gap-3 min-w-0">
+                <div
+                  class="h-11 w-11 rounded-2xl gold-gradient flex items-center justify-center shrink-0"
+                >
+                  <i data-lucide="headset" class="w-5 h-5 text-black"></i>
+                </div>
+
+                <div class="min-w-0">
+                  <p
+                    class="text-white text-base sm:text-lg font-black truncate"
+                  >
+                    Live Support
+                  </p>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span
+                      class="badge-dot h-2.5 w-2.5 rounded-full bg-emerald-400 shrink-0"
+                    ></span>
+                    <p
+                      class="text-emerald-400 text-xs sm:text-sm font-semibold"
+                    >
+                      Agent online
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                id="closeChatModal"
+                class="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:bg-white/10 transition-all shrink-0"
+                aria-label="Close chat"
+              >
+                <i data-lucide="x" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Messages -->
+          <div
+            id="chatMessages"
+            class="px-4 xs:px-5 sm:px-6 py-4 space-y-4 h-[360px] xs:h-[400px] overflow-y-auto bg-white/[0.02]"
+          >
+            <!-- Agent Message -->
+            <div class="flex items-start gap-3">
+              <div
+                class="h-9 w-9 rounded-xl gold-gradient flex items-center justify-center shrink-0"
+              >
+                <i data-lucide="user-round" class="w-4 h-4 text-black"></i>
+              </div>
+
+              <div class="max-w-[82%]">
+                <div
+                  class="rounded-2xl rounded-tl-md bg-white/8 border border-white/10 px-4 py-3"
+                >
+                  <p class="text-white text-sm leading-6">
+                    Hello, welcome to TitanBlockchainCapital support. How can an
+                    agent assist you today?
+                  </p>
+                </div>
+                <p class="text-slate-500 text-[11px] mt-1 ml-1">
+                  Agent • just now
+                </p>
+              </div>
+            </div>
+
+            <!-- User Example -->
+            <div class="flex items-start justify-end gap-3">
+              <div class="max-w-[82%]">
+                <div class="rounded-2xl rounded-tr-md gold-gradient px-4 py-3">
+                  <p class="text-black text-sm font-medium leading-6">
+                    I want to ask about my withdrawal status.
+                  </p>
+                </div>
+                <p class="text-slate-500 text-[11px] mt-1 text-right mr-1">
+                  You • just now
+                </p>
+              </div>
+            </div>
+
+            <!-- Agent Example -->
+            <div class="flex items-start gap-3">
+              <div
+                class="h-9 w-9 rounded-xl gold-gradient flex items-center justify-center shrink-0"
+              >
+                <i data-lucide="user-round" class="w-4 h-4 text-black"></i>
+              </div>
+
+              <div class="max-w-[82%]">
+                <div
+                  class="rounded-2xl rounded-tl-md bg-white/8 border border-white/10 px-4 py-3"
+                >
+                  <p class="text-white text-sm leading-6">
+                    Kindly send your registered email or transaction reference
+                    and an agent will check it for you.
+                  </p>
+                </div>
+                <p class="text-slate-500 text-[11px] mt-1 ml-1">
+                  Agent • just now
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Input Area -->
+          <div
+            class="px-4 xs:px-5 sm:px-6 py-4 border-t border-white/10 bg-white/[0.03]"
+          >
+            <form id="chatForm" class="space-y-3">
+              <div class="relative">
+                <textarea
+                  id="chatInput"
+                  rows="2"
+                  placeholder="Type your message..."
+                  class="w-full rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 px-4 py-3 pr-14 outline-none focus:border-primary/40 focus:ring-0 resize-none"
+                ></textarea>
+
+                <button
+                  type="submit"
+                  class="absolute bottom-3 right-3 h-10 w-10 rounded-xl gold-gradient flex items-center justify-center text-black shadow-lg shadow-primary/20 hover:scale-[1.03] active:scale-[0.96] transition-all"
+                  aria-label="Send message"
+                >
+                  <i data-lucide="send-horizontal" class="w-4 h-4"></i>
+                </button>
+              </div>
+
+              <div class="flex items-center justify-between gap-3 flex-wrap">
+                <p class="text-slate-500 text-xs">
+                  Messages are typically answered within a few minutes.
+                </p>
+
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-2 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+                >
+                  <i data-lucide="paperclip" class="w-4 h-4"></i>
+                  Attach file
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+
+      const mobileSidebarToggle = document.getElementById(
+        "mobileSidebarToggle",
+      );
+      const mobileSidebarClose = document.getElementById("mobileSidebarClose");
+      const mobileSidebarOverlay = document.getElementById(
+        "mobileSidebarOverlay",
+      );
+      const dashboardSidebar = document.getElementById("dashboardSidebar");
+
+      function openSidebar() {
+        dashboardSidebar.classList.remove("-translate-x-full");
+        mobileSidebarOverlay.classList.remove("opacity-0", "invisible");
+        mobileSidebarOverlay.classList.add("opacity-100", "visible");
+        document.body.classList.add("sidebar-open");
+      }
+
+      function closeSidebar() {
+        dashboardSidebar.classList.add("-translate-x-full");
+        mobileSidebarOverlay.classList.remove("opacity-100", "visible");
+        mobileSidebarOverlay.classList.add("opacity-0", "invisible");
+        document.body.classList.remove("sidebar-open");
+      }
+
+      if (mobileSidebarToggle) {
+        mobileSidebarToggle.addEventListener("click", openSidebar);
+      }
+
+      if (mobileSidebarClose) {
+        mobileSidebarClose.addEventListener("click", closeSidebar);
+      }
+
+      if (mobileSidebarOverlay) {
+        mobileSidebarOverlay.addEventListener("click", closeSidebar);
+      }
+
+      // Chat modal
+      const openChatModalBtn = document.getElementById("openChatModal");
+      const closeChatModalBtn = document.getElementById("closeChatModal");
+      const chatModal = document.getElementById("chatModal");
+      const chatModalCard = document.getElementById("chatModalCard");
+      const chatForm = document.getElementById("chatForm");
+      const chatInput = document.getElementById("chatInput");
+      const chatMessages = document.getElementById("chatMessages");
+
+      function openChatModal() {
+        if (!chatModal || !chatModalCard) return;
+
+        chatModal.classList.remove("opacity-0", "invisible");
+        chatModal.classList.add("opacity-100", "visible");
+
+        setTimeout(() => {
+          chatModalCard.classList.remove(
+            "translate-y-8",
+            "sm:translate-y-4",
+            "scale-[0.98]",
+            "opacity-0",
+          );
+          chatModalCard.classList.add(
+            "translate-y-0",
+            "scale-100",
+            "opacity-100",
+          );
+        }, 10);
+
+        document.body.classList.add("chat-modal-open");
+      }
+
+      function closeChatModal() {
+        if (!chatModal || !chatModalCard) return;
+
+        chatModalCard.classList.remove(
+          "translate-y-0",
+          "scale-100",
+          "opacity-100",
+        );
+        chatModalCard.classList.add(
+          "translate-y-8",
+          "sm:translate-y-4",
+          "scale-[0.98]",
+          "opacity-0",
+        );
+
+        chatModal.classList.remove("opacity-100", "visible");
+        chatModal.classList.add("opacity-0", "invisible");
+
+        document.body.classList.remove("chat-modal-open");
+      }
+
+      if (openChatModalBtn) {
+        openChatModalBtn.addEventListener("click", openChatModal);
+      }
+
+      if (closeChatModalBtn) {
+        closeChatModalBtn.addEventListener("click", closeChatModal);
+      }
+
+      if (chatModal) {
+        chatModal.addEventListener("click", function (e) {
+          if (e.target === chatModal) {
+            closeChatModal();
+          }
+        });
+      }
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          closeChatModal();
+        }
+      });
+
+      if (chatForm) {
+        chatForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const message = chatInput.value.trim();
+          if (!message) return;
+
+          const wrapper = document.createElement("div");
+          wrapper.className = "flex items-start justify-end gap-3";
+
+          wrapper.innerHTML = `
+        <div class="max-w-[82%]">
+          <div class="rounded-2xl rounded-tr-md gold-gradient px-4 py-3">
+            <p class="text-black text-sm font-medium leading-6"></p>
+          </div>
+          <p class="text-slate-500 text-[11px] mt-1 text-right mr-1">You • just now</p>
+        </div>
+      `;
+
+          wrapper.querySelector("p.text-black").textContent = message;
+          chatMessages.appendChild(wrapper);
+          chatInput.value = "";
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+
+          setTimeout(() => {
+            const reply = document.createElement("div");
+            reply.className = "flex items-start gap-3";
+
+            reply.innerHTML = `
+          <div class="h-9 w-9 rounded-xl gold-gradient flex items-center justify-center shrink-0">
+            <i data-lucide="user-round" class="w-4 h-4 text-black"></i>
+          </div>
+          <div class="max-w-[82%]">
+            <div class="rounded-2xl rounded-tl-md bg-white/8 border border-white/10 px-4 py-3">
+              <p class="text-white text-sm leading-6">
+                Thank you for your message. An agent will respond shortly.
+              </p>
+            </div>
+            <p class="text-slate-500 text-[11px] mt-1 ml-1">Agent • just now</p>
+          </div>
+        `;
+
+            chatMessages.appendChild(reply);
+            lucide.createIcons();
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          }, 700);
+        });
+      }
+    </script>
+  </body>
+</html>

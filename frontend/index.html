@@ -1,0 +1,1497 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>TitanBlockchainCapital | Trade With Confidence</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="images/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="images/favicon-16x16.png"
+    />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <link rel="manifest" href="images/site.webmanifest" />
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#e4b84f",
+              "primary-deep": "#bb8920",
+              accent: "#4b7cff",
+              "accent-2": "#74e0ff",
+              "background-dark": "#060913",
+              "surface-dark": "#10172a",
+              "surface-dark-2": "#151f36",
+              "border-dark": "rgba(255,255,255,0.08)",
+            },
+            fontFamily: {
+              display: ["Manrope", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+            boxShadow: {
+              glow: "0 20px 80px rgba(228,184,79,0.18)",
+              blue: "0 20px 80px rgba(75,124,255,0.18)",
+              soft: "0 20px 60px rgba(0,0,0,0.4)",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      body {
+        font-family: "Manrope", sans-serif;
+        overflow-x: hidden;
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(228, 184, 79, 0.08),
+            transparent 24%
+          ),
+          radial-gradient(
+            circle at left 20%,
+            rgba(75, 124, 255, 0.1),
+            transparent 28%
+          ),
+          radial-gradient(
+            circle at bottom left,
+            rgba(116, 224, 255, 0.08),
+            transparent 24%
+          ),
+          linear-gradient(180deg, #060913 0%, #070b14 45%, #09101b 100%);
+      }
+
+      .glass-panel {
+        background: rgba(16, 23, 42, 0.72);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .stats-single-card {
+        min-height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .stats-stack {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        text-align: center;
+      }
+
+      .stat-row {
+        opacity: 0.22;
+        transform: scale(0.88);
+        transition:
+          opacity 0.45s ease,
+          transform 0.45s ease,
+          filter 0.45s ease;
+        filter: blur(0.2px);
+      }
+
+      .stat-row.active {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+      }
+
+      .stat-row.mid {
+        opacity: 0.5;
+        transform: scale(0.93);
+      }
+
+      .stat-value {
+        color: #ffffff;
+        font-family: "Manrope", sans-serif;
+        font-size: 2rem;
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: -0.03em;
+      }
+
+      .stat-label {
+        margin-top: 0.45rem;
+        color: rgb(148 163 184);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .stat-row.active .stat-value {
+        font-size: 2.5rem;
+      }
+
+      .stat-row.active .stat-label {
+        color: #dbe3f3;
+      }
+
+      @media (max-width: 640px) {
+        .stats-single-card {
+          min-height: 190px;
+        }
+
+        .stat-value {
+          font-size: 1.7rem;
+        }
+
+        .stat-row.active .stat-value {
+          font-size: 2.1rem;
+        }
+      }
+
+      .premium-panel {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.03)
+        );
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .premium-border {
+        position: relative;
+      }
+
+      .premium-border::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          135deg,
+          rgba(228, 184, 79, 0.45),
+          rgba(75, 124, 255, 0.18),
+          rgba(255, 255, 255, 0.03)
+        );
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+
+      .gold-gradient {
+        background: linear-gradient(
+          135deg,
+          #f6dea0 0%,
+          #e4b84f 48%,
+          #b47a15 100%
+        );
+      }
+
+      .hero-grid {
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        background-size: 38px 38px;
+      }
+
+      .ticker {
+        overflow: hidden;
+        position: relative;
+      }
+
+      .ticker-track {
+        display: flex;
+        width: max-content;
+        animation: tickerMove 22s linear infinite;
+      }
+
+      @keyframes tickerMove {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      .reveal,
+      .reveal-left,
+      .reveal-right {
+        opacity: 0;
+        transition:
+          opacity 0.8s ease,
+          transform 0.8s ease;
+      }
+
+      .reveal {
+        transform: translateY(28px);
+      }
+
+      .reveal-left {
+        transform: translateX(-28px);
+      }
+
+      .reveal-right {
+        transform: translateX(28px);
+      }
+
+      .reveal.is-visible,
+      .reveal-left.is-visible,
+      .reveal-right.is-visible {
+        opacity: 1;
+        transform: translate(0, 0);
+      }
+
+      .delay-1 {
+        transition-delay: 0.08s;
+      }
+      .delay-2 {
+        transition-delay: 0.16s;
+      }
+      .delay-3 {
+        transition-delay: 0.24s;
+      }
+      .delay-4 {
+        transition-delay: 0.32s;
+      }
+
+      .mobile-menu-open {
+        overflow: hidden;
+      }
+
+      #mobileNav {
+        transition:
+          transform 0.3s ease-in-out,
+          opacity 0.2s ease,
+          visibility 0.2s ease;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        .reveal,
+        .reveal-left,
+        .reveal-right,
+        .ticker-track {
+          animation: none !important;
+          transition: none !important;
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body
+    class="bg-background-dark text-white font-display transition-colors duration-300"
+  >
+    <!-- Header -->
+    <header
+      class="sticky top-0 z-50 w-full border-b border-white/10 bg-background-dark/80 backdrop-blur-md"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center gap-3 min-w-0">
+            <img
+              src="images/logo.png"
+              alt="Titan Logo"
+              class="h-10 w-10 rounded-xl object-cover shrink-0"
+            />
+
+            <h2
+              class="text-white text-sm sm:text-xl font-extrabold tracking-tight whitespace-nowrap truncate"
+            >
+              TITAN <span class="text-primary">BLOCKCHAINCAPITAL</span>
+            </h2>
+          </div>
+
+          <nav class="hidden md:flex items-center gap-8">
+            <a
+              class="text-slate-300 hover:text-white text-sm font-medium transition-colors"
+              href="#about"
+              >About</a
+            >
+            <a
+              class="text-slate-300 hover:text-white text-sm font-medium transition-colors"
+              href="#markets"
+              >Markets</a
+            >
+            <a
+              class="text-slate-300 hover:text-white text-sm font-medium transition-colors"
+              href="#advantages"
+              >Benefits</a
+            >
+            <a
+              class="text-slate-300 hover:text-white text-sm font-medium transition-colors"
+              href="#platform"
+              >Platform</a
+            >
+            <a
+              class="text-slate-300 hover:text-white text-sm font-medium transition-colors"
+              href="#start"
+              >Start</a
+            >
+            <a
+              class="text-slate-300 hover:text-white text-sm font-medium transition-colors"
+              href="#faq"
+              >FAQ</a
+            >
+          </nav>
+
+          <div class="flex items-center gap-2 sm:gap-3">
+            <a
+              href="login.html"
+              class="hidden sm:flex px-4 py-2 text-sm font-bold text-white bg-surface-dark hover:bg-slate-700 rounded-lg transition-all items-center justify-center"
+              >Login</a
+            >
+            <a
+              href="register.html"
+              class="hidden sm:flex px-5 py-2 text-sm font-bold text-black gold-gradient rounded-lg transition-all shadow-lg shadow-primary/20 items-center justify-center"
+              >Register</a
+            >
+
+            <button
+              id="menuToggle"
+              class="block md:hidden p-2 text-slate-300 hover:text-white focus:outline-none"
+              aria-label="menu"
+            >
+              <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="mobileNav"
+        class="absolute inset-x-0 top-16 bg-surface-dark border-b border-white/10 shadow-xl md:hidden invisible opacity-0 -translate-y-full transition-all duration-300 ease-in-out"
+      >
+        <nav class="flex flex-col px-6 py-6 space-y-4 text-base">
+          <a
+            class="text-slate-200 hover:text-white py-2 font-medium border-b border-white/10"
+            href="#about"
+            >About</a
+          >
+          <a
+            class="text-slate-200 hover:text-white py-2 font-medium border-b border-white/10"
+            href="#markets"
+            >Markets</a
+          >
+          <a
+            class="text-slate-200 hover:text-white py-2 font-medium border-b border-white/10"
+            href="#advantages"
+            >Benefits</a
+          >
+          <a
+            class="text-slate-200 hover:text-white py-2 font-medium border-b border-white/10"
+            href="#platform"
+            >Platform</a
+          >
+          <a
+            class="text-slate-200 hover:text-white py-2 font-medium border-b border-white/10"
+            href="#start"
+            >Start</a
+          >
+          <a
+            class="text-slate-300 hover:text-white text-sm font-medium transition-colors"
+            href="#faq"
+            >FAQ</a
+          >
+          <div class="flex flex-col sm:hidden pt-4 gap-3">
+            <a
+              href="login.html"
+              class="w-full text-center px-4 py-3 text-sm font-bold text-white bg-surface-dark-2 border border-white/10 rounded-lg"
+              >Login</a
+            >
+            <a
+              href="register.html"
+              class="w-full text-center px-5 py-3 text-sm font-bold text-black gold-gradient rounded-lg shadow-lg shadow-primary/20"
+              >Register</a
+            >
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="relative overflow-hidden pt-12 pb-20 lg:pt-24 lg:pb-32">
+        <div class="absolute inset-0 pointer-events-none">
+          <div
+            class="absolute top-20 right-[8%] h-56 w-56 sm:h-72 sm:w-72 rounded-full bg-primary/10 blur-3xl"
+          ></div>
+          <div
+            class="absolute bottom-10 left-[6%] h-56 w-56 sm:h-72 sm:w-72 rounded-full bg-accent/15 blur-3xl"
+          ></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div class="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+            <!-- text -->
+            <div class="space-y-7 order-1 lg:order-1">
+              <div
+                class="reveal inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-bold uppercase tracking-widest"
+              >
+                <span class="relative flex h-2 w-2">
+                  <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-2 opacity-75"
+                  ></span>
+                  <span
+                    class="relative inline-flex rounded-full h-2 w-2 bg-accent-2"
+                  ></span>
+                </span>
+                3M+ users WorldWide
+              </div>
+
+              <h1
+                class="reveal delay-1 text-white text-4xl sm:text-5xl lg:text-7xl font-black leading-tight tracking-tight max-w-3xl"
+              >
+                Trade the markets with
+                <span class="text-primary">clarity</span>,
+                <span class="text-accent-2">confidence</span>, and real profit
+                potential
+              </h1>
+
+              <p
+                class="reveal delay-2 text-slate-300 text-base sm:text-lg lg:text-xl max-w-2xl leading-relaxed"
+              >
+                TitanBlockchainCapital gives traders access to forex, crypto,
+                commodities, indices, and synthetic markets through one powerful
+                trading environment built for better focus and stronger
+                execution.
+              </p>
+
+              <!-- chart sits before buttons on mobile, but remains right side on desktop -->
+              <div class="relative order-2 lg:hidden reveal-right pt-1">
+                <div
+                  class="absolute -inset-4 bg-primary/20 blur-3xl rounded-full"
+                ></div>
+
+                <div
+                  class="relative premium-panel premium-border rounded-2xl overflow-hidden shadow-2xl shadow-black/40"
+                >
+                  <div class="p-3 sm:p-5">
+                    <div
+                      class="relative h-[280px] xs:h-[320px] sm:h-[360px] rounded-2xl overflow-hidden border border-white/10 bg-surface-dark hero-grid"
+                    >
+                      <img
+                        src="images/chart.png"
+                        alt="Trading chart"
+                        class="w-full h-full object-cover opacity-90"
+                      />
+
+                      <div
+                        class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/20 to-black/15"
+                      ></div>
+
+                      <div
+                        class="absolute top-3 left-3 right-3 flex items-start justify-between gap-3"
+                      >
+                        <div
+                          class="px-3 py-1.5 rounded-full bg-black/30 border border-white/10 text-[10px] uppercase tracking-[0.18em] text-slate-200 backdrop-blur"
+                        >
+                          Trend Continuation
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="mt-4 sm:mt-5 rounded-[28px] bg-white/5 border border-white/10 p-5 sm:p-6 stats-single-card"
+                >
+                  <div class="stats-stack">
+                    <div class="stat-row active">
+                      <p class="stat-value">$65B+</p>
+                      <p class="stat-label">Monthly Volume</p>
+                    </div>
+
+                    <div class="stat-row">
+                      <p class="stat-value">1999</p>
+                      <p class="stat-label">Established Since</p>
+                    </div>
+
+                    <div class="stat-row">
+                      <p class="stat-value">168M+</p>
+                      <p class="stat-label">Monthly Deals</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <p
+                class="reveal delay-3 text-slate-400 text-sm sm:text-base max-w-2xl leading-7"
+              >
+                The goal is simple: help users see market opportunity more
+                clearly, understand price movement better, and take action with
+                greater structure and control.
+              </p>
+
+              <div class="reveal delay-4 flex flex-wrap gap-4">
+                <a
+                  href="register.html"
+                  class="px-8 py-4 text-black font-bold rounded-xl gold-gradient hover:scale-[1.02] transition-transform shadow-xl shadow-primary/20 inline-block text-center w-full sm:w-auto"
+                  >Start Trading Now</a
+                >
+              </div>
+
+              <div class="reveal mt-2 flex flex-wrap gap-3">
+                <span
+                  class="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-slate-300"
+                  >Multi-asset CFD trading</span
+                >
+                <span
+                  class="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-slate-300"
+                  >24/7 synthetic markets</span
+                >
+                <span
+                  class="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-slate-300"
+                  >Automation support</span
+                >
+              </div>
+            </div>
+
+            <!-- desktop chart -->
+            <div class="relative hidden lg:block order-2 reveal-right">
+              <div
+                class="absolute -inset-4 bg-primary/20 blur-3xl rounded-full"
+              ></div>
+
+              <div
+                class="relative premium-panel premium-border rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl shadow-black/40"
+              >
+                <div class="p-3 sm:p-5 lg:p-6">
+                  <div
+                    class="relative h-[300px] sm:h-[380px] lg:h-[500px] rounded-2xl overflow-hidden border border-white/10 bg-surface-dark hero-grid"
+                  >
+                    <img
+                      src="images/chart.png"
+                      alt="Trading chart"
+                      class="w-full h-full object-cover opacity-90"
+                    />
+
+                    <div
+                      class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/20 to-black/15"
+                    ></div>
+
+                    <div
+                      class="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 flex items-start justify-between gap-3"
+                    >
+                      <div
+                        class="px-3 py-1.5 rounded-full bg-black/30 border border-white/10 text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-slate-200 backdrop-blur"
+                      >
+                        Trend Continuation
+                      </div>
+                      <div
+                        class="px-3 py-1.5 rounded-full bg-black/30 border border-white/10 text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-slate-200 backdrop-blur text-right"
+                      >
+                        London / New York Overlap
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-4 sm:mt-5"
+                  >
+                    <div
+                      class="p-4 rounded-2xl bg-white/5 border border-white/10"
+                    >
+                      <p
+                        class="text-slate-400 text-[11px] uppercase font-bold tracking-wider"
+                      >
+                        Monthly Volume
+                      </p>
+                      <p class="text-white text-lg font-black mt-2">$65B+</p>
+                    </div>
+                    <div
+                      class="p-4 rounded-2xl bg-white/5 border border-white/10"
+                    >
+                      <p
+                        class="text-slate-400 text-[11px] uppercase font-bold tracking-wider"
+                      >
+                        1999
+                      </p>
+                      <p class="text-white text-lg font-black mt-2">
+                        Established Since
+                      </p>
+                    </div>
+                    <div
+                      class="p-4 rounded-2xl bg-white/5 border border-white/10"
+                    >
+                      <p
+                        class="text-slate-400 text-[11px] uppercase font-bold tracking-wider"
+                      >
+                        168M+
+                      </p>
+                      <p class="text-white text-lg font-black mt-2">
+                        Monthly Deals
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="reveal mt-12 lg:mt-16">
+            <div class="ticker premium-panel premium-border rounded-full py-3">
+              <div class="ticker-track">
+                <div
+                  class="flex items-center gap-8 px-6 text-sm text-slate-300"
+                >
+                  <span class="flex items-center gap-2"
+                    ><i data-lucide="globe" class="w-4 h-4 text-primary"></i
+                    >Forex, crypto, commodities, indices</span
+                  >
+                  <span class="flex items-center gap-2"
+                    ><i data-lucide="clock-3" class="w-4 h-4 text-primary"></i
+                    >24/7 synthetic markets</span
+                  >
+                  <span class="flex items-center gap-2"
+                    ><i data-lucide="bot" class="w-4 h-4 text-primary"></i>EA
+                    and automation support</span
+                  >
+                  <span class="flex items-center gap-2"
+                    ><i
+                      data-lucide="badge-dollar-sign"
+                      class="w-4 h-4 text-primary"
+                    ></i
+                    >Real opportunity from price movement</span
+                  >
+                  <span class="flex items-center gap-2"
+                    ><i data-lucide="globe" class="w-4 h-4 text-primary"></i
+                    >Forex, crypto, commodities, indices</span
+                  >
+                  <span class="flex items-center gap-2"
+                    ><i data-lucide="clock-3" class="w-4 h-4 text-primary"></i
+                    >24/7 synthetic markets</span
+                  >
+                  <span class="flex items-center gap-2"
+                    ><i data-lucide="bot" class="w-4 h-4 text-primary"></i>EA
+                    and automation support</span
+                  >
+                  <span class="flex items-center gap-2"
+                    ><i
+                      data-lucide="badge-dollar-sign"
+                      class="w-4 h-4 text-primary"
+                    ></i
+                    >Real opportunity from price movement</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About -->
+      <section id="about" class="py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <div class="order-2 lg:order-1 relative">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-4">
+                  <div
+                    class="p-6 bg-surface-dark rounded-2xl border border-white/10"
+                  >
+                    <i
+                      data-lucide="layout-dashboard"
+                      class="text-primary w-8 h-8 mb-4"
+                    ></i>
+                    <h5 class="text-white font-bold">Cleaner Experience</h5>
+                    <p class="text-slate-400 text-xs mt-2">
+                      Trade flow and charts are easier to understand.
+                    </p>
+                  </div>
+                  <div
+                    class="p-6 bg-surface-dark rounded-2xl border border-white/10"
+                  >
+                    <i
+                      data-lucide="trending-up"
+                      class="text-accent-2 w-8 h-8 mb-4"
+                    ></i>
+                    <h5 class="text-white font-bold">Market Opportunity</h5>
+                    <p class="text-slate-400 text-xs mt-2">
+                      Benefit from rising and falling markets.
+                    </p>
+                  </div>
+                </div>
+                <div class="space-y-4 mt-8">
+                  <div
+                    class="p-6 bg-surface-dark rounded-2xl border border-white/10"
+                  >
+                    <i
+                      data-lucide="shield-check"
+                      class="text-primary w-8 h-8 mb-4"
+                    ></i>
+                    <h5 class="text-white font-bold">Stronger Trust</h5>
+                    <p class="text-slate-400 text-xs mt-2">
+                      Premium structure creates better first impressions.
+                    </p>
+                  </div>
+                  <div
+                    class="p-6 bg-primary/10 rounded-2xl border border-primary/30"
+                  >
+                    <i
+                      data-lucide="target"
+                      class="text-primary w-8 h-8 mb-4"
+                    ></i>
+                    <h5 class="text-white font-bold">Focused Trading</h5>
+                    <p class="text-slate-300 text-xs mt-2">
+                      Clearer setups, better decisions, stronger control.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="order-1 lg:order-2 space-y-6">
+              <h2
+                class="text-primary font-bold text-sm uppercase tracking-widest"
+              >
+                Why TitanBlockchainCapital
+              </h2>
+              <h3
+                class="text-white text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight"
+              >
+                Built for traders who want real market opportunity
+              </h3>
+              <p class="text-slate-400 text-base sm:text-lg leading-relaxed">
+                TitanBlockchainCapital is designed for users who want a more
+                practical and convincing path into live trading. Instead of a
+                crowded experience, the platform focuses on clarity, structure,
+                and usable opportunity.
+              </p>
+              <ul class="space-y-4">
+                <li class="flex items-start gap-3">
+                  <i
+                    data-lucide="check-circle"
+                    class="text-primary w-5 h-5 flex-shrink-0"
+                  ></i
+                  ><span class="text-slate-300 font-medium text-sm"
+                    >Trade multiple assets from one environment.</span
+                  >
+                </li>
+                <li class="flex items-start gap-3">
+                  <i
+                    data-lucide="check-circle"
+                    class="text-primary w-5 h-5 flex-shrink-0"
+                  ></i
+                  ><span class="text-slate-300 font-medium text-sm"
+                    >Use tools that support chart-based decision making.</span
+                  >
+                </li>
+                <li class="flex items-start gap-3">
+                  <i
+                    data-lucide="check-circle"
+                    class="text-primary w-5 h-5 flex-shrink-0"
+                  ></i
+                  ><span class="text-slate-300 font-medium text-sm"
+                    >Approach the market with stronger discipline and
+                    control.</span
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Markets -->
+      <section id="markets" class="py-24 bg-background-dark/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <h2
+              class="text-primary font-bold text-sm uppercase tracking-widest"
+            >
+              Markets you can trade
+            </h2>
+            <h3 class="text-white text-3xl sm:text-4xl font-bold">
+              One platform. Multiple trading opportunities.
+            </h3>
+            <p class="text-slate-400">
+              Access the markets that match your trading goals, style, and
+              timing.
+            </p>
+          </div>
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6"
+          >
+            <div
+              class="p-8 rounded-2xl bg-surface-dark border border-white/10 hover:border-primary/40 transition-all group"
+            >
+              <div
+                class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary transition-colors"
+              >
+                <i
+                  data-lucide="landmark"
+                  class="text-primary group-hover:text-black w-6 h-6"
+                ></i>
+              </div>
+              <h4 class="text-white text-xl font-bold mb-3">Forex</h4>
+              <p class="text-slate-400 text-sm leading-relaxed">
+                Trade major and minor currency pairs with daily setup potential.
+              </p>
+            </div>
+            <div
+              class="p-8 rounded-2xl bg-surface-dark border border-white/10 hover:border-primary/40 transition-all group"
+            >
+              <div
+                class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary transition-colors"
+              >
+                <i
+                  data-lucide="bitcoin"
+                  class="text-primary group-hover:text-black w-6 h-6"
+                ></i>
+              </div>
+              <h4 class="text-white text-xl font-bold mb-3">Crypto</h4>
+              <p class="text-slate-400 text-sm leading-relaxed">
+                Capture price movement in fast-moving digital markets.
+              </p>
+            </div>
+            <div
+              class="p-8 rounded-2xl bg-surface-dark border border-white/10 hover:border-primary/40 transition-all group"
+            >
+              <div
+                class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary transition-colors"
+              >
+                <i
+                  data-lucide="bar-chart-3"
+                  class="text-primary group-hover:text-black w-6 h-6"
+                ></i>
+              </div>
+              <h4 class="text-white text-xl font-bold mb-3">Indices</h4>
+              <p class="text-slate-400 text-sm leading-relaxed">
+                Trade broader market direction through index CFDs.
+              </p>
+            </div>
+            <div
+              class="p-8 rounded-2xl bg-surface-dark border border-white/10 hover:border-primary/40 transition-all group"
+            >
+              <div
+                class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary transition-colors"
+              >
+                <i
+                  data-lucide="gem"
+                  class="text-primary group-hover:text-black w-6 h-6"
+                ></i>
+              </div>
+              <h4 class="text-white text-xl font-bold mb-3">Commodities</h4>
+              <p class="text-slate-400 text-sm leading-relaxed">
+                Trade gold and other commodities where strong movement appears.
+              </p>
+            </div>
+            <div
+              class="p-8 rounded-2xl bg-primary/10 border border-primary/30 flex flex-col justify-center items-start"
+            >
+              <h4 class="text-white text-xl font-bold mb-2">
+                Synthetic Indices
+              </h4>
+              <p class="text-slate-300 text-sm mb-6">
+                Trade derived markets with 24/7 access and consistent
+                opportunity.
+              </p>
+              <a
+                href="#start"
+                class="w-full py-3 gold-gradient text-black font-bold rounded-xl inline-block text-center"
+                >Start Trading</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Advantages -->
+      <section id="advantages" class="py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h2 class="text-white text-3xl font-bold">
+              Why traders stay interested
+            </h2>
+            <p class="text-slate-400 mt-4 max-w-2xl mx-auto">
+              Everything here is designed to make trading feel more practical,
+              more exciting, and more worth trying.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div class="p-8 rounded-2xl bg-surface-dark border border-white/10">
+              <div
+                class="text-primary text-xs font-bold uppercase tracking-widest mb-4"
+              >
+                01 / Multi-asset access
+              </div>
+              <h5 class="text-white text-xl font-bold mb-3">
+                Trade multiple opportunities
+              </h5>
+              <p class="text-slate-400 text-sm leading-relaxed">
+                Forex, crypto, indices, commodities, and synthetic markets all
+                in one place.
+              </p>
+            </div>
+            <div class="p-8 rounded-2xl bg-surface-dark border border-white/10">
+              <div
+                class="text-primary text-xs font-bold uppercase tracking-widest mb-4"
+              >
+                02 / 24/7 synthetic markets
+              </div>
+              <h5 class="text-white text-xl font-bold mb-3">
+                Trade when opportunity appears
+              </h5>
+              <p class="text-slate-400 text-sm leading-relaxed">
+                Derived indices stay available all day, every day.
+              </p>
+            </div>
+            <div class="p-8 rounded-2xl bg-surface-dark border border-white/10">
+              <div
+                class="text-primary text-xs font-bold uppercase tracking-widest mb-4"
+              >
+                03 / Technical tools
+              </div>
+              <h5 class="text-white text-xl font-bold mb-3">
+                Built for chart-based decisions
+              </h5>
+              <p class="text-slate-400 text-sm leading-relaxed">
+                Multiple timeframes, indicators, and cleaner trade flow.
+              </p>
+            </div>
+            <div class="p-8 rounded-2xl bg-surface-dark border border-white/10">
+              <div
+                class="text-primary text-xs font-bold uppercase tracking-widest mb-4"
+              >
+                04 / Swap-free flexibility
+              </div>
+              <h5 class="text-white text-xl font-bold mb-3">
+                More breathing room
+              </h5>
+              <p class="text-slate-400 text-sm leading-relaxed">
+                Hold positions longer with less overnight pressure.
+              </p>
+            </div>
+            <div class="p-8 rounded-2xl bg-surface-dark border border-white/10">
+              <div
+                class="text-primary text-xs font-bold uppercase tracking-widest mb-4"
+              >
+                05 / Automation support
+              </div>
+              <h5 class="text-white text-xl font-bold mb-3">
+                Manual or automated trading
+              </h5>
+              <p class="text-slate-400 text-sm leading-relaxed">
+                Run Expert Advisors and grow into a more structured system.
+              </p>
+            </div>
+            <div
+              class="p-8 rounded-2xl bg-primary/10 border border-primary/30 flex flex-col justify-center"
+            >
+              <h5 class="text-white text-xl font-bold mb-2">
+                Ready to enter live markets?
+              </h5>
+              <p class="text-slate-300 text-sm mb-6">
+                Step into a stronger trading environment today.
+              </p>
+              <a
+                href="#start"
+                class="w-full py-3 gold-gradient text-black font-bold rounded-xl inline-block text-center"
+                >Create Account</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Platform -->
+      <section id="platform" class="py-24 bg-surface-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+              <h2
+                class="text-primary font-bold text-sm uppercase tracking-widest"
+              >
+                Platform experience
+              </h2>
+              <h3
+                class="text-white text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight"
+              >
+                A trading environment that feels clear, capable, and built for
+                serious opportunity
+              </h3>
+              <p class="text-slate-400 text-base sm:text-lg leading-relaxed">
+                The platform is designed to help users understand what they are
+                doing, spot opportunity clearly, and act with more control.
+              </p>
+              <ul class="space-y-4">
+                <li class="flex items-start gap-3">
+                  <i
+                    data-lucide="target"
+                    class="text-primary w-5 h-5 mt-0.5"
+                  ></i
+                  ><span class="text-slate-300 text-sm"
+                    >Focus on one clear strategy instead of random
+                    entries.</span
+                  >
+                </li>
+                <li class="flex items-start gap-3">
+                  <i data-lucide="eye" class="text-primary w-5 h-5 mt-0.5"></i
+                  ><span class="text-slate-300 text-sm"
+                    >See entries, exits, and structure more clearly.</span
+                  >
+                </li>
+                <li class="flex items-start gap-3">
+                  <i
+                    data-lucide="shield-plus"
+                    class="text-primary w-5 h-5 mt-0.5"
+                  ></i
+                  ><span class="text-slate-300 text-sm"
+                    >Use stop loss, take profit, and disciplined sizing.</span
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="premium-panel premium-border rounded-3xl p-6 lg:p-8">
+              <div class="grid sm:grid-cols-2 gap-5">
+                <div
+                  class="p-6 rounded-2xl bg-white/5 border border-white/10 text-center"
+                >
+                  <i
+                    data-lucide="monitor-smartphone"
+                    class="text-primary w-8 h-8 mx-auto mb-4"
+                  ></i>
+                  <h5 class="text-white font-bold">Desktop • Web • Mobile</h5>
+                  <p class="text-slate-400 text-sm mt-2">
+                    Access the market anywhere
+                  </p>
+                </div>
+                <div
+                  class="p-6 rounded-2xl bg-white/5 border border-white/10 text-center"
+                >
+                  <i
+                    data-lucide="bot"
+                    class="text-primary w-8 h-8 mx-auto mb-4"
+                  ></i>
+                  <h5 class="text-white font-bold">Expert Advisors</h5>
+                  <p class="text-slate-400 text-sm mt-2">
+                    Manual or automated execution
+                  </p>
+                </div>
+                <div
+                  class="p-6 rounded-2xl bg-primary/10 border border-primary/20 sm:col-span-2"
+                >
+                  <p
+                    class="text-primary text-xs font-bold uppercase tracking-widest mb-3"
+                  >
+                    Trading potential
+                  </p>
+                  <h5 class="text-white text-2xl font-bold">
+                    Opportunity in both directions
+                  </h5>
+                  <p class="text-slate-300 text-sm mt-3">
+                    CFD trading allows profit potential in both rising and
+                    falling prices.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="py-24 bg-background-dark/50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center max-w-3xl mx-auto mb-14 space-y-4">
+            <h2
+              class="text-primary font-bold text-sm uppercase tracking-widest"
+            >
+              Frequently asked questions
+            </h2>
+            <h3 class="text-white text-3xl sm:text-4xl font-bold">
+              Trusted answers for serious traders
+            </h3>
+            <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
+              Learn more about the credibility, verification process, and trust
+              behind TitanBlockchainCapital.
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            <details
+              class="group rounded-2xl bg-surface-dark border border-white/10 p-5 sm:p-6 transition-all open:border-primary/30"
+            >
+              <summary
+                class="flex cursor-pointer list-none items-center justify-between gap-4"
+              >
+                <span class="text-white text-base sm:text-lg font-bold">
+                  Can TitanBlockchainCapital be trusted?
+                </span>
+                <span
+                  class="shrink-0 rounded-full bg-white/5 border border-white/10 p-2 text-slate-300 transition group-open:rotate-180"
+                >
+                  <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                </span>
+              </summary>
+              <p class="mt-4 text-slate-400 text-sm sm:text-base leading-7">
+                TitanBlockchainCapital is built to give users a more secure,
+                structured, and confidence-driven trading experience. The
+                platform is focused on trust, account verification, and a more
+                controlled onboarding process so users can feel more assured as
+                they get started.
+              </p>
+            </details>
+
+            <details
+              class="group rounded-2xl bg-surface-dark border border-white/10 p-5 sm:p-6 transition-all open:border-primary/30"
+            >
+              <summary
+                class="flex cursor-pointer list-none items-center justify-between gap-4"
+              >
+                <span class="text-white text-base sm:text-lg font-bold">
+                  Is TitanBlockchainCapital a verified platform?
+                </span>
+                <span
+                  class="shrink-0 rounded-full bg-white/5 border border-white/10 p-2 text-slate-300 transition group-open:rotate-180"
+                >
+                  <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                </span>
+              </summary>
+              <p class="mt-4 text-slate-400 text-sm sm:text-base leading-7">
+                TitanBlockchainCapital uses a verification-based onboarding
+                process designed to maintain platform quality and user trust.
+                This process helps ensure that accounts go through proper review
+                before full platform access is granted.
+              </p>
+            </details>
+
+            <details
+              class="group rounded-2xl bg-surface-dark border border-white/10 p-5 sm:p-6 transition-all open:border-primary/30"
+            >
+              <summary
+                class="flex cursor-pointer list-none items-center justify-between gap-4"
+              >
+                <span class="text-white text-base sm:text-lg font-bold">
+                  How does TitanBlockchainCapital build user confidence?
+                </span>
+                <span
+                  class="shrink-0 rounded-full bg-white/5 border border-white/10 p-2 text-slate-300 transition group-open:rotate-180"
+                >
+                  <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                </span>
+              </summary>
+              <p class="mt-4 text-slate-400 text-sm sm:text-base leading-7">
+                Confidence is built through a premium user experience, account
+                verification, guided onboarding, and a more disciplined platform
+                structure. Every part of the experience is designed to feel more
+                reliable, more intentional, and more professional.
+              </p>
+            </details>
+
+            <details
+              class="group rounded-2xl bg-surface-dark border border-white/10 p-5 sm:p-6 transition-all open:border-primary/30"
+            >
+              <summary
+                class="flex cursor-pointer list-none items-center justify-between gap-4"
+              >
+                <span class="text-white text-base sm:text-lg font-bold">
+                  Why does TitanBlockchainCapital use an approval process?
+                </span>
+                <span
+                  class="shrink-0 rounded-full bg-white/5 border border-white/10 p-2 text-slate-300 transition group-open:rotate-180"
+                >
+                  <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                </span>
+              </summary>
+              <p class="mt-4 text-slate-400 text-sm sm:text-base leading-7">
+                The approval process is part of the platform’s trust-first
+                approach. It helps maintain a more verified environment, adds an
+                extra layer of review, and supports a more credible experience
+                for users joining the platform.
+              </p>
+            </details>
+
+            <details
+              class="group rounded-2xl bg-surface-dark border border-white/10 p-5 sm:p-6 transition-all open:border-primary/30"
+            >
+              <summary
+                class="flex cursor-pointer list-none items-center justify-between gap-4"
+              >
+                <span class="text-white text-base sm:text-lg font-bold">
+                  What makes TitanBlockchainCapital feel more secure?
+                </span>
+                <span
+                  class="shrink-0 rounded-full bg-white/5 border border-white/10 p-2 text-slate-300 transition group-open:rotate-180"
+                >
+                  <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                </span>
+              </summary>
+              <p class="mt-4 text-slate-400 text-sm sm:text-base leading-7">
+                TitanBlockchainCapital is presented as a platform that values
+                structure, verification, and controlled account access. These
+                elements help create a stronger sense of safety, seriousness,
+                and platform trust for users.
+              </p>
+            </details>
+
+            <details
+              class="group rounded-2xl bg-surface-dark border border-white/10 p-5 sm:p-6 transition-all open:border-primary/30"
+            >
+              <summary
+                class="flex cursor-pointer list-none items-center justify-between gap-4"
+              >
+                <span class="text-white text-base sm:text-lg font-bold">
+                  Why do traders choose TitanBlockchainCapital?
+                </span>
+                <span
+                  class="shrink-0 rounded-full bg-white/5 border border-white/10 p-2 text-slate-300 transition group-open:rotate-180"
+                >
+                  <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                </span>
+              </summary>
+              <p class="mt-4 text-slate-400 text-sm sm:text-base leading-7">
+                Traders are drawn to TitanBlockchainCapital because of its
+                premium presentation, verification-focused onboarding, and the
+                strong impression of trust, professionalism, and platform
+                control it gives from the very beginning.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- Start -->
+      <section id="start" class="py-24">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div
+            class="relative rounded-3xl overflow-hidden bg-primary/10 border border-primary/30 px-8 py-16 text-center text-white"
+          >
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10"
+            ></div>
+            <div class="relative z-10 space-y-8">
+              <h2 class="text-4xl lg:text-5xl font-black">
+                The market is already moving
+              </h2>
+              <p class="text-slate-200 text-lg max-w-2xl mx-auto">
+                Open your live account, step into a premium trading environment,
+                and position yourself to take advantage of real market movement.
+              </p>
+              <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a
+                  href="register.html"
+                  class="px-10 py-4 gold-gradient text-black font-bold rounded-xl shadow-2xl inline-block"
+                  >Start Trading Now</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-background-dark pt-16 pb-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10 mb-14"
+        >
+          <div class="col-span-2">
+            <div class="flex items-center gap-3 mb-5">
+              <img
+                src="images/logo.png"
+                alt="Titan Logo"
+                class="h-12 w-12 rounded-xl object-cover shrink-0"
+              />
+
+              <h2 class="text-white text-xl font-extrabold tracking-tight">
+                TITAN BLOCKCHAINCAPITAL
+              </h2>
+            </div>
+            <p class="text-slate-500 text-sm max-w-sm leading-relaxed">
+              A refined CFD trading experience built around stronger market
+              access, cleaner opportunity, smarter execution, and a premium path
+              into live trading.
+            </p>
+          </div>
+
+          <div>
+            <h6 class="text-white font-bold mb-5">Company</h6>
+            <ul class="space-y-3 text-sm text-slate-500">
+              <li>
+                <a href="#about" class="hover:text-primary transition-colors"
+                  >About</a
+                >
+              </li>
+              <li>
+                <a href="#markets" class="hover:text-primary transition-colors"
+                  >Markets</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#advantages"
+                  class="hover:text-primary transition-colors"
+                  >Benefits</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h6 class="text-white font-bold mb-5">Platform</h6>
+            <ul class="space-y-3 text-sm text-slate-500">
+              <li>
+                <a href="#platform" class="hover:text-primary transition-colors"
+                  >Trading Tools</a
+                >
+              </li>
+              <li>
+                <a href="#start" class="hover:text-primary transition-colors"
+                  >Live Account</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h6 class="text-white font-bold mb-5">Legal</h6>
+            <ul class="space-y-3 text-sm text-slate-500">
+              <li>
+                <a href="#" class="hover:text-primary transition-colors"
+                  >Terms of Service</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-primary transition-colors"
+                  >Policy</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="pt-8 border-t border-white/10 text-center">
+          <p class="text-slate-500 text-xs">
+            © 1999 TitanBlockchainCapital. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const menuToggle = document.getElementById("menuToggle");
+      const mobileNav = document.getElementById("mobileNav");
+
+      if (menuToggle && mobileNav) {
+        menuToggle.addEventListener("click", () => {
+          const isOpen = mobileNav.classList.contains("visible");
+
+          if (isOpen) {
+            mobileNav.classList.remove(
+              "visible",
+              "opacity-100",
+              "translate-y-0",
+            );
+            mobileNav.classList.add(
+              "invisible",
+              "opacity-0",
+              "-translate-y-full",
+            );
+            document.body.classList.remove("mobile-menu-open");
+          } else {
+            mobileNav.classList.remove(
+              "invisible",
+              "opacity-0",
+              "-translate-y-full",
+            );
+            mobileNav.classList.add("visible", "opacity-100", "translate-y-0");
+            document.body.classList.add("mobile-menu-open");
+          }
+        });
+
+        mobileNav.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", () => {
+            mobileNav.classList.remove(
+              "visible",
+              "opacity-100",
+              "translate-y-0",
+            );
+            mobileNav.classList.add(
+              "invisible",
+              "opacity-0",
+              "-translate-y-full",
+            );
+            document.body.classList.remove("mobile-menu-open");
+          });
+        });
+      }
+
+      lucide.createIcons();
+
+      const revealItems = document.querySelectorAll(
+        ".reveal, .reveal-left, .reveal-right",
+      );
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.14, rootMargin: "0px 0px -40px 0px" },
+      );
+
+      revealItems.forEach((item) => observer.observe(item));
+    </script>
+    <script>
+      const statRows = document.querySelectorAll(".stats-stack .stat-row");
+      let activeIndex = 0;
+
+      function rotateSingleStats() {
+        statRows.forEach((row) => {
+          row.classList.remove("active", "mid");
+        });
+
+        statRows[activeIndex].classList.add("active");
+        statRows[(activeIndex + 1) % statRows.length].classList.add("mid");
+
+        activeIndex = (activeIndex + 1) % statRows.length;
+      }
+
+      rotateSingleStats();
+      setInterval(rotateSingleStats, 1800);
+    </script>
+  </body>
+</html>

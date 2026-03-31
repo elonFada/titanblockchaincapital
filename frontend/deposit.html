@@ -1,0 +1,547 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>TitanBlockchainCapital | Deposit</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="images/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="images/favicon-16x16.png"
+    />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <link rel="manifest" href="images/site.webmanifest" />
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            screens: {
+              xs: "480px",
+            },
+            colors: {
+              primary: "#e4b84f",
+              "primary-deep": "#bb8920",
+              accent: "#4b7cff",
+              "accent-2": "#74e0ff",
+              success: "#22c55e",
+              danger: "#ef4444",
+              warning: "#f59e0b",
+              "background-dark": "#060913",
+              "surface-dark": "#10172a",
+              "surface-dark-2": "#151f36",
+            },
+            fontFamily: {
+              display: ["Manrope", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body class="bg-background-dark text-white font-display">
+    <header
+      class="sticky top-0 z-40 border-b border-white/10 bg-background-dark/80 backdrop-blur-md"
+    >
+      <div class="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div class="h-16 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img
+              src="images/logo.png"
+              alt="Titan Logo"
+              class="h-9 w-9 sm:h-10 sm:w-10 rounded-xl object-cover shrink-0"
+            />
+            <h2
+              class="text-white text-[13px] xs:text-sm sm:text-xl font-extrabold tracking-tight whitespace-nowrap truncate"
+            >
+              TITAN <span class="text-primary">BLOCKCHAINCAPITAL</span>
+            </h2>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <a
+              href="dashboard.html"
+              class="px-3 xs:px-4 py-2 text-xs xs:text-sm font-bold text-white bg-surface-dark hover:bg-slate-700 rounded-lg transition-all"
+            >
+              Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="py-4 xs:py-6 sm:py-8 lg:py-10 pb-24 lg:pb-10">
+      <div class="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div class="relative">
+          <button
+            id="mobileSidebarToggle"
+            class="mobile-menu-btn menu-attention lg:hidden fixed bottom-20 right-4 xs:bottom-24 xs:right-5 z-50 h-12 w-12 xs:h-14 xs:w-14 rounded-full gold-gradient flex items-center justify-center shadow-2xl shadow-primary/20"
+            aria-label="Open menu"
+          >
+            <i data-lucide="menu" class="w-5 h-5 xs:w-6 xs:h-6 text-black"></i>
+          </button>
+
+          <div
+            id="mobileSidebarOverlay"
+            class="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px] opacity-0 invisible transition-all duration-300"
+          ></div>
+
+          <div class="grid lg:grid-cols-[280px_1fr] gap-4 sm:gap-6 lg:gap-8">
+            <aside
+              id="dashboardSidebar"
+              class="premium-panel premium-border rounded-r-3xl lg:rounded-3xl p-4 sm:p-5 lg:p-6 h-screen lg:h-fit w-[86%] max-w-[320px] lg:w-auto fixed lg:static top-0 left-0 z-50 lg:z-auto -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto"
+            >
+              <div
+                class="flex items-center justify-between pb-5 border-b border-white/10"
+              >
+                <div class="flex items-center gap-3 min-w-0">
+                  <img
+                    src="images/logo.png"
+                    alt="Titan Logo"
+                    class="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-cover shrink-0"
+                  />
+                  <div class="min-w-0">
+                    <p class="text-white font-bold truncate">Client Account</p>
+                    <p class="text-slate-400 text-sm truncate">Verified User</p>
+                  </div>
+                </div>
+
+                <button
+                  id="mobileSidebarClose"
+                  class="lg:hidden h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 shrink-0"
+                  aria-label="Close menu"
+                >
+                  <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+              </div>
+
+              <nav class="mt-6 space-y-3">
+                <a
+                  href="dashboard.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i
+                    data-lucide="layout-dashboard"
+                    class="w-5 h-5 text-slate-300"
+                  ></i>
+                  <span class="text-sm font-semibold text-white"
+                    >Dashboard</span
+                  >
+                </a>
+
+                <a
+                  href="deposit.html"
+                  class="sidebar-link active flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i data-lucide="wallet" class="w-5 h-5 text-slate-300"></i>
+                  <span class="text-sm font-semibold text-white">Deposit</span>
+                </a>
+
+                <a
+                  href="withdrawal.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i
+                    data-lucide="arrow-up-right"
+                    class="w-5 h-5 text-slate-300"
+                  ></i>
+                  <span class="text-sm font-semibold text-white">Withdraw</span>
+                </a>
+
+                <a
+                  href="tradingbot.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i data-lucide="bot" class="w-5 h-5 text-slate-300"></i>
+                  <span class="text-sm font-semibold text-white"
+                    >Trading Bot</span
+                  >
+                </a>
+
+                <a
+                  href="profile.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i
+                    data-lucide="user-circle-2"
+                    class="w-5 h-5 text-slate-300"
+                  ></i>
+                  <span class="text-sm font-semibold text-white">Profile</span>
+                </a>
+              </nav>
+            </aside>
+
+            <section class="space-y-4 sm:space-y-6 min-w-0">
+              <div
+                class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
+              >
+                <div
+                  class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
+                >
+                  <div>
+                    <div
+                      class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] xs:text-[11px] font-bold uppercase tracking-widest mb-4"
+                    >
+                      Deposit Funds
+                    </div>
+                    <h1
+                      class="text-white text-2xl xs:text-3xl sm:text-4xl font-black leading-tight tracking-tight"
+                    >
+                      Fund your trading account
+                    </h1>
+                    <p
+                      class="text-slate-300 text-sm xs:text-base sm:text-lg leading-relaxed mt-4 max-w-2xl"
+                    >
+                      Submit a deposit to increase your available balance and
+                      continue trading.
+                    </p>
+                  </div>
+
+                  <div
+                    class="glass-card rounded-3xl p-5 sm:p-6 min-w-0 w-full lg:max-w-sm"
+                  >
+                    <p class="text-slate-400 text-sm">Minimum Deposit</p>
+                    <h2 class="text-white text-3xl sm:text-4xl font-black mt-2">
+                      $5,000
+                    </h2>
+                    <p class="text-primary text-sm mt-2 font-semibold">
+                      Deposits below this amount are not accepted.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid xl:grid-cols-[1.05fr_0.95fr] gap-4 sm:gap-6">
+                <div
+                  class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
+                >
+                  <div class="flex items-center gap-3 mb-5">
+                    <i data-lucide="wallet" class="w-5 h-5 text-primary"></i>
+                    <h3 class="text-white text-xl sm:text-2xl font-black">
+                      Make Deposit
+                    </h3>
+                  </div>
+
+                  <form class="space-y-5">
+                    <div>
+                      <label
+                        class="block text-sm font-semibold text-slate-200 mb-2"
+                      >
+                        Select Coin
+                      </label>
+                      <div class="relative">
+                        <select
+                          class="form-input w-full rounded-2xl px-4 py-4 pr-12 text-sm"
+                        >
+                          <option>Bitcoin (BTC)</option>
+                          <option>Ethereum (ETH)</option>
+                          <option>USDT (TRC20)</option>
+                          <option>USDT (ERC20)</option>
+                          <option>BNB</option>
+                        </select>
+                        <i
+                          data-lucide="chevron-down"
+                          class="w-5 h-5 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
+                        ></i>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        class="block text-sm font-semibold text-slate-200 mb-2"
+                      >
+                        Select Network
+                      </label>
+                      <div class="relative">
+                        <select
+                          class="form-input w-full rounded-2xl px-4 py-4 pr-12 text-sm"
+                        >
+                          <option>TRC20</option>
+                          <option>ERC20</option>
+                          <option>BEP20</option>
+                          <option>Bitcoin Network</option>
+                          <option>Ethereum Network</option>
+                        </select>
+                        <i
+                          data-lucide="chevron-down"
+                          class="w-5 h-5 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
+                        ></i>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        class="block text-sm font-semibold text-slate-200 mb-2"
+                      >
+                        Deposit Amount
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="Minimum $5000"
+                        class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        class="block text-sm font-semibold text-slate-200 mb-2"
+                      >
+                        Wallet Address
+                      </label>
+                      <div class="relative">
+                        <input
+                          type="text"
+                          value="TBC-DEPOSIT-WALLET-ADDRESS-1234567890"
+                          readonly
+                          class="form-input w-full rounded-2xl px-4 py-4 pr-24 text-sm"
+                        />
+                        <button
+                          type="button"
+                          class="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+                        >
+                          Copy
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        class="block text-sm font-semibold text-slate-200 mb-2"
+                      >
+                        Transaction Hash / ID
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Enter transaction hash"
+                        class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        class="block text-sm font-semibold text-slate-200 mb-2"
+                      >
+                        Upload Payment Proof
+                      </label>
+                      <label
+                        class="upload-box rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary/40 transition-colors"
+                      >
+                        <i
+                          data-lucide="image-up"
+                          class="w-10 h-10 text-primary mb-3"
+                        ></i>
+                        <p class="text-white font-semibold">
+                          Upload screenshot / receipt
+                        </p>
+                        <p class="text-slate-400 text-sm mt-2">
+                          Upload a clear payment screenshot for review.
+                        </p>
+                        <input type="file" class="hidden" />
+                      </label>
+                    </div>
+
+                    <button
+                      type="button"
+                      class="w-full py-4 text-black font-bold rounded-2xl gold-gradient shadow-xl shadow-primary/20 hover:scale-[1.01] transition-transform"
+                    >
+                      Submit Deposit
+                    </button>
+                  </form>
+                </div>
+
+                <div class="space-y-4 sm:space-y-6">
+                  <div
+                    class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
+                  >
+                    <div class="flex items-center gap-3 mb-4">
+                      <i data-lucide="info" class="w-5 h-5 text-primary"></i>
+                      <h3 class="text-white text-lg sm:text-xl font-black">
+                        Deposit Guide
+                      </h3>
+                    </div>
+
+                    <div class="space-y-4 text-sm text-slate-300 leading-7">
+                      <p>1. Select your preferred coin and network.</p>
+                      <p>
+                        2. Copy the wallet address and complete the payment
+                        externally.
+                      </p>
+                      <p>
+                        3. Enter your transaction hash and upload payment proof.
+                      </p>
+                      <p>4. Submit for review and wait for confirmation.</p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
+                  >
+                    <div class="flex items-center gap-3 mb-4">
+                      <i
+                        data-lucide="shield-check"
+                        class="w-5 h-5 text-primary"
+                      ></i>
+                      <h3 class="text-white text-lg sm:text-xl font-black">
+                        Important Notice
+                      </h3>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-7">
+                      Only deposits from your trusted payment source should be
+                      submitted. Ensure the amount entered matches the payment
+                      made.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8 min-w-0 w-full"
+              >
+                <div
+                  class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-5 sm:mb-6"
+                >
+                  <div class="min-w-0">
+                    <h3
+                      class="text-white text-xl sm:text-2xl font-black tracking-tight"
+                    >
+                      Deposit History
+                    </h3>
+                    <p class="text-slate-400 text-sm mt-2">
+                      View your recent deposit submissions and approval updates.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="space-y-3">
+                  <div
+                    class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
+                  >
+                    <button
+                      type="button"
+                      class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
+                    >
+                      <div class="min-w-0">
+                        <p class="text-white font-bold text-sm sm:text-base">
+                          Deposit
+                        </p>
+                        <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                          24 Mar 2026 • USDT (TRC20)
+                        </p>
+                      </div>
+
+                      <div class="flex items-center gap-3 shrink-0">
+                        <span
+                          class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
+                        >
+                          Approved
+                        </span>
+                        <p
+                          class="text-emerald-400 font-bold text-sm sm:text-base"
+                        >
+                          +$5,000
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+
+                  <div
+                    class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
+                  >
+                    <button
+                      type="button"
+                      class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
+                    >
+                      <div class="min-w-0">
+                        <p class="text-white font-bold text-sm sm:text-base">
+                          Deposit
+                        </p>
+                        <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                          18 Mar 2026 • BTC
+                        </p>
+                      </div>
+
+                      <div class="flex items-center gap-3 shrink-0">
+                        <span
+                          class="px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
+                        >
+                          Pending
+                        </span>
+                        <p
+                          class="text-emerald-400 font-bold text-sm sm:text-base"
+                        >
+                          +$8,500
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+
+                  <div
+                    class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
+                  >
+                    <button
+                      type="button"
+                      class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
+                    >
+                      <div class="min-w-0">
+                        <p class="text-white font-bold text-sm sm:text-base">
+                          Deposit
+                        </p>
+                        <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                          12 Mar 2026 • ETH (ERC20)
+                        </p>
+                      </div>
+
+                      <div class="flex items-center gap-3 shrink-0">
+                        <span
+                          class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
+                        >
+                          Approved
+                        </span>
+                        <p
+                          class="text-emerald-400 font-bold text-sm sm:text-base"
+                        >
+                          +$6,000
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>

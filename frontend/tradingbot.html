@@ -1,0 +1,883 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>TitanBlockchainCapital | Trading Bot</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="images/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="images/favicon-16x16.png"
+    />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <link rel="manifest" href="images/site.webmanifest" />
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            screens: {
+              xs: "480px",
+            },
+            colors: {
+              primary: "#e4b84f",
+              "primary-deep": "#bb8920",
+              accent: "#4b7cff",
+              "accent-2": "#74e0ff",
+              success: "#22c55e",
+              danger: "#ef4444",
+              warning: "#f59e0b",
+              "background-dark": "#060913",
+              "surface-dark": "#10172a",
+              "surface-dark-2": "#151f36",
+            },
+            fontFamily: {
+              display: ["Manrope", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+            boxShadow: {
+              glow: "0 20px 80px rgba(228,184,79,0.18)",
+              blue: "0 20px 80px rgba(75,124,255,0.18)",
+              soft: "0 20px 60px rgba(0,0,0,0.4)",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      body {
+        font-family: "Manrope", sans-serif;
+        overflow-x: hidden;
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(228, 184, 79, 0.08),
+            transparent 24%
+          ),
+          radial-gradient(
+            circle at left 20%,
+            rgba(75, 124, 255, 0.1),
+            transparent 28%
+          ),
+          radial-gradient(
+            circle at bottom left,
+            rgba(116, 224, 255, 0.08),
+            transparent 24%
+          ),
+          linear-gradient(180deg, #060913 0%, #070b14 45%, #09101b 100%);
+      }
+
+      body.sidebar-open,
+      body.modal-open {
+        overflow: hidden;
+      }
+
+      #botModalCard .overflow-y-auto {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+      }
+
+      #botModalCard .overflow-y-auto::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      #botModalCard .overflow-y-auto::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+      }
+
+      .premium-panel {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.03)
+        );
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .premium-border {
+        position: relative;
+      }
+
+      .premium-border::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          135deg,
+          rgba(228, 184, 79, 0.45),
+          rgba(75, 124, 255, 0.18),
+          rgba(255, 255, 255, 0.03)
+        );
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+
+      .glass-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(14px);
+      }
+
+      .gold-gradient {
+        background: linear-gradient(
+          135deg,
+          #f6dea0 0%,
+          #e4b84f 48%,
+          #b47a15 100%
+        );
+      }
+
+      .sidebar-link.active {
+        background: rgba(228, 184, 79, 0.1);
+        border-color: rgba(228, 184, 79, 0.22);
+      }
+
+      .sidebar-link.active span,
+      .sidebar-link.active i {
+        color: #e4b84f;
+      }
+
+      .form-input {
+        background: rgba(255, 255, 255, 0.04) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: white !important;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      .form-input::placeholder {
+        color: rgb(148 163 184) !important;
+      }
+
+      .form-input:focus {
+        background: rgba(255, 255, 255, 0.06) !important;
+        border-color: rgba(228, 184, 79, 0.45) !important;
+        box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.08) !important;
+        outline: none;
+      }
+
+      select.form-input option {
+        background-color: #10172a;
+        color: white;
+      }
+
+      .upload-box {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px dashed rgba(255, 255, 255, 0.14);
+      }
+
+      .badge-dot {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45);
+        animation: pulseGlow 2s infinite;
+      }
+
+      @keyframes pulseGlow {
+        0% {
+          box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45);
+        }
+        70% {
+          box-shadow: 0 0 0 12px rgba(34, 197, 94, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+        }
+      }
+
+      @keyframes menuFloatPulse {
+        0%,
+        100% {
+          transform: translateY(0) scale(1);
+          box-shadow:
+            0 18px 40px rgba(228, 184, 79, 0.18),
+            0 0 0 0 rgba(228, 184, 79, 0.22);
+        }
+        50% {
+          transform: translateY(-6px) scale(1.04);
+          box-shadow:
+            0 24px 48px rgba(228, 184, 79, 0.28),
+            0 0 0 14px rgba(228, 184, 79, 0);
+        }
+      }
+
+      @keyframes menuIconWiggle {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(-8deg);
+        }
+        50% {
+          transform: rotate(0deg);
+        }
+        75% {
+          transform: rotate(8deg);
+        }
+      }
+
+      .menu-attention {
+        animation: menuFloatPulse 2.2s ease-in-out infinite;
+      }
+
+      .menu-attention i,
+      .menu-attention svg {
+        animation: menuIconWiggle 2.2s ease-in-out infinite;
+        transform-origin: center;
+      }
+
+      .bot-grid {
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        background-size: 28px 28px;
+      }
+
+      .bot-glow {
+        box-shadow:
+          0 20px 80px rgba(228, 184, 79, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+
+      .modal-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .modal-visible {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+
+      .modal-card-hidden {
+        transform: translateY(24px) scale(0.98);
+        opacity: 0;
+      }
+
+      .modal-card-visible {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    </style>
+  </head>
+
+  <body class="bg-background-dark text-white font-display">
+    <header
+      class="sticky top-0 z-40 border-b border-white/10 bg-background-dark/80 backdrop-blur-md"
+    >
+      <div class="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div class="h-16 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img
+              src="images/logo.png"
+              alt="Titan Logo"
+              class="h-9 w-9 sm:h-10 sm:w-10 rounded-xl object-cover shrink-0"
+            />
+            <h2
+              class="text-white text-[13px] xs:text-sm sm:text-xl font-extrabold tracking-tight whitespace-nowrap truncate"
+            >
+              TITAN <span class="text-primary">BLOCKCHAINCAPITAL</span>
+            </h2>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <a
+              href="dashboard.html"
+              class="px-3 xs:px-4 py-2 text-xs xs:text-sm font-bold text-white bg-surface-dark hover:bg-slate-700 rounded-lg transition-all"
+            >
+              Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="py-4 xs:py-6 sm:py-8 lg:py-10 pb-24 lg:pb-10">
+      <div class="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div class="relative">
+          <button
+            id="mobileSidebarToggle"
+            class="menu-attention lg:hidden fixed bottom-20 right-4 xs:bottom-24 xs:right-5 z-50 h-12 w-12 xs:h-14 xs:w-14 rounded-full gold-gradient flex items-center justify-center shadow-2xl shadow-primary/20"
+            aria-label="Open menu"
+          >
+            <i data-lucide="menu" class="w-5 h-5 xs:w-6 xs:h-6 text-black"></i>
+          </button>
+
+          <div
+            id="mobileSidebarOverlay"
+            class="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px] opacity-0 invisible transition-all duration-300"
+          ></div>
+
+          <div class="grid lg:grid-cols-[280px_1fr] gap-4 sm:gap-6 lg:gap-8">
+            <aside
+              id="dashboardSidebar"
+              class="premium-panel premium-border rounded-r-3xl lg:rounded-3xl p-4 sm:p-5 lg:p-6 h-screen lg:h-fit w-[86%] max-w-[320px] lg:w-auto fixed lg:static top-0 left-0 z-50 lg:z-auto -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto"
+            >
+              <div
+                class="flex items-center justify-between pb-5 border-b border-white/10"
+              >
+                <div class="flex items-center gap-3 min-w-0">
+                  <img
+                    src="images/logo.png"
+                    alt="Titan Logo"
+                    class="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-cover shrink-0"
+                  />
+                  <div class="min-w-0">
+                    <p class="text-white font-bold truncate">Client Account</p>
+                    <p class="text-slate-400 text-sm truncate">Verified User</p>
+                  </div>
+                </div>
+
+                <button
+                  id="mobileSidebarClose"
+                  class="lg:hidden h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 shrink-0"
+                  aria-label="Close menu"
+                >
+                  <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+              </div>
+
+              <nav class="mt-6 space-y-3">
+                <a
+                  href="dashboard.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i
+                    data-lucide="layout-dashboard"
+                    class="w-5 h-5 text-slate-300"
+                  ></i>
+                  <span class="text-sm font-semibold text-white"
+                    >Dashboard</span
+                  >
+                </a>
+
+                <a
+                  href="deposit.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i data-lucide="wallet" class="w-5 h-5 text-slate-300"></i>
+                  <span class="text-sm font-semibold text-white">Deposit</span>
+                </a>
+
+                <a
+                  href="withdrawal.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i
+                    data-lucide="arrow-up-right"
+                    class="w-5 h-5 text-slate-300"
+                  ></i>
+                  <span class="text-sm font-semibold text-white">Withdraw</span>
+                </a>
+
+                <a
+                  href="tradingbot.html"
+                  class="sidebar-link active flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i data-lucide="bot" class="w-5 h-5 text-slate-300"></i>
+                  <span class="text-sm font-semibold text-white"
+                    >Trading Bot</span
+                  >
+                </a>
+
+                <a
+                  href="profile.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i
+                    data-lucide="user-circle-2"
+                    class="w-5 h-5 text-slate-300"
+                  ></i>
+                  <span class="text-sm font-semibold text-white">Profile</span>
+                </a>
+              </nav>
+            </aside>
+
+            <section class="space-y-4 sm:space-y-6 min-w-0">
+              <div
+                class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8 xl:p-10 overflow-hidden"
+              >
+                <div
+                  class="grid xl:grid-cols-[1.15fr_0.85fr] gap-6 lg:gap-8 items-center"
+                >
+                  <div class="min-w-0">
+                    <div
+                      class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] xs:text-[11px] font-bold uppercase tracking-widest mb-4"
+                    >
+                      Automated Trading Upgrade
+                    </div>
+
+                    <h1
+                      class="text-white text-3xl xs:text-4xl sm:text-5xl xl:text-6xl font-black leading-tight tracking-tight"
+                    >
+                      Activate your
+                      <span class="text-primary">trading bot</span>
+                    </h1>
+
+                    <p
+                      class="text-slate-300 text-sm xs:text-base sm:text-lg leading-relaxed mt-4 max-w-2xl"
+                    >
+                      Improve execution speed, reduce hesitation, and create a
+                      more structured trading experience with
+                      TitanBlockchainCapital’s automated trading bot support.
+                    </p>
+
+                    <div class="mt-6 flex flex-col xs:flex-row flex-wrap gap-3">
+                      <button
+                        type="button"
+                        id="openBotModal"
+                        class="px-6 py-3 text-black font-bold rounded-2xl gold-gradient shadow-xl shadow-primary/20 text-center"
+                      >
+                        Activate Trading Bot
+                      </button>
+
+                      <div
+                        class="px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white font-semibold"
+                      >
+                        One-Time Activation • $10,000
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="min-w-0">
+                    <div
+                      class="glass-card bot-grid bot-glow rounded-3xl p-5 sm:p-6 lg:p-7"
+                    >
+                      <div class="flex items-start justify-between gap-4">
+                        <div>
+                          <p class="text-slate-400 text-sm">
+                            Trading Bot Activation Fee
+                          </p>
+                          <h2
+                            class="text-white text-4xl sm:text-5xl font-black mt-3"
+                          >
+                            $10,000
+                          </h2>
+                          <p class="text-primary text-sm mt-3 font-semibold">
+                            One-time payment to enable the feature
+                          </p>
+                        </div>
+
+                        <div
+                          class="h-14 w-14 sm:h-16 sm:w-16 rounded-3xl gold-gradient flex items-center justify-center shrink-0"
+                        >
+                          <i
+                            data-lucide="bot"
+                            class="w-7 h-7 sm:w-8 sm:h-8 text-black"
+                          ></i>
+                        </div>
+                      </div>
+
+                      <div class="grid grid-cols-2 gap-3 mt-6">
+                        <div
+                          class="rounded-2xl bg-white/5 border border-white/10 p-4"
+                        >
+                          <p
+                            class="text-slate-400 text-xs uppercase tracking-wider"
+                          >
+                            Status
+                          </p>
+                          <p class="text-white text-lg font-black mt-2">
+                            Not Active
+                          </p>
+                        </div>
+
+                        <div
+                          class="rounded-2xl bg-white/5 border border-white/10 p-4"
+                        >
+                          <p
+                            class="text-slate-400 text-xs uppercase tracking-wider"
+                          >
+                            Type
+                          </p>
+                          <p class="text-white text-lg font-black mt-2">
+                            Premium Bot
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid xl:grid-cols-[1.05fr_0.95fr] gap-4 sm:gap-6">
+                <div
+                  class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
+                >
+                  <div class="flex items-center gap-3 mb-5">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-primary"></i>
+                    <h3 class="text-white text-xl sm:text-2xl font-black">
+                      Why activate the trading bot?
+                    </h3>
+                  </div>
+
+                  <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="glass-card rounded-3xl p-5">
+                      <div
+                        class="h-11 w-11 rounded-2xl gold-gradient flex items-center justify-center mb-4"
+                      >
+                        <i data-lucide="zap" class="w-5 h-5 text-black"></i>
+                      </div>
+                      <h4 class="text-white font-bold text-lg">
+                        Faster execution
+                      </h4>
+                      <p class="text-slate-400 text-sm mt-2 leading-7">
+                        The bot helps reduce delay by reacting faster to market
+                        setups and trading opportunities.
+                      </p>
+                    </div>
+
+                    <div class="glass-card rounded-3xl p-5">
+                      <div
+                        class="h-11 w-11 rounded-2xl gold-gradient flex items-center justify-center mb-4"
+                      >
+                        <i
+                          data-lucide="shield-check"
+                          class="w-5 h-5 text-black"
+                        ></i>
+                      </div>
+                      <h4 class="text-white font-bold text-lg">
+                        More discipline
+                      </h4>
+                      <p class="text-slate-400 text-sm mt-2 leading-7">
+                        It helps remove emotional hesitation and creates a more
+                        structured approach to execution.
+                      </p>
+                    </div>
+
+                    <div class="glass-card rounded-3xl p-5">
+                      <div
+                        class="h-11 w-11 rounded-2xl gold-gradient flex items-center justify-center mb-4"
+                      >
+                        <i data-lucide="cpu" class="w-5 h-5 text-black"></i>
+                      </div>
+                      <h4 class="text-white font-bold text-lg">
+                        Smarter automation
+                      </h4>
+                      <p class="text-slate-400 text-sm mt-2 leading-7">
+                        Automated support helps users stay active in the market
+                        with a more consistent workflow.
+                      </p>
+                    </div>
+
+                    <div class="glass-card rounded-3xl p-5">
+                      <div
+                        class="h-11 w-11 rounded-2xl gold-gradient flex items-center justify-center mb-4"
+                      >
+                        <i
+                          data-lucide="activity"
+                          class="w-5 h-5 text-black"
+                        ></i>
+                      </div>
+                      <h4 class="text-white font-bold text-lg">
+                        Better opportunity tracking
+                      </h4>
+                      <p class="text-slate-400 text-sm mt-2 leading-7">
+                        The trading bot helps users monitor setups and market
+                        movements more efficiently.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-4 sm:space-y-6">
+                  <div
+                    class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
+                  >
+                    <div class="flex items-center gap-3 mb-4">
+                      <i
+                        data-lucide="badge-dollar-sign"
+                        class="w-5 h-5 text-primary"
+                      ></i>
+                      <h3 class="text-white text-lg sm:text-xl font-black">
+                        Activation Cost
+                      </h3>
+                    </div>
+
+                    <div class="glass-card rounded-3xl p-5">
+                      <p class="text-slate-400 text-sm">One-Time Payment</p>
+                      <h4 class="text-white text-4xl font-black mt-3">
+                        $10,000
+                      </h4>
+                      <p class="text-slate-300 text-sm mt-3 leading-7">
+                        This is a one-time activation payment for the trading
+                        bot feature.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
+                  >
+                    <div class="flex items-center gap-3 mb-4">
+                      <i data-lucide="info" class="w-5 h-5 text-primary"></i>
+                      <h3 class="text-white text-lg sm:text-xl font-black">
+                        Important
+                      </h3>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-7">
+                      After payment, upload your screenshot or transaction proof
+                      so the activation can be reviewed and processed.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div
+      id="botModal"
+      class="fixed inset-0 z-[70] bg-black/70 backdrop-blur-[3px] transition-all duration-300 modal-hidden"
+    >
+      <div
+        class="min-h-screen flex items-end sm:items-center justify-center p-3 xs:p-4 sm:p-6"
+      >
+        <div
+          id="botModalCard"
+          class="w-full max-w-2xl premium-panel premium-border rounded-3xl transition-all duration-300 modal-card-hidden max-h-[90vh] overflow-hidden flex flex-col"
+        >
+          <div
+            class="flex items-center justify-between gap-4 p-4 xs:p-5 sm:p-6 lg:p-8 pb-4 border-b border-white/10 shrink-0"
+          >
+            <div>
+              <p
+                class="text-primary text-[11px] font-bold uppercase tracking-widest"
+              >
+                Trading Bot Activation
+              </p>
+              <h3 class="text-white text-2xl sm:text-3xl font-black mt-2">
+                Complete bot payment
+              </h3>
+            </div>
+
+            <button
+              id="closeBotModal"
+              class="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 shrink-0"
+              aria-label="Close modal"
+            >
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <div class="overflow-y-auto flex-1 p-4 xs:p-5 sm:p-6 lg:p-8 pt-5">
+            <div class="grid lg:grid-cols-[0.95fr_1.05fr] gap-5 sm:gap-6">
+              <div class="space-y-4">
+                <div class="glass-card rounded-3xl p-5">
+                  <p class="text-slate-400 text-sm">Activation Fee</p>
+                  <h4 class="text-white text-4xl font-black mt-3">$10,000</h4>
+                  <p class="text-primary text-sm mt-3 font-semibold">
+                    One-time payment
+                  </p>
+                </div>
+
+                <div class="glass-card rounded-3xl p-5">
+                  <p class="text-slate-400 text-sm mb-2">Wallet Address</p>
+                  <div class="relative">
+                    <input
+                      type="text"
+                      value="TBC-BOT-ACTIVATION-WALLET-ADDRESS-1234567890"
+                      readonly
+                      class="form-input w-full rounded-2xl px-4 py-4 pr-24 text-sm"
+                    />
+                    <button
+                      type="button"
+                      class="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <form class="space-y-5">
+                <div>
+                  <label
+                    class="block text-sm font-semibold text-slate-200 mb-2"
+                  >
+                    Select Coin
+                  </label>
+                  <div class="relative">
+                    <select
+                      class="form-input w-full rounded-2xl px-4 py-4 pr-12 text-sm"
+                    >
+                      <option>Bitcoin (BTC)</option>
+                      <option>Ethereum (ETH)</option>
+                      <option>USDT (TRC20)</option>
+                      <option>USDT (ERC20)</option>
+                      <option>BNB</option>
+                    </select>
+                    <i
+                      data-lucide="chevron-down"
+                      class="w-5 h-5 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
+                    ></i>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-semibold text-slate-200 mb-2"
+                  >
+                    Transaction Hash / ID
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter transaction hash"
+                    class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-semibold text-slate-200 mb-2"
+                  >
+                    Upload Payment Screenshot
+                  </label>
+                  <label
+                    class="upload-box rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary/40 transition-colors"
+                  >
+                    <i
+                      data-lucide="image-up"
+                      class="w-10 h-10 text-primary mb-3"
+                    ></i>
+                    <p class="text-white font-semibold">
+                      Upload screenshot / receipt
+                    </p>
+                    <p class="text-slate-400 text-sm mt-2">
+                      Upload clear payment proof for activation review.
+                    </p>
+                    <input type="file" class="hidden" />
+                  </label>
+                </div>
+
+                <button
+                  type="button"
+                  class="w-full py-4 text-black font-bold rounded-2xl gold-gradient shadow-xl shadow-primary/20 hover:scale-[1.01] transition-transform"
+                >
+                  Submit Activation Payment
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+
+      const mobileSidebarToggle = document.getElementById(
+        "mobileSidebarToggle",
+      );
+      const mobileSidebarClose = document.getElementById("mobileSidebarClose");
+      const mobileSidebarOverlay = document.getElementById(
+        "mobileSidebarOverlay",
+      );
+      const dashboardSidebar = document.getElementById("dashboardSidebar");
+
+      function openSidebar() {
+        if (!dashboardSidebar || !mobileSidebarOverlay) return;
+        dashboardSidebar.classList.remove("-translate-x-full");
+        mobileSidebarOverlay.classList.remove("opacity-0", "invisible");
+        mobileSidebarOverlay.classList.add("opacity-100", "visible");
+        document.body.classList.add("sidebar-open");
+      }
+
+      function closeSidebar() {
+        if (!dashboardSidebar || !mobileSidebarOverlay) return;
+        dashboardSidebar.classList.add("-translate-x-full");
+        mobileSidebarOverlay.classList.remove("opacity-100", "visible");
+        mobileSidebarOverlay.classList.add("opacity-0", "invisible");
+        document.body.classList.remove("sidebar-open");
+      }
+
+      if (mobileSidebarToggle) {
+        mobileSidebarToggle.addEventListener("click", openSidebar);
+      }
+
+      if (mobileSidebarClose) {
+        mobileSidebarClose.addEventListener("click", closeSidebar);
+      }
+
+      if (mobileSidebarOverlay) {
+        mobileSidebarOverlay.addEventListener("click", closeSidebar);
+      }
+
+      const openBotModal = document.getElementById("openBotModal");
+      const closeBotModal = document.getElementById("closeBotModal");
+      const botModal = document.getElementById("botModal");
+      const botModalCard = document.getElementById("botModalCard");
+
+      function openModal() {
+        botModal.classList.remove("modal-hidden");
+        botModal.classList.add("modal-visible");
+        botModalCard.classList.remove("modal-card-hidden");
+        botModalCard.classList.add("modal-card-visible");
+        document.body.classList.add("modal-open");
+      }
+
+      function closeModal() {
+        botModal.classList.remove("modal-visible");
+        botModal.classList.add("modal-hidden");
+        botModalCard.classList.remove("modal-card-visible");
+        botModalCard.classList.add("modal-card-hidden");
+        document.body.classList.remove("modal-open");
+      }
+
+      if (openBotModal) {
+        openBotModal.addEventListener("click", openModal);
+      }
+
+      if (closeBotModal) {
+        closeBotModal.addEventListener("click", closeModal);
+      }
+
+      if (botModal) {
+        botModal.addEventListener("click", (e) => {
+          if (e.target === botModal) closeModal();
+        });
+      }
+    </script>
+  </body>
+</html>

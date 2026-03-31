@@ -1,0 +1,643 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>TitanBlockchainCapital | Awaiting Approval</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="images/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="images/favicon-16x16.png"
+    />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <link rel="manifest" href="images/site.webmanifest" />
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#e4b84f",
+              "primary-deep": "#bb8920",
+              accent: "#4b7cff",
+              "accent-2": "#74e0ff",
+              "background-dark": "#060913",
+              "surface-dark": "#10172a",
+              "surface-dark-2": "#151f36",
+              "border-dark": "rgba(255,255,255,0.08)",
+            },
+            fontFamily: {
+              display: ["Manrope", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+            boxShadow: {
+              glow: "0 20px 80px rgba(228,184,79,0.18)",
+              blue: "0 20px 80px rgba(75,124,255,0.18)",
+              soft: "0 20px 60px rgba(0,0,0,0.4)",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      body {
+        font-family: "Manrope", sans-serif;
+        overflow-x: hidden;
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(228, 184, 79, 0.08),
+            transparent 24%
+          ),
+          radial-gradient(
+            circle at left 20%,
+            rgba(75, 124, 255, 0.1),
+            transparent 28%
+          ),
+          radial-gradient(
+            circle at bottom left,
+            rgba(116, 224, 255, 0.08),
+            transparent 24%
+          ),
+          linear-gradient(180deg, #060913 0%, #070b14 45%, #09101b 100%);
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      .premium-panel {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.03)
+        );
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .premium-border {
+        position: relative;
+      }
+
+      .premium-border::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          135deg,
+          rgba(228, 184, 79, 0.45),
+          rgba(75, 124, 255, 0.18),
+          rgba(255, 255, 255, 0.03)
+        );
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+
+      .gold-gradient {
+        background: linear-gradient(
+          135deg,
+          #f6dea0 0%,
+          #e4b84f 48%,
+          #b47a15 100%
+        );
+      }
+
+      .glass-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(14px);
+      }
+
+      .locked-card {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .locked-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(6, 9, 19, 0.45);
+        backdrop-filter: blur(2px);
+      }
+
+      .locked-card-content {
+        position: relative;
+        z-index: 2;
+      }
+
+      .status-pulse {
+        box-shadow: 0 0 0 0 rgba(228, 184, 79, 0.5);
+        animation: pulseGlow 2s infinite;
+      }
+
+      @keyframes pulseGlow {
+        0% {
+          box-shadow: 0 0 0 0 rgba(228, 184, 79, 0.45);
+        }
+        70% {
+          box-shadow: 0 0 0 14px rgba(228, 184, 79, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(228, 184, 79, 0);
+        }
+      }
+    </style>
+  </head>
+
+  <body class="bg-background-dark text-white font-display">
+    <header
+      class="sticky top-0 z-40 border-b border-white/10 bg-background-dark/80 backdrop-blur-md"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="h-16 flex items-center justify-between">
+          <div class="flex items-center gap-3 min-w-0">
+            <img
+              src="images/logo.png"
+              alt="Titan Logo"
+              class="h-10 w-10 rounded-xl object-cover shrink-0"
+            />
+
+            <h2
+              class="text-white text-sm sm:text-xl font-extrabold tracking-tight whitespace-nowrap truncate"
+            >
+              TITAN <span class="text-primary">BLOCKCHAINCAPITAL</span>
+            </h2>
+          </div>
+          <div class="flex items-center gap-3">
+            <span
+              class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider"
+            >
+              <span class="w-2 h-2 rounded-full bg-primary status-pulse"></span>
+              Awaiting Approval
+            </span>
+
+            <a
+              href="login.html"
+              class="px-4 py-2 text-sm font-bold text-white bg-surface-dark hover:bg-slate-700 rounded-lg transition-all"
+            >
+              Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="py-8 sm:py-10 lg:py-12 pb-24 lg:pb-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="relative">
+          <!-- Mobile floating menu button -->
+          <button
+            id="mobileSidebarToggle"
+            class="lg:hidden fixed bottom-5 right-5 z-50 h-14 w-14 rounded-full gold-gradient flex items-center justify-center shadow-2xl shadow-primary/20"
+            aria-label="Open menu"
+          >
+            <i data-lucide="menu" class="w-6 h-6 text-black"></i>
+          </button>
+
+          <!-- Mobile overlay -->
+          <div
+            id="mobileSidebarOverlay"
+            class="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px] opacity-0 invisible transition-all duration-300"
+          ></div>
+
+          <div class="grid lg:grid-cols-[280px_1fr] gap-6 lg:gap-8">
+            <!-- Sidebar -->
+            <aside
+              id="dashboardSidebar"
+              class="premium-panel premium-border rounded-r-3xl lg:rounded-3xl p-5 lg:p-6 h-screen lg:h-fit w-[85%] max-w-[320px] lg:w-auto fixed lg:static top-0 left-0 z-50 lg:z-auto -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto"
+            >
+              <div
+                class="flex items-center justify-between pb-5 border-b border-white/10"
+              >
+                <div class="flex items-center gap-4 min-w-0">
+                  <div
+                    class="h-14 w-14 rounded-2xl gold-gradient flex items-center justify-center text-black font-black text-lg shrink-0"
+                  >
+                    U
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-white font-bold truncate">Client Account</p>
+                    <p class="text-slate-400 text-sm truncate">
+                      Pending Verification
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  id="mobileSidebarClose"
+                  class="lg:hidden h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 shrink-0"
+                  aria-label="Close menu"
+                >
+                  <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+              </div>
+
+              <nav class="mt-6 space-y-3">
+                <div class="locked-card rounded-2xl">
+                  <div
+                    class="locked-card-content flex items-center justify-between p-4 glass-card rounded-2xl"
+                  >
+                    <div class="flex items-center gap-3">
+                      <i
+                        data-lucide="layout-dashboard"
+                        class="w-5 h-5 text-primary"
+                      ></i>
+                      <span class="text-sm font-semibold text-white"
+                        >Dashboard</span
+                      >
+                    </div>
+                    <i data-lucide="lock" class="w-4 h-4 text-slate-400"></i>
+                  </div>
+                </div>
+
+                <div class="locked-card rounded-2xl">
+                  <div
+                    class="locked-card-content flex items-center justify-between p-4 glass-card rounded-2xl"
+                  >
+                    <div class="flex items-center gap-3">
+                      <i data-lucide="wallet" class="w-5 h-5 text-primary"></i>
+                      <span class="text-sm font-semibold text-white"
+                        >Deposit</span
+                      >
+                    </div>
+                    <i data-lucide="lock" class="w-4 h-4 text-slate-400"></i>
+                  </div>
+                </div>
+
+                <div class="locked-card rounded-2xl">
+                  <div
+                    class="locked-card-content flex items-center justify-between p-4 glass-card rounded-2xl"
+                  >
+                    <div class="flex items-center gap-3">
+                      <i
+                        data-lucide="arrow-up-right"
+                        class="w-5 h-5 text-primary"
+                      ></i>
+                      <span class="text-sm font-semibold text-white"
+                        >Withdraw</span
+                      >
+                    </div>
+                    <i data-lucide="lock" class="w-4 h-4 text-slate-400"></i>
+                  </div>
+                </div>
+
+                <div class="locked-card rounded-2xl">
+                  <div
+                    class="locked-card-content flex items-center justify-between p-4 glass-card rounded-2xl"
+                  >
+                    <div class="flex items-center gap-3">
+                      <i
+                        data-lucide="user-circle-2"
+                        class="w-5 h-5 text-primary"
+                      ></i>
+                      <span class="text-sm font-semibold text-white"
+                        >Profile</span
+                      >
+                    </div>
+                    <i data-lucide="lock" class="w-4 h-4 text-slate-400"></i>
+                  </div>
+                </div>
+
+                <div class="locked-card rounded-2xl">
+                  <div
+                    class="locked-card-content flex items-center justify-between p-4 glass-card rounded-2xl"
+                  >
+                    <div class="flex items-center gap-3">
+                      <i data-lucide="history" class="w-5 h-5 text-primary"></i>
+                      <span class="text-sm font-semibold text-white"
+                        >Transactions</span
+                      >
+                    </div>
+                    <i data-lucide="lock" class="w-4 h-4 text-slate-400"></i>
+                  </div>
+                </div>
+              </nav>
+            </aside>
+
+            <!-- Main content -->
+            <section class="space-y-6">
+              <div
+                class="premium-panel premium-border rounded-3xl p-6 sm:p-8 lg:p-10"
+              >
+                <div
+                  class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
+                >
+                  <div class="max-w-3xl">
+                    <div
+                      class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-bold uppercase tracking-widest mb-5"
+                    >
+                      Account Status
+                    </div>
+
+                    <h1
+                      class="text-white text-3xl sm:text-4xl lg:text-5xl font-black leading-tight tracking-tight"
+                    >
+                      Awaiting Registration Verification
+                    </h1>
+
+                    <p
+                      class="text-slate-300 text-base sm:text-lg leading-relaxed mt-5 max-w-2xl"
+                    >
+                      Your registration has been submitted successfully and your
+                      one-time registration fee payment has been received for
+                      review. Your account is currently pending admin approval
+                      before full access can be granted.
+                    </p>
+                  </div>
+
+                  <div class="shrink-0">
+                    <div
+                      class="h-24 w-24 sm:h-28 sm:w-28 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto lg:mx-0"
+                    >
+                      <div
+                        class="h-14 w-14 sm:h-16 sm:w-16 rounded-full gold-gradient flex items-center justify-center status-pulse"
+                      >
+                        <i
+                          data-lucide="shield-check"
+                          class="w-8 h-8 text-black"
+                        ></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid md:grid-cols-3 gap-5">
+                <div class="glass-card rounded-3xl p-6">
+                  <div class="flex items-center justify-between">
+                    <p class="text-slate-400 text-sm">Registration Status</p>
+                    <i
+                      data-lucide="badge-check"
+                      class="w-5 h-5 text-primary"
+                    ></i>
+                  </div>
+                  <p class="text-white text-xl font-black mt-4">Submitted</p>
+                  <p class="text-slate-400 text-sm mt-2">
+                    Your registration details have been received.
+                  </p>
+                </div>
+
+                <div class="glass-card rounded-3xl p-6">
+                  <div class="flex items-center justify-between">
+                    <p class="text-slate-400 text-sm">Fee Payment</p>
+                    <i
+                      data-lucide="badge-dollar-sign"
+                      class="w-5 h-5 text-primary"
+                    ></i>
+                  </div>
+                  <p class="text-white text-xl font-black mt-4">$500 Paid</p>
+                  <p class="text-slate-400 text-sm mt-2">
+                    One-time registration fee submitted successfully.
+                  </p>
+                </div>
+
+                <div class="glass-card rounded-3xl p-6">
+                  <div class="flex items-center justify-between">
+                    <p class="text-slate-400 text-sm">Account Access</p>
+                    <i data-lucide="lock" class="w-5 h-5 text-primary"></i>
+                  </div>
+                  <p class="text-white text-xl font-black mt-4">Locked</p>
+                  <p class="text-slate-400 text-sm mt-2">
+                    Features remain unavailable until approval is completed.
+                  </p>
+                </div>
+              </div>
+
+              <div class="grid xl:grid-cols-[1.15fr_0.85fr] gap-6">
+                <div
+                  class="premium-panel premium-border rounded-3xl p-6 sm:p-8"
+                >
+                  <h3 class="text-white text-2xl font-black tracking-tight">
+                    What happens next?
+                  </h3>
+
+                  <div class="mt-6 space-y-5">
+                    <div class="flex items-start gap-4">
+                      <div
+                        class="h-10 w-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0"
+                      >
+                        <span class="text-primary font-black text-sm">1</span>
+                      </div>
+                      <div>
+                        <h4 class="text-white font-bold">
+                          Admin reviews your registration
+                        </h4>
+                        <p class="text-slate-400 text-sm mt-2 leading-7">
+                          Your submitted account details, photo verification,
+                          and registration payment will be checked by the admin
+                          team.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                      <div
+                        class="h-10 w-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0"
+                      >
+                        <span class="text-primary font-black text-sm">2</span>
+                      </div>
+                      <div>
+                        <h4 class="text-white font-bold">
+                          Account status is updated
+                        </h4>
+                        <p class="text-slate-400 text-sm mt-2 leading-7">
+                          Once approved, your dashboard unlocks and all core
+                          account features become available.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                      <div
+                        class="h-10 w-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0"
+                      >
+                        <span class="text-primary font-black text-sm">3</span>
+                      </div>
+                      <div>
+                        <h4 class="text-white font-bold">
+                          You gain full platform access
+                        </h4>
+                        <p class="text-slate-400 text-sm mt-2 leading-7">
+                          After approval, you will be able to access your
+                          balance, deposit, withdrawal, MT5 login details, and
+                          account tools.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-6">
+                  <div
+                    class="premium-panel premium-border rounded-3xl p-6 sm:p-7"
+                  >
+                    <div class="flex items-center gap-3 mb-4">
+                      <i
+                        data-lucide="bell-ring"
+                        class="w-5 h-5 text-primary"
+                      ></i>
+                      <h3 class="text-white text-xl font-black">
+                        Current Notice
+                      </h3>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-7">
+                      Your dashboard is currently in restricted mode. You cannot
+                      click or perform any trading-related action until your
+                      account is approved.
+                    </p>
+                  </div>
+
+                  <div
+                    class="premium-panel premium-border rounded-3xl p-6 sm:p-7"
+                  >
+                    <div class="flex items-center gap-3 mb-4">
+                      <i
+                        data-lucide="mail-check"
+                        class="w-5 h-5 text-primary"
+                      ></i>
+                      <h3 class="text-white text-xl font-black">
+                        Email Update
+                      </h3>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-7">
+                      You will receive an email notification once your
+                      registration has been verified and your account has been
+                      approved.
+                    </p>
+                  </div>
+
+                  <div
+                    class="premium-panel premium-border rounded-3xl p-6 sm:p-7"
+                  >
+                    <div class="flex items-center gap-3 mb-4">
+                      <i
+                        data-lucide="message-square-text"
+                        class="w-5 h-5 text-primary"
+                      ></i>
+                      <h3 class="text-white text-xl font-black">
+                        Need Support?
+                      </h3>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-7 mb-5">
+                      If you need help with your registration or payment review,
+                      contact support for assistance.
+                    </p>
+                    <a
+                      href="#"
+                      class="inline-flex items-center justify-center px-5 py-3 rounded-2xl bg-white/5 border border-white/10 text-white font-semibold hover:bg-white/10 transition-colors"
+                    >
+                      Contact Support
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="premium-panel premium-border rounded-3xl p-6 sm:p-8">
+                <div
+                  class="flex flex-col md:flex-row md:items-center md:justify-between gap-5"
+                >
+                  <div>
+                    <h3 class="text-white text-2xl font-black tracking-tight">
+                      Dashboard Access Locked
+                    </h3>
+                    <p
+                      class="text-slate-400 text-sm sm:text-base mt-2 leading-7 max-w-2xl"
+                    >
+                      Balance, deposit, withdrawal, and other account actions
+                      will remain disabled until admin approval is completed.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    disabled
+                    class="px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-slate-500 font-bold cursor-not-allowed"
+                  >
+                    Access Restricted
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      lucide.createIcons();
+
+      const mobileSidebarToggle = document.getElementById(
+        "mobileSidebarToggle",
+      );
+      const mobileSidebarClose = document.getElementById("mobileSidebarClose");
+      const mobileSidebarOverlay = document.getElementById(
+        "mobileSidebarOverlay",
+      );
+      const dashboardSidebar = document.getElementById("dashboardSidebar");
+
+      function openSidebar() {
+        dashboardSidebar.classList.remove("-translate-x-full");
+        mobileSidebarOverlay.classList.remove("opacity-0", "invisible");
+        mobileSidebarOverlay.classList.add("opacity-100", "visible");
+        document.body.classList.add("sidebar-open");
+      }
+
+      function closeSidebar() {
+        dashboardSidebar.classList.add("-translate-x-full");
+        mobileSidebarOverlay.classList.remove("opacity-100", "visible");
+        mobileSidebarOverlay.classList.add("opacity-0", "invisible");
+        document.body.classList.remove("sidebar-open");
+      }
+
+      if (mobileSidebarToggle) {
+        mobileSidebarToggle.addEventListener("click", openSidebar);
+      }
+
+      if (mobileSidebarClose) {
+        mobileSidebarClose.addEventListener("click", closeSidebar);
+      }
+
+      if (mobileSidebarOverlay) {
+        mobileSidebarOverlay.addEventListener("click", closeSidebar);
+      }
+    </script>
+  </body>
+</html>

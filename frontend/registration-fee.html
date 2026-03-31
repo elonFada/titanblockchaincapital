@@ -1,0 +1,451 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>TitanBlockchainCapital | Registration Fee</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="images/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="images/favicon-16x16.png"
+    />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <link rel="manifest" href="images/site.webmanifest" />
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#e4b84f",
+              "primary-deep": "#bb8920",
+              accent: "#4b7cff",
+              "accent-2": "#74e0ff",
+              "background-dark": "#060913",
+              "surface-dark": "#10172a",
+              "surface-dark-2": "#151f36",
+              "border-dark": "rgba(255,255,255,0.08)",
+            },
+            fontFamily: {
+              display: ["Manrope", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+            boxShadow: {
+              glow: "0 20px 80px rgba(228,184,79,0.18)",
+              blue: "0 20px 80px rgba(75,124,255,0.18)",
+              soft: "0 20px 60px rgba(0,0,0,0.4)",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      body {
+        font-family: "Manrope", sans-serif;
+        overflow-x: hidden;
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(228, 184, 79, 0.08),
+            transparent 24%
+          ),
+          radial-gradient(
+            circle at left 20%,
+            rgba(75, 124, 255, 0.1),
+            transparent 28%
+          ),
+          radial-gradient(
+            circle at bottom left,
+            rgba(116, 224, 255, 0.08),
+            transparent 24%
+          ),
+          linear-gradient(180deg, #060913 0%, #070b14 45%, #09101b 100%);
+      }
+
+      .form-input {
+        background: rgba(255, 255, 255, 0.04) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: white !important;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      .form-input::placeholder {
+        color: rgb(148 163 184) !important;
+      }
+
+      .form-input:focus {
+        background: rgba(255, 255, 255, 0.06) !important;
+        border-color: rgba(228, 184, 79, 0.45) !important;
+        box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.08) !important;
+        outline: none;
+      }
+
+      select.form-input option {
+        background-color: #10172a;
+        color: white;
+      }
+
+      .premium-panel {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.03)
+        );
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .premium-border {
+        position: relative;
+      }
+
+      .premium-border::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          135deg,
+          rgba(228, 184, 79, 0.45),
+          rgba(75, 124, 255, 0.18),
+          rgba(255, 255, 255, 0.03)
+        );
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+
+      .gold-gradient {
+        background: linear-gradient(
+          135deg,
+          #f6dea0 0%,
+          #e4b84f 48%,
+          #b47a15 100%
+        );
+      }
+
+      .form-input {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: white;
+      }
+
+      .form-input::placeholder {
+        color: rgb(148 163 184);
+      }
+
+      .form-input:focus {
+        border-color: rgba(228, 184, 79, 0.45);
+        box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.08);
+        outline: none;
+      }
+
+      .upload-box {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px dashed rgba(255, 255, 255, 0.14);
+      }
+    </style>
+  </head>
+
+  <body class="bg-background-dark text-white font-display">
+    <header
+      class="border-b border-white/10 bg-background-dark/80 backdrop-blur-md"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="index.html" class="flex items-center gap-3 min-w-0">
+            <img
+              src="images/logo.png"
+              alt="Titan Logo"
+              class="h-10 w-10 rounded-xl object-cover shrink-0"
+            />
+
+            <h2
+              class="text-white text-sm sm:text-xl font-extrabold tracking-tight whitespace-nowrap truncate"
+            >
+              TITAN <span class="text-primary">BLOCKCHAINCAPITAL</span>
+            </h2>
+          </a>
+
+          <a
+            href="login.html"
+            class="px-4 py-2 text-sm font-bold text-white bg-surface-dark hover:bg-slate-700 rounded-lg transition-all"
+          >
+            Login
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="min-h-[calc(100vh-64px)] py-10 sm:py-16">
+      <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+        <div
+          class="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-14 items-start"
+        >
+          <div class="space-y-8">
+            <div>
+              <div
+                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-bold uppercase tracking-widest mb-6"
+              >
+                Registration Payment
+              </div>
+              <h1
+                class="text-white text-4xl sm:text-5xl font-black leading-tight tracking-tight max-w-3xl"
+              >
+                Complete your
+                <span class="text-primary">one-time registration fee</span>
+              </h1>
+              <p
+                class="mt-5 text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl"
+              >
+                To continue your onboarding, complete the required one-time
+                registration payment of
+                <span class="text-primary font-bold">$500</span>. Once payment
+                is confirmed, your application moves into review.
+              </p>
+            </div>
+
+            <div class="grid sm:grid-cols-3 gap-4">
+              <div
+                class="p-5 rounded-2xl bg-surface-dark border border-white/10"
+              >
+                <i
+                  data-lucide="badge-dollar-sign"
+                  class="w-7 h-7 text-primary mb-3"
+                ></i>
+                <h4 class="font-bold text-white">One-Time Fee</h4>
+                <p class="text-slate-400 text-sm mt-2">
+                  Pay once during registration only.
+                </p>
+              </div>
+
+              <div
+                class="p-5 rounded-2xl bg-surface-dark border border-white/10"
+              >
+                <i
+                  data-lucide="shield-check"
+                  class="w-7 h-7 text-accent-2 mb-3"
+                ></i>
+                <h4 class="font-bold text-white">Secure Review</h4>
+                <p class="text-slate-400 text-sm mt-2">
+                  Your account proceeds to verification after payment
+                  submission.
+                </p>
+              </div>
+
+              <div
+                class="p-5 rounded-2xl bg-surface-dark border border-white/10"
+              >
+                <i data-lucide="clock-3" class="w-7 h-7 text-primary mb-3"></i>
+                <h4 class="font-bold text-white">Fast Processing</h4>
+                <p class="text-slate-400 text-sm mt-2">
+                  Submit payment details clearly for quicker confirmation.
+                </p>
+              </div>
+            </div>
+
+            <div class="premium-panel premium-border rounded-3xl p-6 sm:p-8">
+              <div class="flex items-start gap-4">
+                <div
+                  class="h-12 w-12 rounded-2xl gold-gradient flex items-center justify-center shrink-0"
+                >
+                  <i data-lucide="info" class="w-6 h-6 text-black"></i>
+                </div>
+                <div>
+                  <h3 class="text-white text-xl font-bold">Important Notice</h3>
+                  <p class="text-slate-300 text-sm sm:text-base leading-7 mt-3">
+                    This registration fee is required before account activation.
+                    After payment, submit your payment proof and transaction
+                    details below. Your dashboard access remains pending until
+                    the registration is reviewed and approved by the admin team.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full">
+            <div
+              class="premium-panel premium-border rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl shadow-black/40"
+            >
+              <div class="mb-8">
+                <p
+                  class="text-primary text-sm font-bold uppercase tracking-widest mb-3"
+                >
+                  Payment Summary
+                </p>
+                <h2
+                  class="text-white text-3xl sm:text-4xl font-black tracking-tight"
+                >
+                  Registration Fee
+                </h2>
+                <p
+                  class="text-slate-400 text-sm sm:text-base mt-3 leading-relaxed"
+                >
+                  Complete the payment and submit your details below.
+                </p>
+              </div>
+
+              <div
+                class="rounded-2xl bg-white/5 border border-white/10 p-5 sm:p-6 mb-6"
+              >
+                <div
+                  class="flex items-center justify-between gap-4 py-2 border-b border-white/10"
+                >
+                  <span class="text-slate-400 text-sm">Fee Type</span>
+                  <span class="text-white font-semibold text-sm"
+                    >One-Time Registration</span
+                  >
+                </div>
+                <div
+                  class="flex items-center justify-between gap-4 py-4 border-b border-white/10"
+                >
+                  <span class="text-slate-400 text-sm">Amount</span>
+                  <span class="text-primary text-2xl font-black">$500</span>
+                </div>
+                <div class="flex items-center justify-between gap-4 pt-4">
+                  <span class="text-slate-400 text-sm">Status</span>
+                  <span
+                    class="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider"
+                  >
+                    Pending Payment
+                  </span>
+                </div>
+              </div>
+
+              <form class="space-y-5">
+                <div>
+                  <label
+                    class="block text-sm font-semibold text-slate-200 mb-2"
+                  >
+                    Select Coin
+                  </label>
+                  <select
+                    class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                  >
+                    <option>Bitcoin (BTC)</option>
+                    <option>Ethereum (ETH)</option>
+                    <option>USDT (TRC20)</option>
+                    <option>USDT (ERC20)</option>
+                    <option>BNB</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-semibold text-slate-200 mb-2"
+                  >
+                    Wallet Address
+                  </label>
+                  <div class="relative">
+                    <input
+                      type="text"
+                      value="TBC-REG-WALLET-ADDRESS-HERE-1234567890"
+                      class="form-input w-full rounded-2xl px-4 py-4 pr-24 text-sm"
+                      readonly
+                    />
+                    <button
+                      type="button"
+                      class="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-semibold text-slate-200 mb-2"
+                  >
+                    Transaction ID / Hash
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter transaction ID or payment hash"
+                    class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-semibold text-slate-200 mb-2"
+                  >
+                    Upload Payment Proof
+                  </label>
+                  <label
+                    class="upload-box rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary/40 transition-colors"
+                  >
+                    <i
+                      data-lucide="image-up"
+                      class="w-10 h-10 text-primary mb-3"
+                    ></i>
+                    <p class="text-white font-semibold">
+                      Upload screenshot / receipt
+                    </p>
+                    <p class="text-slate-400 text-sm mt-2 max-w-md">
+                      Upload a clear payment screenshot or transaction proof for
+                      verification.
+                    </p>
+                    <input type="file" class="hidden" />
+                  </label>
+                </div>
+
+                <a
+                  href="dashboard-pending.html"
+                  class="w-full py-4 text-black font-bold rounded-2xl gold-gradient shadow-xl shadow-primary/20 hover:scale-[1.01] transition-transform text-center block"
+                >
+                  Submit Payment Details
+                </a>
+              </form>
+
+              <p class="text-center text-sm text-slate-400 mt-6 leading-6">
+                After submission, your registration payment will be reviewed and
+                your account status will remain pending until approval is
+                completed.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,448 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes"
+    />
+    <title>TitanBlockchainCapital | OTP Verification</title>
+
+    <!-- Tailwind + Lucide + Fonts -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- favicon -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="images/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="images/favicon-16x16.png"
+    />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <link rel="manifest" href="images/site.webmanifest" />
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#e4b84f",
+              "primary-deep": "#bb8920",
+              accent: "#4b7cff",
+              "accent-2": "#74e0ff",
+              "background-dark": "#060913",
+              "surface-dark": "#10172a",
+              "surface-dark-2": "#151f36",
+              "border-dark": "rgba(255,255,255,0.08)",
+            },
+            fontFamily: {
+              display: ["Manrope", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+            boxShadow: {
+              glow: "0 20px 80px rgba(228,184,79,0.18)",
+              blue: "0 20px 80px rgba(75,124,255,0.18)",
+              soft: "0 20px 60px rgba(0,0,0,0.4)",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-family: "Manrope", sans-serif;
+        overflow-x: hidden;
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(228, 184, 79, 0.08),
+            transparent 24%
+          ),
+          radial-gradient(
+            circle at left 20%,
+            rgba(75, 124, 255, 0.1),
+            transparent 28%
+          ),
+          radial-gradient(
+            circle at bottom left,
+            rgba(116, 224, 255, 0.08),
+            transparent 24%
+          ),
+          linear-gradient(180deg, #060913 0%, #070b14 45%, #09101b 100%);
+        min-height: 100vh;
+      }
+
+      /* premium panel with glass effect */
+      .premium-panel {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.03)
+        );
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .premium-border {
+        position: relative;
+      }
+
+      .premium-border::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          135deg,
+          rgba(228, 184, 79, 0.45),
+          rgba(75, 124, 255, 0.18),
+          rgba(255, 255, 255, 0.03)
+        );
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+
+      .gold-gradient {
+        background: linear-gradient(
+          135deg,
+          #f6dea0 0%,
+          #e4b84f 48%,
+          #b47a15 100%
+        );
+      }
+
+      /* OTP INPUTS: ROUNDED RECTANGLE DESIGN — consistent, responsive, rounded-2xl */
+      .otp-input {
+        width: 4rem;
+        height: 4.5rem;
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: 700;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 5rem; /* rounded rectangle, consistent */
+        color: black;
+        transition: all 0.2s ease;
+        font-family: "Inter", monospace;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .otp-input:focus {
+        border-color: #e4b84f;
+        box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.25);
+        outline: none;
+        background: white;
+        transform: scale(1.02);
+      }
+
+      /* Responsive sizes: perfect for mobile, tablet, desktop */
+      @media (max-width: 520px) {
+        .otp-input {
+          width: 3rem;
+          height: 3.75rem;
+          font-size: 1.5rem;
+          border-radius: 0.875rem;
+        }
+        .gap-3.sm\:gap-4 {
+          gap: 0.65rem;
+        }
+      }
+
+      @media (max-width: 440px) {
+        .otp-input {
+          width: 2.7rem;
+          height: 3.4rem;
+          font-size: 1.35rem;
+          border-radius: 0.75rem;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .otp-input {
+          width: 2.4rem;
+          height: 3.1rem;
+          font-size: 1.2rem;
+          border-radius: 0.7rem;
+        }
+        .flex-wrap {
+          gap: 0.5rem;
+        }
+      }
+
+      /* keep overall card padding cozy on small screens */
+      @media (max-width: 640px) {
+        .premium-panel {
+          padding: 1.5rem !important;
+        }
+      }
+
+      .form-input:focus {
+        border-color: rgba(228, 184, 79, 0.55);
+        box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.1);
+        outline: none;
+      }
+
+      /* timer + error animation */
+      .fade-shake {
+        animation: shake 0.4s ease-in-out;
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-4px);
+        }
+        75% {
+          transform: translateX(4px);
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-background-dark text-white font-display">
+    <!-- Header consistent with brand -->
+    <header
+      class="border-b border-white/10 bg-background-dark/80 backdrop-blur-md sticky top-0 z-10"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="index.html" class="flex items-center gap-3 min-w-0">
+            <img
+              src="images/logo.png"
+              alt="Titan Logo"
+              class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl object-cover shrink-0"
+              onerror="this.src = 'https://placehold.co/48x48?text=T'"
+            />
+            <h2
+              class="text-white text-sm sm:text-xl font-extrabold tracking-tight whitespace-nowrap truncate"
+            >
+              TITAN <span class="text-primary">BLOCKCHAINCAPITAL</span>
+            </h2>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main
+      class="min-h-[calc(100vh-64px)] flex items-center py-8 sm:py-12 md:py-16 px-4"
+    >
+      <div class="max-w-7xl mx-auto w-full">
+        <div class="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center">
+          <!-- Left side: messaging, hidden on mobile, visible on large screens -->
+          <div class="hidden lg:block">
+            <div class="max-w-xl">
+              <div
+                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-bold uppercase tracking-widest mb-6"
+              >
+                Two‑Factor Authentication
+              </div>
+              <h1
+                class="text-white text-4xl xl:text-5xl font-black leading-tight tracking-tight"
+              >
+                Verify your
+                <span class="text-primary">identity</span>
+              </h1>
+              <p class="mt-6 text-slate-300 text-lg leading-relaxed">
+                A one‑time password (OTP) has been sent to your registered email
+                and phone. Enter the code below to confirm your identity and
+                complete secure onboarding.
+              </p>
+            </div>
+          </div>
+
+          <!-- Right side: OTP verification card - fully responsive rounded rectangle inputs -->
+          <div class="w-full max-w-2xl mx-auto">
+            <div
+              class="premium-panel premium-border rounded-3xl p-5 sm:p-7 md:p-9 shadow-2xl shadow-black/40"
+            >
+              <div class="mb-6 text-center lg:text-left">
+                <p
+                  class="text-primary text-sm font-bold uppercase tracking-widest mb-2"
+                >
+                  Verification
+                </p>
+                <h2
+                  class="text-white text-2xl sm:text-3xl md:text-4xl font-black tracking-tight"
+                >
+                  Enter OTP Code
+                </h2>
+                <p
+                  class="text-slate-400 text-sm sm:text-base mt-3 leading-relaxed"
+                >
+                  We sent a 6‑digit code to
+                  <span id="maskedEmail" class="text-primary font-medium"
+                    >demo@titan.com</span
+                  >
+                  and your mobile.
+                </p>
+              </div>
+
+              <form id="otpForm" class="space-y-7">
+                <!-- OTP input fields group: Rounded rectangle inputs with auto-tabbing -->
+                <div>
+                  <label
+                    class="block text-sm font-semibold text-slate-200 mb-4 text-center lg:text-left"
+                  >
+                    Authentication code
+                  </label>
+                  <div
+                    class="flex justify-center lg:justify-start gap-2 sm:gap-3 flex-wrap"
+                    id="otpContainer"
+                  >
+                    <input
+                      type="text"
+                      maxlength="1"
+                      class="otp-input digit-input"
+                      data-index="0"
+                      autofocus
+                      inputmode="numeric"
+                      pattern="\d*"
+                    />
+                    <input
+                      type="text"
+                      maxlength="1"
+                      class="otp-input digit-input"
+                      data-index="1"
+                      inputmode="numeric"
+                      pattern="\d*"
+                    />
+                    <input
+                      type="text"
+                      maxlength="1"
+                      class="otp-input digit-input"
+                      data-index="2"
+                      inputmode="numeric"
+                      pattern="\d*"
+                    />
+                    <input
+                      type="text"
+                      maxlength="1"
+                      class="otp-input digit-input"
+                      data-index="3"
+                      inputmode="numeric"
+                      pattern="\d*"
+                    />
+                    <input
+                      type="text"
+                      maxlength="1"
+                      class="otp-input digit-input"
+                      data-index="4"
+                      inputmode="numeric"
+                      pattern="\d*"
+                    />
+                    <input
+                      type="text"
+                      maxlength="1"
+                      class="otp-input digit-input"
+                      data-index="5"
+                      inputmode="numeric"
+                      pattern="\d*"
+                    />
+                  </div>
+
+                  <!-- Timer & error row -->
+                  <div class="mt-5 text-center lg:text-left">
+                    <div
+                      id="timerDisplay"
+                      class="text-sm font-mono bg-surface-dark/60 inline-flex items-center px-4 py-2 rounded-full border border-white/10 text-slate-300 gap-1.5"
+                    >
+                      <i data-lucide="timer" class="w-4 h-4"></i>
+                      <span id="countdownText">10:00</span>
+                    </div>
+                    <p
+                      id="errorMessage"
+                      class="text-red-400 text-xs mt-3 hidden transition-all font-medium"
+                    ></p>
+                    <p
+                      id="successMessage"
+                      class="text-emerald-400 text-xs mt-3 hidden transition-all font-medium"
+                    ></p>
+                  </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="space-y-4">
+                  <button
+                    type="submit"
+                    id="verifyBtn"
+                    class="w-full py-3.5 sm:py-4 text-black font-bold rounded-2xl gold-gradient shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all text-center block text-base sm:text-lg"
+                  >
+                    Verify & Continue
+                  </button>
+
+                  <div
+                    class="flex flex-col sm:flex-row justify-between items-center gap-3 text-sm"
+                  >
+                    <button
+                      type="button"
+                      id="resendOtpBtn"
+                      class="text-slate-400 hover:text-primary transition-colors font-medium flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                      Resend verification code
+                    </button>
+                    <a
+                      href="register.html"
+                      class="text-slate-400 hover:text-white transition-colors flex items-center gap-1"
+                    >
+                      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                      Back to registration
+                    </a>
+                  </div>
+                </div>
+              </form>
+
+              <div
+                class="mt-6 text-center text-xs text-slate-500 border-t border-white/10 pt-6"
+              >
+                <p>
+                  By verifying, you confirm that you are the owner of the
+                  provided contact details.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      lucide.createIcons();
+    </script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/otp.js"></script>
+  </body>
+</html>

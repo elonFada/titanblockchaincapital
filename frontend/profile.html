@@ -1,0 +1,841 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>TitanBlockchainCapital | Profile</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="images/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="images/favicon-16x16.png"
+    />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <link rel="manifest" href="images/site.webmanifest" />
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            screens: {
+              xs: "480px",
+            },
+            colors: {
+              primary: "#e4b84f",
+              "primary-deep": "#bb8920",
+              accent: "#4b7cff",
+              "accent-2": "#74e0ff",
+              success: "#22c55e",
+              danger: "#ef4444",
+              warning: "#f59e0b",
+              "background-dark": "#060913",
+              "surface-dark": "#10172a",
+              "surface-dark-2": "#151f36",
+            },
+            fontFamily: {
+              display: ["Manrope", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+            boxShadow: {
+              glow: "0 20px 80px rgba(228,184,79,0.18)",
+              blue: "0 20px 80px rgba(75,124,255,0.18)",
+              soft: "0 20px 60px rgba(0,0,0,0.4)",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      body {
+        font-family: "Manrope", sans-serif;
+        overflow-x: hidden;
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(228, 184, 79, 0.08),
+            transparent 24%
+          ),
+          radial-gradient(
+            circle at left 20%,
+            rgba(75, 124, 255, 0.1),
+            transparent 28%
+          ),
+          radial-gradient(
+            circle at bottom left,
+            rgba(116, 224, 255, 0.08),
+            transparent 24%
+          ),
+          linear-gradient(180deg, #060913 0%, #070b14 45%, #09101b 100%);
+      }
+
+      .form-input {
+        background: rgba(255, 255, 255, 0.04) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: white !important;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      .form-input::placeholder {
+        color: rgb(148 163 184) !important;
+      }
+
+      .form-input:focus {
+        background: rgba(255, 255, 255, 0.06) !important;
+        border-color: rgba(228, 184, 79, 0.45) !important;
+        box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.08) !important;
+        outline: none;
+      }
+
+      select.form-input {
+        background-color: rgba(255, 255, 255, 0.04) !important;
+        color: white !important;
+      }
+
+      select.form-input option {
+        background: #10172a !important;
+        color: white !important;
+      }
+
+      body.sidebar-open,
+      body.modal-open {
+        overflow: hidden;
+      }
+
+      .premium-panel {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.03)
+        );
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .premium-border {
+        position: relative;
+      }
+
+      .premium-border::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          135deg,
+          rgba(228, 184, 79, 0.45),
+          rgba(75, 124, 255, 0.18),
+          rgba(255, 255, 255, 0.03)
+        );
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+
+      .glass-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(14px);
+      }
+
+      .gold-gradient {
+        background: linear-gradient(
+          135deg,
+          #f6dea0 0%,
+          #e4b84f 48%,
+          #b47a15 100%
+        );
+      }
+
+      .sidebar-link.active {
+        background: rgba(228, 184, 79, 0.1);
+        border-color: rgba(228, 184, 79, 0.22);
+      }
+
+      .sidebar-link.active span,
+      .sidebar-link.active i {
+        color: #e4b84f;
+      }
+
+      .form-input {
+        background: rgba(255, 255, 255, 0.04) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: white !important;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      .form-input::placeholder {
+        color: rgb(148 163 184) !important;
+      }
+
+      .form-input:focus {
+        background: rgba(255, 255, 255, 0.06) !important;
+        border-color: rgba(228, 184, 79, 0.45) !important;
+        box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.08) !important;
+        outline: none;
+      }
+
+      #walletModalCard .overflow-y-auto {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+      }
+
+      #walletModalCard .overflow-y-auto::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      #walletModalCard .overflow-y-auto::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+      }
+
+      @keyframes menuFloatPulse {
+        0%,
+        100% {
+          transform: translateY(0) scale(1);
+          box-shadow:
+            0 18px 40px rgba(228, 184, 79, 0.18),
+            0 0 0 0 rgba(228, 184, 79, 0.22);
+        }
+        50% {
+          transform: translateY(-6px) scale(1.04);
+          box-shadow:
+            0 24px 48px rgba(228, 184, 79, 0.28),
+            0 0 0 14px rgba(228, 184, 79, 0);
+        }
+      }
+
+      @keyframes menuIconWiggle {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(-8deg);
+        }
+        50% {
+          transform: rotate(0deg);
+        }
+        75% {
+          transform: rotate(8deg);
+        }
+      }
+
+      .menu-attention {
+        animation: menuFloatPulse 2.2s ease-in-out infinite;
+      }
+
+      .menu-attention i,
+      .menu-attention svg {
+        animation: menuIconWiggle 2.2s ease-in-out infinite;
+        transform-origin: center;
+      }
+
+      .modal-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .modal-visible {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+
+      .modal-card-hidden {
+        transform: translateY(24px) scale(0.98);
+        opacity: 0;
+      }
+
+      .modal-card-visible {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    </style>
+  </head>
+
+  <body class="bg-background-dark text-white font-display">
+    <header
+      class="sticky top-0 z-40 border-b border-white/10 bg-background-dark/80 backdrop-blur-md"
+    >
+      <div class="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div class="h-16 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img
+              src="images/logo.png"
+              alt="Titan Logo"
+              class="h-9 w-9 sm:h-10 sm:w-10 rounded-xl object-cover shrink-0"
+            />
+            <h2
+              class="text-white text-[13px] xs:text-sm sm:text-xl font-extrabold tracking-tight whitespace-nowrap truncate"
+            >
+              TITAN <span class="text-primary">BLOCKCHAINCAPITAL</span>
+            </h2>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <a
+              href="dashboard.html"
+              class="px-3 xs:px-4 py-2 text-xs xs:text-sm font-bold text-white bg-surface-dark hover:bg-slate-700 rounded-lg transition-all"
+            >
+              Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="py-4 xs:py-6 sm:py-8 lg:py-10 pb-24 lg:pb-10">
+      <div class="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div class="relative">
+          <button
+            id="mobileSidebarToggle"
+            class="menu-attention lg:hidden fixed bottom-20 right-4 xs:bottom-24 xs:right-5 z-50 h-12 w-12 xs:h-14 xs:w-14 rounded-full gold-gradient flex items-center justify-center shadow-2xl shadow-primary/20"
+            aria-label="Open menu"
+          >
+            <i data-lucide="menu" class="w-5 h-5 xs:w-6 xs:h-6 text-black"></i>
+          </button>
+
+          <div
+            id="mobileSidebarOverlay"
+            class="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px] opacity-0 invisible transition-all duration-300"
+          ></div>
+
+          <div class="grid lg:grid-cols-[280px_1fr] gap-4 sm:gap-6 lg:gap-8">
+            <aside
+              id="dashboardSidebar"
+              class="premium-panel premium-border rounded-r-3xl lg:rounded-3xl p-4 sm:p-5 lg:p-6 h-screen lg:h-fit w-[86%] max-w-[320px] lg:w-auto fixed lg:static top-0 left-0 z-50 lg:z-auto -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto"
+            >
+              <div
+                class="flex items-center justify-between pb-5 border-b border-white/10"
+              >
+                <div class="flex items-center gap-3 min-w-0">
+                  <img
+                    src="images/logo.png"
+                    alt="Titan Logo"
+                    class="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-cover shrink-0"
+                  />
+                  <div class="min-w-0">
+                    <p class="text-white font-bold truncate">Client Account</p>
+                    <p class="text-slate-400 text-sm truncate">Verified User</p>
+                  </div>
+                </div>
+
+                <button
+                  id="mobileSidebarClose"
+                  class="lg:hidden h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 shrink-0"
+                  aria-label="Close menu"
+                >
+                  <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+              </div>
+
+              <nav class="mt-6 space-y-3">
+                <a
+                  href="dashboard.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i
+                    data-lucide="layout-dashboard"
+                    class="w-5 h-5 text-slate-300"
+                  ></i>
+                  <span class="text-sm font-semibold text-white"
+                    >Dashboard</span
+                  >
+                </a>
+
+                <a
+                  href="deposit.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i data-lucide="wallet" class="w-5 h-5 text-slate-300"></i>
+                  <span class="text-sm font-semibold text-white">Deposit</span>
+                </a>
+
+                <a
+                  href="withdrawal.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i
+                    data-lucide="arrow-up-right"
+                    class="w-5 h-5 text-slate-300"
+                  ></i>
+                  <span class="text-sm font-semibold text-white">Withdraw</span>
+                </a>
+
+                <a
+                  href="tradingbot.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i data-lucide="bot" class="w-5 h-5 text-slate-300"></i>
+                  <span class="text-sm font-semibold text-white"
+                    >Trading Bot</span
+                  >
+                </a>
+
+                <a
+                  href="profile.html"
+                  class="sidebar-link active flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i
+                    data-lucide="user-circle-2"
+                    class="w-5 h-5 text-slate-300"
+                  ></i>
+                  <span class="text-sm font-semibold text-white">Profile</span>
+                </a>
+              </nav>
+            </aside>
+
+            <section class="space-y-4 sm:space-y-6 min-w-0">
+              <div class="grid xl:grid-cols-[0.85fr_1.15fr] gap-4 sm:gap-6">
+                <div
+                  class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
+                >
+                  <div class="flex flex-col items-center text-center">
+                    <div class="relative">
+                      <img
+                        src="images/logo.png"
+                        alt="Profile"
+                        class="h-28 w-28 xs:h-32 xs:w-32 rounded-3xl object-cover border border-white/10"
+                      />
+                      <button
+                        type="button"
+                        class="absolute -bottom-2 -right-2 h-11 w-11 rounded-2xl gold-gradient flex items-center justify-center shadow-lg"
+                      >
+                        <i data-lucide="camera" class="w-5 h-5 text-black"></i>
+                      </button>
+                    </div>
+
+                    <h3 class="text-white text-2xl font-black mt-5">
+                      Samuel Joshua
+                    </h3>
+                    <p class="text-slate-400 text-sm mt-2">Verified User</p>
+
+                    <div
+                      class="mt-6 w-full rounded-3xl bg-white/5 border border-white/10 p-5"
+                    >
+                      <div class="flex items-center gap-3 mb-4">
+                        <i
+                          data-lucide="shield-check"
+                          class="w-5 h-5 text-primary"
+                        ></i>
+                        <h4 class="text-white font-bold text-lg">
+                          Wallet Address Notice
+                        </h4>
+                      </div>
+                      <p class="text-slate-300 text-sm leading-7 text-left">
+                        Add only your one main trusted and secure withdrawal
+                        wallet address. Once saved, it becomes permanent and
+                        cannot be changed from this page.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-4 sm:space-y-6">
+                  <!-- Full Name -->
+                  <div
+                    class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
+                  >
+                    <div class="flex items-start justify-between gap-4 mb-4">
+                      <div>
+                        <p class="text-slate-400 text-sm">Full Name</p>
+                        <h3
+                          class="text-white text-xl sm:text-2xl font-black mt-2"
+                        >
+                          Samuel Joshua
+                        </h3>
+                      </div>
+                      <button
+                        type="button"
+                        class="h-11 w-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:bg-white/10 transition-colors"
+                        data-edit-target="name"
+                      >
+                        <i data-lucide="pencil" class="w-5 h-5"></i>
+                      </button>
+                    </div>
+
+                    <div id="edit-name" class="hidden mt-4">
+                      <div class="space-y-4">
+                        <input
+                          type="text"
+                          value="Samuel Joshua"
+                          class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                        />
+                        <button
+                          type="button"
+                          class="px-5 py-3 text-black font-bold rounded-2xl gold-gradient"
+                        >
+                          Save Changes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Email -->
+                  <div
+                    class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
+                  >
+                    <div class="flex items-start justify-between gap-4 mb-4">
+                      <div class="min-w-0">
+                        <p class="text-slate-400 text-sm">Email Address</p>
+                        <h3
+                          class="text-white text-base sm:text-xl font-black mt-2 break-all"
+                        >
+                          samueljoshua@email.com
+                        </h3>
+                      </div>
+                      <button
+                        type="button"
+                        class="h-11 w-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:bg-white/10 transition-colors shrink-0"
+                        data-edit-target="email"
+                      >
+                        <i data-lucide="pencil" class="w-5 h-5"></i>
+                      </button>
+                    </div>
+
+                    <div id="edit-email" class="hidden mt-4">
+                      <div class="space-y-4">
+                        <input
+                          type="email"
+                          value="samueljoshua@email.com"
+                          class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                        />
+                        <button
+                          type="button"
+                          class="px-5 py-3 text-black font-bold rounded-2xl gold-gradient"
+                        >
+                          Save Changes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Password -->
+                  <div
+                    class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
+                  >
+                    <div class="flex items-start justify-between gap-4 mb-4">
+                      <div>
+                        <p class="text-slate-400 text-sm">Password</p>
+                        <h3
+                          class="text-white text-xl sm:text-2xl font-black mt-2"
+                        >
+                          ••••••••••••
+                        </h3>
+                      </div>
+                      <button
+                        type="button"
+                        class="h-11 w-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:bg-white/10 transition-colors"
+                        data-edit-target="password"
+                      >
+                        <i data-lucide="pencil" class="w-5 h-5"></i>
+                      </button>
+                    </div>
+
+                    <div id="edit-password" class="hidden mt-4">
+                      <div class="space-y-4">
+                        <input
+                          type="password"
+                          placeholder="Enter current password"
+                          class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                        />
+                        <input
+                          type="password"
+                          placeholder="Enter new password"
+                          class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                        />
+                        <input
+                          type="password"
+                          placeholder="Confirm new password"
+                          class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                        />
+                        <button
+                          type="button"
+                          class="px-5 py-3 text-black font-bold rounded-2xl gold-gradient"
+                        >
+                          Update Password
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Wallet Address -->
+                  <div
+                    class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
+                  >
+                    <div class="flex items-start justify-between gap-4 mb-4">
+                      <div class="min-w-0">
+                        <p class="text-slate-400 text-sm">
+                          Withdrawal Wallet Address
+                        </p>
+                        <h3
+                          class="text-white text-base sm:text-lg font-black mt-2 break-all"
+                        >
+                          Not Added Yet
+                        </h3>
+                      </div>
+                      <div
+                        class="px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-bold uppercase tracking-wider shrink-0"
+                      >
+                        One-Time
+                      </div>
+                    </div>
+
+                    <div
+                      class="rounded-2xl bg-white/5 border border-white/10 p-5"
+                    >
+                      <p class="text-slate-300 text-sm leading-7 mb-5">
+                        Add only your one main trusted and secure wallet
+                        address. This action is permanent and cannot be edited
+                        later.
+                      </p>
+
+                      <button
+                        type="button"
+                        id="openWalletModal"
+                        class="w-full sm:w-auto px-5 py-3 text-black font-bold rounded-2xl gold-gradient"
+                      >
+                        Add Withdrawal Wallet
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Wallet Modal -->
+    <div
+      id="walletModal"
+      class="fixed inset-0 z-[70] bg-black/70 backdrop-blur-[3px] transition-all duration-300 modal-hidden"
+    >
+      <div
+        class="flex min-h-screen items-end justify-center p-3 xs:p-4 sm:items-center sm:p-6"
+      >
+        <div
+          id="walletModalCard"
+          class="premium-panel premium-border modal-card-hidden flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl transition-all duration-300"
+        >
+          <div
+            class="flex shrink-0 items-center justify-between gap-4 border-b border-white/10 p-4 pb-4 xs:p-5 sm:p-6 lg:p-8"
+          >
+            <div>
+              <p
+                class="text-primary text-[11px] font-bold uppercase tracking-widest"
+              >
+                Withdrawal Wallet Setup
+              </p>
+              <h3 class="mt-2 text-2xl font-black text-white sm:text-3xl">
+                Add your trusted wallet
+              </h3>
+            </div>
+
+            <button
+              id="closeWalletModal"
+              type="button"
+              aria-label="Close modal"
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300"
+            >
+              <i data-lucide="x" class="h-5 w-5"></i>
+            </button>
+          </div>
+
+          <div class="flex-1 overflow-y-auto p-4 pt-5 xs:p-5 sm:p-6 lg:p-8">
+            <div
+              class="mb-5 rounded-2xl border border-primary/20 bg-primary/10 p-5"
+            >
+              <p class="text-base font-bold text-white sm:text-lg">
+                Important Warning
+              </p>
+              <p class="mt-2 text-sm leading-7 text-slate-300">
+                You are only allowed to add one main trusted and secure
+                withdrawal wallet address. Once submitted, this wallet address
+                becomes permanent and cannot be edited later.
+              </p>
+            </div>
+
+            <form class="space-y-5">
+              <div>
+                <label class="mb-2 block text-sm font-semibold text-slate-200">
+                  Wallet Type / Network
+                </label>
+
+                <div class="relative">
+                  <select
+                    class="form-input w-full rounded-2xl px-4 py-4 pr-12 text-sm"
+                  >
+                    <option>USDT (TRC20)</option>
+                    <option>USDT (ERC20)</option>
+                    <option>Bitcoin (BTC)</option>
+                    <option>Ethereum (ETH)</option>
+                    <option>BNB (BEP20)</option>
+                  </select>
+
+                  <i
+                    data-lucide="chevron-down"
+                    class="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
+                  ></i>
+                </div>
+              </div>
+
+              <div>
+                <label class="mb-2 block text-sm font-semibold text-slate-200">
+                  Wallet Address
+                </label>
+
+                <input
+                  type="text"
+                  placeholder="Enter your main trusted wallet address"
+                  class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                />
+              </div>
+
+              <label class="flex items-start gap-3 text-sm text-slate-300">
+                <input
+                  type="checkbox"
+                  class="mt-1 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/30"
+                />
+                <span>
+                  I confirm this is my one main trusted and secure withdrawal
+                  wallet address, and I understand that it cannot be changed
+                  after submission.
+                </span>
+              </label>
+
+              <button
+                type="button"
+                class="gold-gradient w-full rounded-2xl py-4 font-bold text-black shadow-xl shadow-primary/20"
+              >
+                Save Wallet Address
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+
+      const mobileSidebarToggle = document.getElementById(
+        "mobileSidebarToggle",
+      );
+      const mobileSidebarClose = document.getElementById("mobileSidebarClose");
+      const mobileSidebarOverlay = document.getElementById(
+        "mobileSidebarOverlay",
+      );
+      const dashboardSidebar = document.getElementById("dashboardSidebar");
+
+      function openSidebar() {
+        if (!dashboardSidebar || !mobileSidebarOverlay) return;
+        dashboardSidebar.classList.remove("-translate-x-full");
+        mobileSidebarOverlay.classList.remove("opacity-0", "invisible");
+        mobileSidebarOverlay.classList.add("opacity-100", "visible");
+        document.body.classList.add("sidebar-open");
+      }
+
+      function closeSidebar() {
+        if (!dashboardSidebar || !mobileSidebarOverlay) return;
+        dashboardSidebar.classList.add("-translate-x-full");
+        mobileSidebarOverlay.classList.remove("opacity-100", "visible");
+        mobileSidebarOverlay.classList.add("opacity-0", "invisible");
+        document.body.classList.remove("sidebar-open");
+      }
+
+      if (mobileSidebarToggle) {
+        mobileSidebarToggle.addEventListener("click", openSidebar);
+      }
+
+      if (mobileSidebarClose) {
+        mobileSidebarClose.addEventListener("click", closeSidebar);
+      }
+
+      if (mobileSidebarOverlay) {
+        mobileSidebarOverlay.addEventListener("click", closeSidebar);
+      }
+
+      const editButtons = document.querySelectorAll("[data-edit-target]");
+      editButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const target = button.getAttribute("data-edit-target");
+          const panel = document.getElementById(`edit-${target}`);
+          if (panel) panel.classList.toggle("hidden");
+        });
+      });
+
+      const openWalletModal = document.getElementById("openWalletModal");
+      const closeWalletModal = document.getElementById("closeWalletModal");
+      const walletModal = document.getElementById("walletModal");
+      const walletModalCard = document.getElementById("walletModalCard");
+
+      function openModal() {
+        walletModal.classList.remove("modal-hidden");
+        walletModal.classList.add("modal-visible");
+        walletModalCard.classList.remove("modal-card-hidden");
+        walletModalCard.classList.add("modal-card-visible");
+        document.body.classList.add("modal-open");
+      }
+
+      function closeModal() {
+        walletModal.classList.remove("modal-visible");
+        walletModal.classList.add("modal-hidden");
+        walletModalCard.classList.remove("modal-card-visible");
+        walletModalCard.classList.add("modal-card-hidden");
+        document.body.classList.remove("modal-open");
+      }
+
+      if (openWalletModal) {
+        openWalletModal.addEventListener("click", openModal);
+      }
+
+      if (closeWalletModal) {
+        closeWalletModal.addEventListener("click", closeModal);
+      }
+
+      if (walletModal) {
+        walletModal.addEventListener("click", (e) => {
+          if (e.target === walletModal) closeModal();
+        });
+      }
+    </script>
+  </body>
+</html>

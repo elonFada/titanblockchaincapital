@@ -1,0 +1,614 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>TitanBlockchainCapital Admin | Users Deposit</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            screens: { xs: "480px" },
+            colors: {
+              primary: "#e4b84f",
+              "primary-deep": "#bb8920",
+              accent: "#4b7cff",
+              "accent-2": "#74e0ff",
+              success: "#22c55e",
+              danger: "#ef4444",
+              warning: "#f59e0b",
+              "background-dark": "#060913",
+              "surface-dark": "#10172a",
+              "surface-dark-2": "#151f36",
+            },
+            fontFamily: {
+              display: ["Manrope", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      body {
+        font-family: "Manrope", sans-serif;
+        overflow-x: hidden;
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(228, 184, 79, 0.08),
+            transparent 24%
+          ),
+          radial-gradient(
+            circle at left 20%,
+            rgba(75, 124, 255, 0.1),
+            transparent 28%
+          ),
+          radial-gradient(
+            circle at bottom left,
+            rgba(116, 224, 255, 0.08),
+            transparent 24%
+          ),
+          linear-gradient(180deg, #060913 0%, #070b14 45%, #09101b 100%);
+      }
+      body.sidebar-open {
+        overflow: hidden;
+      }
+      .premium-panel {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.03)
+        );
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .premium-border {
+        position: relative;
+      }
+      .premium-border::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          135deg,
+          rgba(228, 184, 79, 0.45),
+          rgba(75, 124, 255, 0.18),
+          rgba(255, 255, 255, 0.03)
+        );
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(14px);
+      }
+      .gold-gradient {
+        background: linear-gradient(
+          135deg,
+          #f6dea0 0%,
+          #e4b84f 48%,
+          #b47a15 100%
+        );
+      }
+      .sidebar-link.active {
+        background: rgba(228, 184, 79, 0.1);
+        border-color: rgba(228, 184, 79, 0.22);
+      }
+      .sidebar-link.active span,
+      .sidebar-link.active i {
+        color: #e4b84f;
+      }
+      .form-input {
+        background: rgba(255, 255, 255, 0.04) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: white !important;
+        appearance: none;
+      }
+      .form-input::placeholder {
+        color: rgb(148 163 184) !important;
+      }
+      .form-input:focus {
+        background: rgba(255, 255, 255, 0.06) !important;
+        border-color: rgba(228, 184, 79, 0.45) !important;
+        box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.08) !important;
+        outline: none;
+      }
+      .table-scroll::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      .table-scroll::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+      }
+      @keyframes menuFloatPulse {
+        0%,
+        100% {
+          transform: translateY(0) scale(1);
+        }
+        50% {
+          transform: translateY(-6px) scale(1.04);
+        }
+      }
+      @keyframes menuIconWiggle {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(-8deg);
+        }
+        75% {
+          transform: rotate(8deg);
+        }
+      }
+      .menu-attention {
+        animation: menuFloatPulse 2.2s ease-in-out infinite;
+      }
+      .menu-attention i,
+      .menu-attention svg {
+        animation: menuIconWiggle 2.2s ease-in-out infinite;
+        transform-origin: center;
+      }
+    </style>
+  </head>
+
+  <body class="bg-background-dark text-white font-display">
+    <header
+      class="sticky top-0 z-40 border-b border-white/10 bg-background-dark/80 backdrop-blur-md"
+    >
+      <div class="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div class="h-16 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img
+              src="images/logo.png"
+              alt="Titan Logo"
+              class="h-9 w-9 sm:h-10 sm:w-10 rounded-xl object-cover shrink-0"
+            />
+            <h2
+              class="text-white text-[13px] xs:text-sm sm:text-xl font-extrabold tracking-tight whitespace-nowrap truncate"
+            >
+              TITAN <span class="text-primary">ADMIN</span>
+            </h2>
+          </div>
+          <a
+            href="admin-dashboard.html"
+            class="px-3 xs:px-4 py-2 text-xs xs:text-sm font-bold text-white bg-surface-dark hover:bg-slate-700 rounded-lg transition-all"
+          >
+            Dashboard
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="py-4 xs:py-6 sm:py-8 lg:py-10 pb-24 lg:pb-10">
+      <div class="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div class="relative">
+          <button
+            id="mobileSidebarToggle"
+            class="menu-attention lg:hidden fixed bottom-5 right-4 xs:right-5 z-50 h-12 w-12 xs:h-14 xs:w-14 rounded-full gold-gradient flex items-center justify-center shadow-2xl shadow-primary/20"
+            aria-label="Open menu"
+          >
+            <i data-lucide="menu" class="w-5 h-5 xs:w-6 xs:h-6 text-black"></i>
+          </button>
+
+          <div
+            id="mobileSidebarOverlay"
+            class="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px] opacity-0 invisible transition-all duration-300"
+          ></div>
+
+          <div class="grid lg:grid-cols-[280px_1fr] gap-4 sm:gap-6 lg:gap-8">
+            <aside
+              id="dashboardSidebar"
+              class="premium-panel premium-border rounded-r-3xl lg:rounded-3xl p-4 sm:p-5 lg:p-6 h-screen lg:h-fit w-[86%] max-w-[320px] lg:w-auto fixed lg:static top-0 left-0 z-50 lg:z-auto -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto"
+            >
+              <div
+                class="flex items-center justify-between pb-5 border-b border-white/10"
+              >
+                <div class="flex items-center gap-3 min-w-0">
+                  <img
+                    src="images/logo.png"
+                    alt="Titan Logo"
+                    class="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-cover shrink-0"
+                  />
+                  <div class="min-w-0">
+                    <p class="text-white font-bold truncate">Admin Panel</p>
+                    <p class="text-slate-400 text-sm truncate">
+                      Control Center
+                    </p>
+                  </div>
+                </div>
+                <button
+                  id="mobileSidebarClose"
+                  class="lg:hidden h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 shrink-0"
+                  aria-label="Close menu"
+                >
+                  <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+              </div>
+
+              <nav class="mt-6 space-y-3">
+                <a
+                  href="admin-dashboard.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i
+                    data-lucide="layout-dashboard"
+                    class="w-5 h-5 text-slate-300"
+                  ></i>
+                  <span class="text-sm font-semibold text-white"
+                    >Dashboard</span
+                  >
+                </a>
+                <a
+                  href="all-users.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i data-lucide="users" class="w-5 h-5 text-slate-300"></i>
+                  <span class="text-sm font-semibold text-white"
+                    >All Users</span
+                  >
+                </a>
+                <a
+                  href="users-deposit.html"
+                  class="sidebar-link active flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i data-lucide="wallet" class="w-5 h-5 text-slate-300"></i>
+                  <span class="text-sm font-semibold text-white"
+                    >Users Deposit</span
+                  >
+                </a>
+                <a
+                  href="users-withdrawal.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i
+                    data-lucide="arrow-up-right"
+                    class="w-5 h-5 text-slate-300"
+                  ></i>
+                  <span class="text-sm font-semibold text-white"
+                    >Users Withdrawal</span
+                  >
+                </a>
+                <a
+                  href="tradingbot-payment.html"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                >
+                  <i data-lucide="bot" class="w-5 h-5 text-slate-300"></i>
+                  <span class="text-sm font-semibold text-white"
+                    >Trading Bot Payment</span
+                  >
+                </a>
+              </nav>
+            </aside>
+
+            <section class="space-y-4 sm:space-y-6 min-w-0">
+              <div
+                class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
+              >
+                <div
+                  class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
+                >
+                  <div>
+                    <div
+                      class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] xs:text-[11px] font-bold uppercase tracking-widest mb-4"
+                    >
+                      Deposit Management
+                    </div>
+                    <h1
+                      class="text-white text-2xl xs:text-3xl sm:text-4xl font-black leading-tight tracking-tight"
+                    >
+                      User deposit approvals
+                    </h1>
+                    <p
+                      class="text-slate-300 text-sm xs:text-base sm:text-lg leading-relaxed mt-4 max-w-2xl"
+                    >
+                      Review submitted deposits, confirm payment proofs, and
+                      approve pending account funding.
+                    </p>
+                  </div>
+
+                  <div class="w-full lg:max-w-md">
+                    <input
+                      type="text"
+                      placeholder="Search by user, coin, network or transaction hash..."
+                      class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5"
+              >
+                <div class="glass-card rounded-3xl p-5 sm:p-6">
+                  <p class="text-slate-400 text-sm">Pending Deposits</p>
+                  <p class="text-white text-3xl font-black mt-3">18</p>
+                  <p class="text-yellow-400 text-sm mt-2">Awaiting approval</p>
+                </div>
+                <div class="glass-card rounded-3xl p-5 sm:p-6">
+                  <p class="text-slate-400 text-sm">Approved Today</p>
+                  <p class="text-white text-3xl font-black mt-3">9</p>
+                  <p class="text-emerald-400 text-sm mt-2">
+                    Processed successfully
+                  </p>
+                </div>
+                <div class="glass-card rounded-3xl p-5 sm:p-6">
+                  <p class="text-slate-400 text-sm">Total Deposit Volume</p>
+                  <p class="text-white text-3xl font-black mt-3">$148,500</p>
+                  <p class="text-primary text-sm mt-2">Across all users</p>
+                </div>
+                <div class="glass-card rounded-3xl p-5 sm:p-6">
+                  <p class="text-slate-400 text-sm">Flagged Proofs</p>
+                  <p class="text-white text-3xl font-black mt-3">3</p>
+                  <p class="text-red-400 text-sm mt-2">Needs manual check</p>
+                </div>
+              </div>
+
+              <div
+                class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
+              >
+                <div
+                  class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 sm:mb-6"
+                >
+                  <div>
+                    <h3
+                      class="text-white text-xl sm:text-2xl font-black tracking-tight"
+                    >
+                      Pending Deposit Requests
+                    </h3>
+                    <p class="text-slate-400 text-sm mt-2">
+                      Approve or reject user deposit submissions.
+                    </p>
+                  </div>
+
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      class="px-4 py-2 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-bold"
+                    >
+                      Pending
+                    </button>
+                    <button
+                      class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-semibold"
+                    >
+                      Approved
+                    </button>
+                    <button
+                      class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-semibold"
+                    >
+                      All
+                    </button>
+                  </div>
+                </div>
+
+                <div class="space-y-4">
+                  <div
+                    class="rounded-3xl bg-white/5 border border-white/10 p-4 sm:p-5"
+                  >
+                    <div
+                      class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5"
+                    >
+                      <div
+                        class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 flex-1"
+                      >
+                        <div>
+                          <p
+                            class="text-slate-400 text-xs uppercase tracking-wider"
+                          >
+                            User
+                          </p>
+                          <p class="text-white font-bold mt-2">Samuel Joshua</p>
+                          <p class="text-slate-400 text-sm mt-1">TBC-00124</p>
+                        </div>
+                        <div>
+                          <p
+                            class="text-slate-400 text-xs uppercase tracking-wider"
+                          >
+                            Deposit
+                          </p>
+                          <p class="text-white font-bold mt-2">$5,000.00</p>
+                          <p class="text-slate-400 text-sm mt-1">
+                            USDT (TRC20)
+                          </p>
+                        </div>
+                        <div>
+                          <p
+                            class="text-slate-400 text-xs uppercase tracking-wider"
+                          >
+                            Transaction Hash
+                          </p>
+                          <p class="text-slate-300 font-medium mt-2 break-all">
+                            0xTRC20HASH548965421
+                          </p>
+                        </div>
+                        <div>
+                          <p
+                            class="text-slate-400 text-xs uppercase tracking-wider"
+                          >
+                            Status
+                          </p>
+                          <span
+                            class="inline-flex mt-2 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-bold uppercase tracking-wider"
+                          >
+                            Pending
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="flex flex-wrap gap-3">
+                        <button
+                          class="px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white text-sm font-semibold"
+                        >
+                          View Proof
+                        </button>
+                        <button
+                          class="px-4 py-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold"
+                        >
+                          Reject
+                        </button>
+                        <button
+                          class="px-4 py-3 rounded-2xl gold-gradient text-black text-sm font-bold"
+                        >
+                          Approve Deposit
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="rounded-3xl bg-white/5 border border-white/10 p-4 sm:p-5"
+                  >
+                    <div
+                      class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5"
+                    >
+                      <div
+                        class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 flex-1"
+                      >
+                        <div>
+                          <p
+                            class="text-slate-400 text-xs uppercase tracking-wider"
+                          >
+                            User
+                          </p>
+                          <p class="text-white font-bold mt-2">Daniel Robert</p>
+                          <p class="text-slate-400 text-sm mt-1">TBC-00125</p>
+                        </div>
+                        <div>
+                          <p
+                            class="text-slate-400 text-xs uppercase tracking-wider"
+                          >
+                            Deposit
+                          </p>
+                          <p class="text-white font-bold mt-2">$8,500.00</p>
+                          <p class="text-slate-400 text-sm mt-1">BTC</p>
+                        </div>
+                        <div>
+                          <p
+                            class="text-slate-400 text-xs uppercase tracking-wider"
+                          >
+                            Transaction Hash
+                          </p>
+                          <p class="text-slate-300 font-medium mt-2 break-all">
+                            bc1qh3ash902842btc
+                          </p>
+                        </div>
+                        <div>
+                          <p
+                            class="text-slate-400 text-xs uppercase tracking-wider"
+                          >
+                            Status
+                          </p>
+                          <span
+                            class="inline-flex mt-2 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-bold uppercase tracking-wider"
+                          >
+                            Pending
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="flex flex-wrap gap-3">
+                        <button
+                          class="px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white text-sm font-semibold"
+                        >
+                          View Proof
+                        </button>
+                        <button
+                          class="px-4 py-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold"
+                        >
+                          Reject
+                        </button>
+                        <button
+                          class="px-4 py-3 rounded-2xl gold-gradient text-black text-sm font-bold"
+                        >
+                          Approve Deposit
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
+              >
+                <div class="flex items-center gap-3 mb-5">
+                  <i data-lucide="history" class="w-5 h-5 text-primary"></i>
+                  <h3 class="text-white text-xl sm:text-2xl font-black">
+                    Recently Approved Deposits
+                  </h3>
+                </div>
+
+                <div class="space-y-3">
+                  <div
+                    class="rounded-2xl border border-white/10 bg-white/5 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                  >
+                    <div>
+                      <p class="text-white font-bold">Grace Peter</p>
+                      <p class="text-slate-400 text-sm mt-1">
+                        ETH (ERC20) • 12 Mar 2026
+                      </p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <span
+                        class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider"
+                      >
+                        Approved
+                      </span>
+                      <p class="text-emerald-400 font-bold">$6,000</p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="rounded-2xl border border-white/10 bg-white/5 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                  >
+                    <div>
+                      <p class="text-white font-bold">Michael James</p>
+                      <p class="text-slate-400 text-sm mt-1">
+                        USDT (TRC20) • 10 Mar 2026
+                      </p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <span
+                        class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider"
+                      >
+                        Approved
+                      </span>
+                      <p class="text-emerald-400 font-bold">$12,400</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="js/admin.js"></script>
+  </body>
+</html>
