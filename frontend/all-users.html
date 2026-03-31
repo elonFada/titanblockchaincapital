@@ -361,13 +361,12 @@
                     <h1
                       class="text-white text-2xl xs:text-3xl sm:text-4xl font-black leading-tight tracking-tight"
                     >
-                      All registered users
+                      All users
                     </h1>
                     <p
                       class="text-slate-300 text-sm xs:text-base sm:text-lg leading-relaxed mt-4 max-w-2xl"
                     >
-                      View user details, approval status, email, account
-                      balance, and saved wallet address.
+                      View and approve all users registration fee payment
                     </p>
                   </div>
 
@@ -382,7 +381,7 @@
               </div>
 
               <div
-                class="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5"
+                class="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5"
               >
                 <div class="glass-card rounded-3xl p-5 sm:p-6">
                   <p class="text-slate-400 text-sm">Total Users</p>
@@ -401,12 +400,6 @@
                   <p class="text-white text-3xl font-black mt-3">31</p>
                   <p class="text-yellow-400 text-sm mt-2">Needs review</p>
                 </div>
-
-                <div class="glass-card rounded-3xl p-5 sm:p-6">
-                  <p class="text-slate-400 text-sm">Locked Accounts</p>
-                  <p class="text-white text-3xl font-black mt-3">14</p>
-                  <p class="text-red-400 text-sm mt-2">Restricted access</p>
-                </div>
               </div>
 
               <div
@@ -419,45 +412,22 @@
                     <h3
                       class="text-white text-xl sm:text-2xl font-black tracking-tight"
                     >
-                      Users Directory
+                      Payment Requests
                     </h3>
                     <p class="text-slate-400 text-sm mt-2">
-                      Includes wallet information saved from each user profile.
+                      Review user payment proofs and approve or reject requests.
                     </p>
-                  </div>
-
-                  <div class="flex flex-wrap gap-2">
-                    <button
-                      class="px-4 py-2 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-bold"
-                    >
-                      All
-                    </button>
-                    <button
-                      class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-semibold"
-                    >
-                      Verified
-                    </button>
-                    <button
-                      class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-semibold"
-                    >
-                      Pending
-                    </button>
                   </div>
                 </div>
 
                 <div class="table-scroll overflow-x-auto">
-                  <table class="min-w-[1100px] w-full">
+                  <table class="min-w-[800px] w-full">
                     <thead>
                       <tr class="border-b border-white/10 text-left">
                         <th
                           class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
                         >
-                          User
-                        </th>
-                        <th
-                          class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
-                        >
-                          User ID
+                          Username
                         </th>
                         <th
                           class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
@@ -467,17 +437,7 @@
                         <th
                           class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
                         >
-                          Balance
-                        </th>
-                        <th
-                          class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
-                        >
-                          Wallet Address
-                        </th>
-                        <th
-                          class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
-                        >
-                          Status
+                          Payment Proof
                         </th>
                         <th
                           class="pb-4 text-slate-400 text-xs uppercase tracking-widest"
@@ -488,236 +448,124 @@
                     </thead>
 
                     <tbody class="divide-y divide-white/10">
+                      <!-- ROW 1 -->
                       <tr>
                         <td class="py-4 pr-4">
-                          <div>
-                            <p class="text-white font-bold">Samuel Joshua</p>
-                            <p class="text-slate-400 text-sm mt-1">Nigeria</p>
-                          </div>
+                          <p class="text-white font-bold">Samuel Joshua</p>
                         </td>
-                        <td class="py-4 pr-4 text-slate-300">TBC-00124</td>
+
                         <td class="py-4 pr-4 text-slate-300">
                           samueljoshua@email.com
                         </td>
-                        <td class="py-4 pr-4 text-white font-bold">
-                          $24,580.00
-                        </td>
-                        <td class="py-4 pr-4 text-slate-300">TXf3...27md</td>
+
                         <td class="py-4 pr-4">
-                          <span
-                            class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider"
+                          <a
+                            href="#"
+                            target="_blank"
+                            class="text-blue-400 underline text-sm font-semibold"
                           >
-                            Verified
-                          </span>
+                            View Proof
+                          </a>
                         </td>
+
                         <td class="py-4">
-                          <button
-                            class="px-4 py-2 rounded-xl gold-gradient text-black text-sm font-bold"
-                          >
-                            View
-                          </button>
+                          <div class="flex gap-2">
+                            <!-- Approve -->
+                            <button
+                              class="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-bold hover:bg-emerald-500/20 transition-all duration-200"
+                            >
+                              Approve
+                            </button>
+
+                            <!-- Reject -->
+                            <button
+                              class="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all duration-200"
+                            >
+                              Reject
+                            </button>
+                          </div>
                         </td>
                       </tr>
 
+                      <!-- ROW 2 -->
                       <tr>
                         <td class="py-4 pr-4">
-                          <div>
-                            <p class="text-white font-bold">Daniel Robert</p>
-                            <p class="text-slate-400 text-sm mt-1">
-                              United Kingdom
-                            </p>
-                          </div>
+                          <p class="text-white font-bold">Daniel Robert</p>
                         </td>
-                        <td class="py-4 pr-4 text-slate-300">TBC-00125</td>
+
                         <td class="py-4 pr-4 text-slate-300">
                           danielrobert@email.com
                         </td>
-                        <td class="py-4 pr-4 text-white font-bold">
-                          $18,200.00
-                        </td>
-                        <td class="py-4 pr-4 text-slate-300">0x84...ab91</td>
+
                         <td class="py-4 pr-4">
-                          <span
-                            class="px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-bold uppercase tracking-wider"
+                          <a
+                            href="#"
+                            target="_blank"
+                            class="text-blue-400 underline text-sm font-semibold"
                           >
-                            Pending
-                          </span>
+                            View Proof
+                          </a>
                         </td>
+
                         <td class="py-4">
-                          <button
-                            class="px-4 py-2 rounded-xl gold-gradient text-black text-sm font-bold"
-                          >
-                            Approve
-                          </button>
+                          <div class="flex gap-2">
+                            <!-- Approve -->
+                            <button
+                              class="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-bold hover:bg-emerald-500/20 transition-all duration-200"
+                            >
+                              Approve
+                            </button>
+
+                            <!-- Reject -->
+                            <button
+                              class="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all duration-200"
+                            >
+                              Reject
+                            </button>
+                          </div>
                         </td>
                       </tr>
 
+                      <!-- ROW 3 -->
                       <tr>
                         <td class="py-4 pr-4">
-                          <div>
-                            <p class="text-white font-bold">Grace Peter</p>
-                            <p class="text-slate-400 text-sm mt-1">
-                              South Africa
-                            </p>
-                          </div>
+                          <p class="text-white font-bold">Grace Peter</p>
                         </td>
-                        <td class="py-4 pr-4 text-slate-300">TBC-00126</td>
+
                         <td class="py-4 pr-4 text-slate-300">
                           gracep@email.com
                         </td>
-                        <td class="py-4 pr-4 text-white font-bold">
-                          $9,750.00
-                        </td>
-                        <td class="py-4 pr-4 text-slate-300">Not Added Yet</td>
-                        <td class="py-4 pr-4">
-                          <span
-                            class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider"
-                          >
-                            Verified
-                          </span>
-                        </td>
-                        <td class="py-4">
-                          <button
-                            class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-semibold"
-                          >
-                            View
-                          </button>
-                        </td>
-                      </tr>
 
-                      <tr>
                         <td class="py-4 pr-4">
-                          <div>
-                            <p class="text-white font-bold">Michael James</p>
-                            <p class="text-slate-400 text-sm mt-1">Canada</p>
-                          </div>
-                        </td>
-                        <td class="py-4 pr-4 text-slate-300">TBC-00127</td>
-                        <td class="py-4 pr-4 text-slate-300">
-                          michael@email.com
-                        </td>
-                        <td class="py-4 pr-4 text-white font-bold">
-                          $42,100.00
-                        </td>
-                        <td class="py-4 pr-4 text-slate-300">bc1q...8k92</td>
-                        <td class="py-4 pr-4">
-                          <span
-                            class="px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold uppercase tracking-wider"
+                          <a
+                            href="#"
+                            target="_blank"
+                            class="text-blue-400 underline text-sm font-semibold"
                           >
-                            Locked
-                          </span>
+                            View Proof
+                          </a>
                         </td>
+
                         <td class="py-4">
-                          <button
-                            class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-semibold"
-                          >
-                            Review
-                          </button>
+                          <div class="flex gap-2">
+                            <!-- Approve -->
+                            <button
+                              class="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-bold hover:bg-emerald-500/20 transition-all duration-200"
+                            >
+                              Approve
+                            </button>
+
+                            <!-- Reject -->
+                            <button
+                              class="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all duration-200"
+                            >
+                              Reject
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                </div>
-              </div>
-
-              <div class="grid xl:grid-cols-2 gap-4 sm:gap-6">
-                <div
-                  class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
-                >
-                  <div class="flex items-center gap-3 mb-4">
-                    <i
-                      data-lucide="shield-check"
-                      class="w-5 h-5 text-primary"
-                    ></i>
-                    <h3 class="text-white text-lg sm:text-xl font-black">
-                      Verification Queue
-                    </h3>
-                  </div>
-
-                  <div class="space-y-3">
-                    <div
-                      class="rounded-2xl bg-white/5 border border-white/10 p-4"
-                    >
-                      <div class="flex items-start justify-between gap-4">
-                        <div>
-                          <p class="text-white font-bold">Daniel Robert</p>
-                          <p class="text-slate-400 text-sm mt-1">
-                            Photo verification submitted
-                          </p>
-                        </div>
-                        <button
-                          class="px-4 py-2 rounded-xl gold-gradient text-black text-sm font-bold"
-                        >
-                          Approve
-                        </button>
-                      </div>
-                    </div>
-
-                    <div
-                      class="rounded-2xl bg-white/5 border border-white/10 p-4"
-                    >
-                      <div class="flex items-start justify-between gap-4">
-                        <div>
-                          <p class="text-white font-bold">Amina Yusuf</p>
-                          <p class="text-slate-400 text-sm mt-1">
-                            Awaiting account approval
-                          </p>
-                        </div>
-                        <button
-                          class="px-4 py-2 rounded-xl gold-gradient text-black text-sm font-bold"
-                        >
-                          Approve
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
-                >
-                  <div class="flex items-center gap-3 mb-4">
-                    <i
-                      data-lucide="wallet-cards"
-                      class="w-5 h-5 text-primary"
-                    ></i>
-                    <h3 class="text-white text-lg sm:text-xl font-black">
-                      Wallet Summary
-                    </h3>
-                  </div>
-
-                  <div class="space-y-3">
-                    <div
-                      class="rounded-2xl bg-white/5 border border-white/10 p-4 flex items-center justify-between gap-3"
-                    >
-                      <span class="text-slate-300 text-sm"
-                        >TRC20 Wallets Added</span
-                      >
-                      <span class="text-white font-black">118</span>
-                    </div>
-                    <div
-                      class="rounded-2xl bg-white/5 border border-white/10 p-4 flex items-center justify-between gap-3"
-                    >
-                      <span class="text-slate-300 text-sm"
-                        >ERC20 Wallets Added</span
-                      >
-                      <span class="text-white font-black">67</span>
-                    </div>
-                    <div
-                      class="rounded-2xl bg-white/5 border border-white/10 p-4 flex items-center justify-between gap-3"
-                    >
-                      <span class="text-slate-300 text-sm"
-                        >BTC Wallets Added</span
-                      >
-                      <span class="text-white font-black">41</span>
-                    </div>
-                    <div
-                      class="rounded-2xl bg-white/5 border border-white/10 p-4 flex items-center justify-between gap-3"
-                    >
-                      <span class="text-slate-300 text-sm">No Wallet Yet</span>
-                      <span class="text-yellow-400 font-black">22</span>
-                    </div>
-                  </div>
                 </div>
               </div>
             </section>

@@ -201,7 +201,7 @@
           </p>
         </div>
 
-        <form class="mt-8 space-y-5" action="admin-dashboard.html">
+        <form id="adminLoginForm" class="mt-8 space-y-5">
           <!-- Email field -->
           <div>
             <label
@@ -211,9 +211,9 @@
               Admin Email
             </label>
             <input
+              id="adminEmail"
               type="email"
-              placeholder="sorochijoshua30@gmail.com"
-              value="sorochijoshua30@gmail.com"
+              placeholder="Enter admin email"
               class="form-input w-full rounded-2xl px-4 py-3.5 text-sm focus:ring-1 transition-all"
             />
           </div>
@@ -227,15 +227,16 @@
               Password
             </label>
             <input
+              id="adminPassword"
               type="password"
-              placeholder="••••••••"
-              value="demo123"
+              placeholder="Enter password"
               class="form-input w-full rounded-2xl px-4 py-3.5 text-sm"
             />
           </div>
 
           <!-- Login Button -->
           <button
+            id="adminLoginSubmitBtn"
             type="submit"
             class="w-full py-3.5 text-black font-extrabold rounded-2xl gold-gradient shadow-xl shadow-primary/20 hover:scale-[1.01] transition-all duration-200 flex items-center justify-center gap-2 text-base mt-2"
           >
@@ -247,8 +248,10 @@
     </div>
 
     <script>
-      // Initialize Lucide icons dynamically
       lucide.createIcons();
     </script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/admin-login.js"></script>
   </body>
 </html>

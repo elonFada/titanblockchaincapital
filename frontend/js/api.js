@@ -6,6 +6,8 @@ const API_BASE_URL =
 
 function getStoredToken() {
   return (
+    localStorage.getItem("admin_token") ||
+    sessionStorage.getItem("admin_token") ||
     localStorage.getItem("token") ||
     sessionStorage.getItem("token") ||
     ""
