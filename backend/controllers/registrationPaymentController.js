@@ -15,9 +15,14 @@ const makePayment = asyncHandler(async (req, res) => {
     throw new Error('Please verify your email before making a payment');
   }
 
+  if (!user.isActive) {
+    res.status(403);
+    throw new Error('Your account is inactive. Please contact support.');
+  }
+
   const existingApproved = await RegistrationPayment.findOne({
     user: user._id,
-    status: 'approved'
+    status: 'approved',
   });
 
   if (existingApproved) {
@@ -27,12 +32,14 @@ const makePayment = asyncHandler(async (req, res) => {
 
   const existingPending = await RegistrationPayment.findOne({
     user: user._id,
-    status: 'pending'
+    status: 'pending',
   });
 
   if (existingPending) {
     res.status(400);
-    throw new Error('You already have a pending payment under review. Please wait for admin approval.');
+    throw new Error(
+      'You already have a pending payment under review. Please wait for admin approval.'
+    );
   }
 
   if (!req.file) {
@@ -40,25 +47,56 @@ const makePayment = asyncHandler(async (req, res) => {
     throw new Error('Payment receipt is required');
   }
 
-  if (!req.body.amount) {
+  const { coin, walletAddress, transactionId } = req.body;
+
+  if (!coin) {
     res.status(400);
-    throw new Error('Payment amount is required');
+    throw new Error('Payment coin is required');
+  }
+
+  if (!walletAddress) {
+    res.status(400);
+    throw new Error('Wallet address is required');
+  }
+
+  if (!transactionId) {
+    res.status(400);
+    throw new Error('Transaction ID is required');
+  }
+
+  const allowedCoins = ['BTC', 'ETH', 'USDT_TRC20', 'USDT_ERC20', 'BNB'];
+  if (!allowedCoins.includes(coin)) {
+    res.status(400);
+    throw new Error('Invalid payment coin selected');
+  }
+
+  const cleanedWalletAddress = String(walletAddress).trim();
+  const cleanedTransactionId = String(transactionId).trim();
+
+  const existingTransaction = await RegistrationPayment.findOne({
+    transactionId: cleanedTransactionId,
+  });
+
+  if (existingTransaction) {
+    res.status(400);
+    throw new Error('This transaction ID has already been used');
   }
 
   const payment = await RegistrationPayment.create({
     user: user._id,
     feeType: 'registration',
-    amount: req.body.amount,
+    amount: 500,
+    coin,
+    walletAddress: cleanedWalletAddress,
+    transactionId: cleanedTransactionId,
     receipt: req.file.path,
     receiptPublicId: req.file.filename,
     status: 'pending',
   });
 
-  // Update user kycStatus to submitted
   user.kycStatus = 'submitted';
   await user.save();
 
-  // Send confirmation email to user
   await sendPaymentEmail({
     to: user.email,
     fullName: user.fullName,
@@ -73,6 +111,9 @@ const makePayment = asyncHandler(async (req, res) => {
       id: payment._id,
       feeType: payment.feeType,
       amount: payment.amount,
+      coin: payment.coin,
+      walletAddress: payment.walletAddress,
+      transactionId: payment.transactionId,
       receipt: payment.receipt,
       status: payment.status,
       submittedAt: payment.createdAt,
@@ -81,8 +122,8 @@ const makePayment = asyncHandler(async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         kycStatus: user.kycStatus,
-      }
-    }
+      },
+    },
   });
 });
 

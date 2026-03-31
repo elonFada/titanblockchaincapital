@@ -17,6 +17,27 @@ const registrationPaymentSchema = new mongoose.Schema(
     amount: {
       type: Number,
       required: [true, 'Payment amount is required'],
+      default: 500,
+    },
+
+    coin: {
+      type: String,
+      required: [true, 'Payment coin is required'],
+      trim: true,
+      enum: ['BTC', 'ETH', 'USDT_TRC20', 'USDT_ERC20', 'BNB'],
+    },
+
+    walletAddress: {
+      type: String,
+      required: [true, 'Wallet address is required'],
+      trim: true,
+    },
+
+    transactionId: {
+      type: String,
+      required: [true, 'Transaction ID is required'],
+      trim: true,
+      unique: true,
     },
 
     receipt: {
@@ -26,6 +47,7 @@ const registrationPaymentSchema = new mongoose.Schema(
 
     receiptPublicId: {
       type: String,
+      default: null,
     },
 
     status: {
@@ -37,11 +59,12 @@ const registrationPaymentSchema = new mongoose.Schema(
     rejectionReason: {
       type: String,
       default: null,
+      trim: true,
     },
 
     reviewedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'Admin',
       default: null,
     },
 
@@ -55,6 +78,11 @@ const registrationPaymentSchema = new mongoose.Schema(
   }
 );
 
-const RegistrationPayment = mongoose.model('RegistrationPayment', registrationPaymentSchema);
+registrationPaymentSchema.index({ user: 1, status: 1 });
+
+const RegistrationPayment = mongoose.model(
+  'RegistrationPayment',
+  registrationPaymentSchema
+);
 
 export default RegistrationPayment;
