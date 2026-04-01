@@ -2,10 +2,7 @@
 <html class="dark" lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    />
+
     <title>TitanBlockchainCapital | Register</title>
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -170,6 +167,17 @@
       .upload-box {
         background: rgba(255, 255, 255, 0.04);
         border: 1px dashed rgba(255, 255, 255, 0.14);
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      .upload-filename {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     </style>
   </head>
