@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const dashboardSidebar = document.getElementById("dashboardSidebar");
 
   const openChatModalBtn = document.getElementById("openChatModal");
+  const openChatModalDesktopBtn = document.getElementById("openChatModalDesktop");
   const closeChatModalBtn = document.getElementById("closeChatModal");
   const chatModal = document.getElementById("chatModal");
   const chatModalCard = document.getElementById("chatModalCard");
@@ -727,6 +728,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   mobileSidebarOverlay?.addEventListener("click", closeSidebar);
 
   openChatModalBtn?.addEventListener("click", async () => {
+    openChatModal();
+    await loadChat();
+  });
+
+  openChatModalDesktopBtn?.addEventListener("click", async () => {
     openChatModal();
     await loadChat();
   });
