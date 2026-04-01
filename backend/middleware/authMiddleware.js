@@ -28,7 +28,7 @@ export const protect = asyncHandler(async (req, res, next) => {
 
   if (!token) {
     res.status(401);
-    throw new Error("Not authorized, no user token");
+    throw new Error("Not authorized");
   }
 
   try {
@@ -46,7 +46,7 @@ export const protect = asyncHandler(async (req, res, next) => {
     next();
   } catch (err) {
     res.status(401);
-    throw new Error("Not authorized, user token failed");
+    throw new Error("Not authorized");
   }
 });
 
@@ -56,7 +56,7 @@ export const adminProtect = asyncHandler(async (req, res, next) => {
 
   if (!token) {
     res.status(401);
-    throw new Error("Not authorized as admin, no admin token");
+    throw new Error("Not authorized as admin");
   }
 
   try {
@@ -79,7 +79,7 @@ export const adminProtect = asyncHandler(async (req, res, next) => {
     next();
   } catch (err) {
     res.status(401);
-    throw new Error("Not authorized as admin, token failed/expired");
+    throw new Error("Not authorized as admin");
   }
 });
 
