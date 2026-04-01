@@ -499,6 +499,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           amount: Number(d.amount || 0),
           createdAt: new Date(d.updatedAt || d.createdAt).getTime(),
         })),
+
         ...approvedWithdrawals.map((w) => ({
           type: "withdrawal",
           title: "Withdrawal",
@@ -506,13 +507,34 @@ document.addEventListener("DOMContentLoaded", async () => {
           amount: -Number(w.amount || 0),
           createdAt: new Date(w.updatedAt || w.createdAt).getTime(),
         })),
+
         ...trades
-          .filter((t) => t.status === "completed" && t.result === "profit" && Number(t.profit || 0) > 0)
+          .filter(
+            (t) =>
+              t.status === "completed" &&
+              t.result === "profit" &&
+              Number(t.profit || 0) > 0
+          )
           .map((t) => ({
             type: "profit",
             title: "Profit Credit",
             subtitle: `${formatDate(t.completedAt || t.updatedAt || t.createdAt)} • ${t.symbol || "System"}`,
             amount: Number(t.profit || 0),
+            createdAt: new Date(t.completedAt || t.updatedAt || t.createdAt).getTime(),
+          })),
+
+        ...trades
+          .filter(
+            (t) =>
+              t.status === "completed" &&
+              t.result === "loss" &&
+              Number(t.loss || 0) > 0
+          )
+          .map((t) => ({
+            type: "loss",
+            title: "Loss Debit",
+            subtitle: `${formatDate(t.completedAt || t.updatedAt || t.createdAt)} • ${t.symbol || "System"}`,
+            amount: -Number(t.loss || 0),
             createdAt: new Date(t.completedAt || t.updatedAt || t.createdAt).getTime(),
           })),
       ]
