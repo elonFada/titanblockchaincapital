@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("registerForm");
   const submitBtn = document.getElementById("registerSubmitBtn");
   const fileInput = document.getElementById("profileInput");
-  const fileText = document.getElementById("fileUploadText");
+  const fileText = document.getElementById("registerPhotoText");
 
   if (!form) return;
 
