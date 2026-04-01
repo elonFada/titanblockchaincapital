@@ -391,13 +391,24 @@
               >
                 <div class="flex items-center gap-3 min-w-0">
                   <img
+                    id="sidebarUserAvatar"
                     src="images/logo.png"
                     alt="Titan Logo"
                     class="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-cover shrink-0"
                   />
                   <div class="min-w-0">
-                    <p class="text-white font-bold truncate">Client Account</p>
-                    <p class="text-slate-400 text-sm truncate">Verified User</p>
+                    <p
+                      id="sidebarUserName"
+                      class="text-white font-bold truncate"
+                    >
+                      Client Account
+                    </p>
+                    <p
+                      id="sidebarUserStatus"
+                      class="text-slate-400 text-sm truncate"
+                    >
+                      Verified User
+                    </p>
                   </div>
                 </div>
 
@@ -523,9 +534,10 @@
                         <div>
                           <p class="text-slate-400 text-sm">Account Balance</p>
                           <h2
+                            id="accountBalanceValue"
                             class="text-white text-2xl xs:text-3xl sm:text-4xl xl:text-5xl font-black mt-2 break-words"
                           >
-                            $24,580.00
+                            $0.00
                           </h2>
                         </div>
                       </div>
@@ -571,15 +583,16 @@
                     </div>
 
                     <p
+                      id="totalDepositValue"
                       class="text-white text-2xl font-black mt-4 xl:mt-6 xl:leading-none"
                     >
-                      $12,500.00
+                      $0.00
                     </p>
-
                     <p
-                      class="text-emerald-400 text-sm mt-2 xl:mt-5 xl:leading-6"
+                      id="totalDepositMeta"
+                      class="text-slate-400 text-sm mt-2 xl:mt-5 xl:leading-6"
                     >
-                      +8.4% this month
+                      No approved deposit yet
                     </p>
                   </div>
 
@@ -600,13 +613,16 @@
                     </div>
 
                     <p
+                      id="totalWithdrawalValue"
                       class="text-white text-2xl font-black mt-4 xl:mt-6 xl:leading-none"
                     >
-                      $4,800.00
+                      $0.00
                     </p>
-
-                    <p class="text-slate-400 text-sm mt-2 xl:mt-5 xl:leading-6">
-                      Processed successfully
+                    <p
+                      id="totalWithdrawalMeta"
+                      class="text-slate-400 text-sm mt-2 xl:mt-5 xl:leading-6"
+                    >
+                      No approved withdrawals yet
                     </p>
                   </div>
 
@@ -625,15 +641,17 @@
                         class="w-5 h-5 text-primary"
                       ></i>
                     </div>
-
                     <p
+                      id="openPositionsValue"
                       class="text-white text-2xl font-black mt-4 xl:mt-6 xl:leading-none"
                     >
-                      12
+                      0
                     </p>
-
-                    <p class="text-slate-400 text-sm mt-2 xl:mt-5 xl:leading-6">
-                      Across Total Assets Trading
+                    <p
+                      id="openPositionsMeta"
+                      class="text-slate-400 text-sm mt-2 xl:mt-5 xl:leading-6"
+                    >
+                      No active positions currently
                     </p>
                   </div>
 
@@ -654,15 +672,16 @@
                     </div>
 
                     <p
+                      id="monthlyProfitValue"
                       class="text-white text-2xl font-black mt-4 xl:mt-6 xl:leading-none"
                     >
-                      $3,240.00
+                      $0.00
                     </p>
-
                     <p
-                      class="text-emerald-400 text-sm mt-2 xl:mt-5 xl:leading-6"
+                      id="monthlyProfitMeta"
+                      class="text-slate-400 text-sm mt-2 xl:mt-5 xl:leading-6"
                     >
-                      Profitable performance
+                      No profit booked this month
                     </p>
                   </div>
                 </div>
@@ -734,16 +753,16 @@
                       fill="none"
                       preserveAspectRatio="none"
                     >
-                      <!-- line -->
                       <path
+                        id="performanceChartLine"
                         d="M0 180 C60 170, 90 130, 140 140 C200 155, 230 110, 280 120 C340 135, 380 90, 440 100 C500 115, 540 70, 600 85 C660 100, 700 60, 760 75 C780 80, 790 70, 800 65"
                         stroke="#e4b84f"
                         stroke-width="4"
                         stroke-linecap="round"
                       />
 
-                      <!-- fill -->
                       <path
+                        id="performanceChartFill"
                         d="M0 180 C60 170, 90 130, 140 140 C200 155, 230 110, 280 120 C340 135, 380 90, 440 100 C500 115, 540 70, 600 85 C660 100, 700 60, 760 75 C780 80, 790 70, 800 65 V240 H0 Z"
                         fill="url(#chartFill2)"
                         opacity="0.9"
@@ -775,7 +794,9 @@
                   <!-- bottom stats -->
                   <div class="mt-5 flex items-center justify-between text-sm">
                     <span class="text-slate-400">Growth</span>
-                    <span class="text-emerald-400 font-bold">+12.8%</span>
+                    <span id="growthValue" class="text-emerald-400 font-bold"
+                      >+0.0%</span
+                    >
                   </div>
                 </div>
               </div>
@@ -800,114 +821,8 @@
                     </div>
                   </div>
 
-                  <div class="space-y-3">
-                    <!-- Transaction Item -->
-                    <div
-                      class="transaction-item rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
-                    >
-                      <button
-                        type="button"
-                        class="transaction-toggle w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
-                      >
-                        <div class="min-w-0">
-                          <p class="text-white font-bold text-sm sm:text-base">
-                            Deposit
-                          </p>
-                          <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                            24 Mar 2026 • USDT (TRC20)
-                          </p>
-                        </div>
-
-                        <div class="flex items-center gap-3 shrink-0">
-                          <p
-                            class="text-emerald-400 font-bold text-sm sm:text-base"
-                          >
-                            +$5,000
-                          </p>
-                        </div>
-                      </button>
-                    </div>
-
-                    <!-- Transaction Item -->
-                    <div
-                      class="transaction-item rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
-                    >
-                      <button
-                        type="button"
-                        class="transaction-toggle w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
-                      >
-                        <div class="min-w-0">
-                          <p class="text-white font-bold text-sm sm:text-base">
-                            Withdrawal
-                          </p>
-                          <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                            21 Mar 2026 • BTC
-                          </p>
-                        </div>
-
-                        <div class="flex items-center gap-3 shrink-0">
-                          <p
-                            class="text-red-400 font-bold text-sm sm:text-base"
-                          >
-                            -$1,200
-                          </p>
-                        </div>
-                      </button>
-                    </div>
-
-                    <!-- Transaction Item -->
-                    <div
-                      class="transaction-item rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
-                    >
-                      <button
-                        type="button"
-                        class="transaction-toggle w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
-                      >
-                        <div class="min-w-0">
-                          <p class="text-white font-bold text-sm sm:text-base">
-                            Profit Credit
-                          </p>
-                          <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                            18 Mar 2026 • System
-                          </p>
-                        </div>
-
-                        <div class="flex items-center gap-3 shrink-0">
-                          <p
-                            class="text-emerald-400 font-bold text-sm sm:text-base"
-                          >
-                            +$840
-                          </p>
-                        </div>
-                      </button>
-                    </div>
-
-                    <!-- Transaction Item -->
-                    <div
-                      class="transaction-item rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
-                    >
-                      <button
-                        type="button"
-                        class="transaction-toggle w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
-                      >
-                        <div class="min-w-0">
-                          <p class="text-white font-bold text-sm sm:text-base">
-                            Deposit
-                          </p>
-                          <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                            15 Mar 2026 • Ethereum
-                          </p>
-                        </div>
-
-                        <div class="flex items-center gap-3 shrink-0">
-                          <p
-                            class="text-emerald-400 font-bold text-sm sm:text-base"
-                          >
-                            +$2,500
-                          </p>
-                        </div>
-                      </button>
-                    </div>
+                  <div id="recentTransactionsContainer" class="space-y-3">
+                    <!-- dashboard.js will render recent transactions here -->
                   </div>
                 </div>
               </div>

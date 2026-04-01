@@ -7,6 +7,8 @@ import userRoutes from './routes/userRoutes.js';
 import registrationPaymentRoutes from './routes/registrationPaymentRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import depositRoutes from './routes/depositRoutes.js';
+import withdrawalRoutes from "./routes/withdrawalRoutes.js";
+import tradingRoutes from "./routes/tradingRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 dotenv.config();
@@ -57,6 +59,8 @@ app.use('/api/user', userRoutes);
 app.use('/api/payment/registration', registrationPaymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/deposit', depositRoutes);
+app.use("/api/withdrawal", withdrawalRoutes);
+app.use("/api/trading", tradingRoutes);
 
 // Error handlers
 app.use(notFound);
