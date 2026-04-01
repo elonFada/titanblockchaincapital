@@ -189,10 +189,23 @@
         box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.08);
         outline: none;
       }
-
+    </style>
+    <style>
       .upload-box {
         background: rgba(255, 255, 255, 0.04);
         border: 1px dashed rgba(255, 255, 255, 0.14);
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      .upload-filename {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        line-height: 1.7;
       }
     </style>
   </head>
