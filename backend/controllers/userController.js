@@ -6,11 +6,8 @@ import {
   generateUserToken,
   clearUserToken,
 } from '../utils/generateToken.js';
-import {
-  generateOTP,
-  getOTPExpiry,
-  sendEmailOTP,
-} from '../utils/otpResend.js';
+import { generateOTP, getOTPExpiry } from '../utils/otpResend.js';
+import { sendEmailOTP } from '../utils/emailService.js';
 import {
   validateFullName,
   validateEmail,

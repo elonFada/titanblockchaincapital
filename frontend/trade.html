@@ -312,209 +312,209 @@
     <main class="py-4 xs:py-6 sm:py-8 lg:py-10 pb-24 lg:pb-10">
       <div class="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
         <div class="relative">
-          <div
-            id="mobileSidebarOverlay"
-            class="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px] opacity-0 invisible transition-all duration-300"
-          ></div>
-
-          <div class="grid lg:grid-cols-[280px_1fr] gap-4 sm:gap-6 lg:gap-8">
-            <aside
-              id="dashboardSidebar"
-              class="premium-panel premium-border rounded-r-3xl lg:rounded-3xl p-4 sm:p-5 lg:p-6 h-screen lg:h-fit w-[86%] max-w-[320px] lg:w-auto fixed lg:static top-0 left-0 z-50 lg:z-auto -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto"
+          <section class="space-y-4 sm:space-y-6 min-w-0">
+            <div
+              class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
             >
               <div
-                class="flex items-center justify-between pb-5 border-b border-white/10"
+                class="grid xl:grid-cols-[1.1fr_0.9fr] gap-6 lg:gap-8 items-center"
               >
-                <div class="flex items-center gap-3 min-w-0">
-                  <img
-                    src="images/logo.png"
-                    alt="Titan Logo"
-                    class="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-cover shrink-0"
-                  />
-                  <div class="min-w-0">
-                    <p class="text-white font-bold truncate">Client Account</p>
-                    <p class="text-slate-400 text-sm truncate">Verified User</p>
+                <div class="min-w-0">
+                  <div
+                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] xs:text-[11px] font-bold uppercase tracking-widest mb-4"
+                  >
+                    Live Trade Signals
                   </div>
-                </div>
 
-                <button
-                  id="mobileSidebarClose"
-                  class="lg:hidden h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 shrink-0"
-                  aria-label="Close menu"
-                >
-                  <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-              </div>
-
-              <nav class="mt-6 space-y-3">
-                <a
-                  href="dashboard.html"
-                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
-                >
-                  <i
-                    data-lucide="layout-dashboard"
-                    class="w-5 h-5 text-slate-300"
-                  ></i>
-                  <span class="text-sm font-semibold text-white"
-                    >Dashboard</span
-                  >
-                </a>
-
-                <a
-                  href="trade.html"
-                  class="sidebar-link active flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
-                >
-                  <i
-                    data-lucide="candlestick-chart"
-                    class="w-5 h-5 text-slate-300"
-                  ></i>
-                  <span class="text-sm font-semibold text-white">Trade</span>
-                </a>
-
-                <a
-                  href="deposit.html"
-                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
-                >
-                  <i data-lucide="wallet" class="w-5 h-5 text-slate-300"></i>
-                  <span class="text-sm font-semibold text-white">Deposit</span>
-                </a>
-
-                <a
-                  href="withdrawal.html"
-                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
-                >
-                  <i
-                    data-lucide="arrow-up-right"
-                    class="w-5 h-5 text-slate-300"
-                  ></i>
-                  <span class="text-sm font-semibold text-white">Withdraw</span>
-                </a>
-
-                <a
-                  href="trading-bot.html"
-                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
-                >
-                  <i data-lucide="bot" class="w-5 h-5 text-slate-300"></i>
-                  <span class="text-sm font-semibold text-white"
-                    >Trading Bot</span
-                  >
-                </a>
-
-                <a
-                  href="profile.html"
-                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
-                >
-                  <i
-                    data-lucide="user-circle-2"
-                    class="w-5 h-5 text-slate-300"
-                  ></i>
-                  <span class="text-sm font-semibold text-white">Profile</span>
-                </a>
-
-                <a
-                  href="#"
-                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
-                >
-                  <i data-lucide="headset" class="w-5 h-5 text-slate-300"></i>
-                  <span class="text-sm font-semibold text-white">Support</span>
-                </a>
-              </nav>
-            </aside>
-
-            <section class="space-y-4 sm:space-y-6 min-w-0">
-              <div
-                class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
-              >
-                <div
-                  class="grid xl:grid-cols-[1.1fr_0.9fr] gap-6 lg:gap-8 items-center"
-                >
-                  <div class="min-w-0">
+                  <div class="mt-6 flex flex-col xs:flex-row flex-wrap gap-3">
                     <div
-                      class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] xs:text-[11px] font-bold uppercase tracking-widest mb-4"
+                      class="px-4 py-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-sm"
                     >
-                      Live Trade Signals
-                    </div>
-
-                    <div class="mt-6 flex flex-col xs:flex-row flex-wrap gap-3">
-                      <div
-                        class="px-4 py-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-sm"
-                      >
-                        3 Live Signals Available
-                      </div>
+                      3 Live Signals Available
                     </div>
                   </div>
+                </div>
 
-                  <div class="min-w-0">
-                    <div class="glass-card rounded-3xl p-5 sm:p-6">
-                      <div class="flex items-center justify-between gap-4">
-                        <div>
-                          <p class="text-slate-400 text-sm">Signal Accuracy</p>
-                          <h2 class="text-white text-4xl font-black mt-3">
-                            78%
-                          </h2>
-                          <p
-                            class="text-emerald-400 text-sm mt-2 font-semibold"
+                <div class="min-w-0">
+                  <div class="glass-card rounded-3xl p-5 sm:p-6">
+                    <div class="flex items-center justify-between gap-4">
+                      <div>
+                        <p class="text-slate-400 text-sm">Signal Accuracy</p>
+                        <h2 class="text-white text-4xl font-black mt-3">78%</h2>
+                        <p class="text-emerald-400 text-sm mt-2 font-semibold">
+                          Strong recent performance
+                        </p>
+                      </div>
+
+                      <div
+                        class="h-14 w-14 rounded-2xl gold-gradient flex items-center justify-center shrink-0"
+                      >
+                        <i data-lucide="target" class="w-7 h-7 text-black"></i>
+                      </div>
+                    </div>
+
+                    <div class="mini-chart mt-5">
+                      <svg
+                        viewBox="0 0 800 240"
+                        fill="none"
+                        preserveAspectRatio="none"
+                      >
+                        <path
+                          d="M0 170 C60 180, 90 140, 140 148 C200 158, 230 110, 280 118 C340 126, 390 92, 450 102 C520 114, 560 76, 620 88 C690 102, 720 54, 800 62"
+                          stroke="#e4b84f"
+                          stroke-width="4"
+                          stroke-linecap="round"
+                        />
+                        <path
+                          d="M0 170 C60 180, 90 140, 140 148 C200 158, 230 110, 280 118 C340 126, 390 92, 450 102 C520 114, 560 76, 620 88 C690 102, 720 54, 800 62 V240 H0 Z"
+                          fill="url(#tradeChartFill)"
+                          opacity="0.9"
+                        />
+                        <defs>
+                          <linearGradient
+                            id="tradeChartFill"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
                           >
-                            Strong recent performance
-                          </p>
-                        </div>
-
-                        <div
-                          class="h-14 w-14 rounded-2xl gold-gradient flex items-center justify-center shrink-0"
-                        >
-                          <i
-                            data-lucide="target"
-                            class="w-7 h-7 text-black"
-                          ></i>
-                        </div>
-                      </div>
-
-                      <div class="mini-chart mt-5">
-                        <svg
-                          viewBox="0 0 800 240"
-                          fill="none"
-                          preserveAspectRatio="none"
-                        >
-                          <path
-                            d="M0 170 C60 180, 90 140, 140 148 C200 158, 230 110, 280 118 C340 126, 390 92, 450 102 C520 114, 560 76, 620 88 C690 102, 720 54, 800 62"
-                            stroke="#e4b84f"
-                            stroke-width="4"
-                            stroke-linecap="round"
-                          />
-                          <path
-                            d="M0 170 C60 180, 90 140, 140 148 C200 158, 230 110, 280 118 C340 126, 390 92, 450 102 C520 114, 560 76, 620 88 C690 102, 720 54, 800 62 V240 H0 Z"
-                            fill="url(#tradeChartFill)"
-                            opacity="0.9"
-                          />
-                          <defs>
-                            <linearGradient
-                              id="tradeChartFill"
-                              x1="0"
-                              y1="0"
-                              x2="0"
-                              y2="1"
-                            >
-                              <stop
-                                offset="0%"
-                                stop-color="#e4b84f"
-                                stop-opacity="0.30"
-                              />
-                              <stop
-                                offset="100%"
-                                stop-color="#e4b84f"
-                                stop-opacity="0"
-                              />
-                            </linearGradient>
-                          </defs>
-                        </svg>
-                      </div>
+                            <stop
+                              offset="0%"
+                              stop-color="#e4b84f"
+                              stop-opacity="0.30"
+                            />
+                            <stop
+                              offset="100%"
+                              stop-color="#e4b84f"
+                              stop-opacity="0"
+                            />
+                          </linearGradient>
+                        </defs>
+                      </svg>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
+            <div
+              class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
+            >
               <div
-                class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
+                class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-5 sm:mb-6"
+              >
+                <div class="min-w-0">
+                  <h3
+                    class="text-white text-xl sm:text-2xl font-black tracking-tight"
+                  >
+                    Live Trade Signals
+                  </h3>
+                  <p class="text-slate-400 text-sm mt-2">
+                    Review and accept active trade signals.
+                  </p>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <div
+                  class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
+                >
+                  <div
+                    class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-4 sm:px-5 py-4"
+                  >
+                    <div class="min-w-0">
+                      <p class="text-white font-bold text-sm sm:text-base">
+                        EUR/USD BUY
+                      </p>
+                      <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                        Entry 1.0820 • TP 1.0880 • SL 1.0785
+                      </p>
+                    </div>
+
+                    <div class="flex items-center gap-3 shrink-0">
+                      <span
+                        class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
+                      >
+                        Live
+                      </span>
+                      <button
+                        type="button"
+                        class="px-4 py-2 rounded-xl gold-gradient text-black text-sm font-bold"
+                      >
+                        Accept
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
+                >
+                  <div
+                    class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-4 sm:px-5 py-4"
+                  >
+                    <div class="min-w-0">
+                      <p class="text-white font-bold text-sm sm:text-base">
+                        GOLD SELL
+                      </p>
+                      <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                        Entry 2168.00 • TP 2149.00 • SL 2178.50
+                      </p>
+                    </div>
+
+                    <div class="flex items-center gap-3 shrink-0">
+                      <span
+                        class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
+                      >
+                        Live
+                      </span>
+                      <button
+                        type="button"
+                        class="px-4 py-2 rounded-xl gold-gradient text-black text-sm font-bold"
+                      >
+                        Accept
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
+                >
+                  <div
+                    class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-4 sm:px-5 py-4"
+                  >
+                    <div class="min-w-0">
+                      <p class="text-white font-bold text-sm sm:text-base">
+                        NAS100 BUY
+                      </p>
+                      <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                        Entry 18245 • TP 18380 • SL 18170
+                      </p>
+                    </div>
+
+                    <div class="flex items-center gap-3 shrink-0">
+                      <span
+                        class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
+                      >
+                        Live
+                      </span>
+                      <button
+                        type="button"
+                        class="px-4 py-2 rounded-xl gold-gradient text-black text-sm font-bold"
+                      >
+                        Accept
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- History -->
+            <div class="w-full">
+              <div
+                class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8 min-w-0 w-full"
               >
                 <div
                   class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-5 sm:mb-6"
@@ -523,10 +523,11 @@
                     <h3
                       class="text-white text-xl sm:text-2xl font-black tracking-tight"
                     >
-                      Live Trade Signals
+                      Trade Profit / Loss History
                     </h3>
                     <p class="text-slate-400 text-sm mt-2">
-                      Review and accept active trade signals.
+                      View your recently closed trade outcomes in a simple
+                      format.
                     </p>
                   </div>
                 </div>
@@ -535,15 +536,16 @@
                   <div
                     class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
                   >
-                    <div
-                      class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-4 sm:px-5 py-4"
+                    <button
+                      type="button"
+                      class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
                     >
                       <div class="min-w-0">
                         <p class="text-white font-bold text-sm sm:text-base">
                           EUR/USD BUY
                         </p>
                         <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                          Entry 1.0820 • TP 1.0880 • SL 1.0785
+                          24 Mar 2026 • Closed Trade
                         </p>
                       </div>
 
@@ -551,61 +553,59 @@
                         <span
                           class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
                         >
-                          Live
+                          Profit
                         </span>
-                        <button
-                          type="button"
-                          class="px-4 py-2 rounded-xl gold-gradient text-black text-sm font-bold"
+                        <p
+                          class="text-emerald-400 font-bold text-sm sm:text-base"
                         >
-                          Accept
-                        </button>
+                          +$840
+                        </p>
                       </div>
-                    </div>
+                    </button>
                   </div>
 
                   <div
                     class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
                   >
-                    <div
-                      class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-4 sm:px-5 py-4"
+                    <button
+                      type="button"
+                      class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
                     >
                       <div class="min-w-0">
                         <p class="text-white font-bold text-sm sm:text-base">
                           GOLD SELL
                         </p>
                         <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                          Entry 2168.00 • TP 2149.00 • SL 2178.50
+                          22 Mar 2026 • Closed Trade
                         </p>
                       </div>
 
                       <div class="flex items-center gap-3 shrink-0">
                         <span
-                          class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
+                          class="px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
                         >
-                          Live
+                          Loss
                         </span>
-                        <button
-                          type="button"
-                          class="px-4 py-2 rounded-xl gold-gradient text-black text-sm font-bold"
-                        >
-                          Accept
-                        </button>
+                        <p class="text-red-400 font-bold text-sm sm:text-base">
+                          -$320
+                        </p>
                       </div>
-                    </div>
+                    </button>
                   </div>
 
                   <div
                     class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
                   >
-                    <div
-                      class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-4 sm:px-5 py-4"
+                    <button
+                      type="button"
+                      class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
                     >
                       <div class="min-w-0">
                         <p class="text-white font-bold text-sm sm:text-base">
                           NAS100 BUY
                         </p>
                         <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                          Entry 18245 • TP 18380 • SL 18170
+                          20 Mar 2026 • Closed Trade
                         </p>
                       </div>
 
@@ -613,170 +613,51 @@
                         <span
                           class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
                         >
-                          Live
+                          Profit
                         </span>
-                        <button
-                          type="button"
-                          class="px-4 py-2 rounded-xl gold-gradient text-black text-sm font-bold"
+                        <p
+                          class="text-emerald-400 font-bold text-sm sm:text-base"
                         >
-                          Accept
-                        </button>
+                          +$1,120
+                        </p>
                       </div>
-                    </div>
+                    </button>
                   </div>
-                </div>
-              </div>
 
-              <!-- History -->
-              <div class="w-full">
-                <div
-                  class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8 min-w-0 w-full"
-                >
                   <div
-                    class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-5 sm:mb-6"
+                    class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
                   >
-                    <div class="min-w-0">
-                      <h3
-                        class="text-white text-xl sm:text-2xl font-black tracking-tight"
-                      >
-                        Trade Profit / Loss History
-                      </h3>
-                      <p class="text-slate-400 text-sm mt-2">
-                        View your recently closed trade outcomes in a simple
-                        format.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div class="space-y-3">
-                    <div
-                      class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
+                    <button
+                      type="button"
+                      class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
                     >
-                      <button
-                        type="button"
-                        class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
-                      >
-                        <div class="min-w-0">
-                          <p class="text-white font-bold text-sm sm:text-base">
-                            EUR/USD BUY
-                          </p>
-                          <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                            24 Mar 2026 • Closed Trade
-                          </p>
-                        </div>
+                      <div class="min-w-0">
+                        <p class="text-white font-bold text-sm sm:text-base">
+                          BTC/USD BUY
+                        </p>
+                        <p class="text-slate-400 text-xs sm:text-sm mt-1">
+                          18 Mar 2026 • Closed Trade
+                        </p>
+                      </div>
 
-                        <div class="flex items-center gap-3 shrink-0">
-                          <span
-                            class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
-                          >
-                            Profit
-                          </span>
-                          <p
-                            class="text-emerald-400 font-bold text-sm sm:text-base"
-                          >
-                            +$840
-                          </p>
-                        </div>
-                      </button>
-                    </div>
-
-                    <div
-                      class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
-                    >
-                      <button
-                        type="button"
-                        class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
-                      >
-                        <div class="min-w-0">
-                          <p class="text-white font-bold text-sm sm:text-base">
-                            GOLD SELL
-                          </p>
-                          <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                            22 Mar 2026 • Closed Trade
-                          </p>
-                        </div>
-
-                        <div class="flex items-center gap-3 shrink-0">
-                          <span
-                            class="px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
-                          >
-                            Loss
-                          </span>
-                          <p
-                            class="text-red-400 font-bold text-sm sm:text-base"
-                          >
-                            -$320
-                          </p>
-                        </div>
-                      </button>
-                    </div>
-
-                    <div
-                      class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
-                    >
-                      <button
-                        type="button"
-                        class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
-                      >
-                        <div class="min-w-0">
-                          <p class="text-white font-bold text-sm sm:text-base">
-                            NAS100 BUY
-                          </p>
-                          <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                            20 Mar 2026 • Closed Trade
-                          </p>
-                        </div>
-
-                        <div class="flex items-center gap-3 shrink-0">
-                          <span
-                            class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
-                          >
-                            Profit
-                          </span>
-                          <p
-                            class="text-emerald-400 font-bold text-sm sm:text-base"
-                          >
-                            +$1,120
-                          </p>
-                        </div>
-                      </button>
-                    </div>
-
-                    <div
-                      class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
-                    >
-                      <button
-                        type="button"
-                        class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
-                      >
-                        <div class="min-w-0">
-                          <p class="text-white font-bold text-sm sm:text-base">
-                            BTC/USD BUY
-                          </p>
-                          <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                            18 Mar 2026 • Closed Trade
-                          </p>
-                        </div>
-
-                        <div class="flex items-center gap-3 shrink-0">
-                          <span
-                            class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
-                          >
-                            Profit
-                          </span>
-                          <p
-                            class="text-emerald-400 font-bold text-sm sm:text-base"
-                          >
-                            +$560
-                          </p>
-                        </div>
-                      </button>
-                    </div>
+                      <div class="flex items-center gap-3 shrink-0">
+                        <span
+                          class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
+                        >
+                          Profit
+                        </span>
+                        <p
+                          class="text-emerald-400 font-bold text-sm sm:text-base"
+                        >
+                          +$560
+                        </p>
+                      </div>
+                    </button>
                   </div>
                 </div>
               </div>
-            </section>
-          </div>
+            </div>
+          </section>
         </div>
       </div>
     </main>

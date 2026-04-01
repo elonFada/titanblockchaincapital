@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import RegistrationPayment from '../models/registrationPaymentModel.js';
 import User from '../models/userModel.js';
-import { sendPaymentEmail } from '../utils/otpResend.js';
+import { sendPaymentEmail } from '../utils/emailService.js';
 
 
 // @desc    Submit registration payment
