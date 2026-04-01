@@ -4,6 +4,32 @@ import UserTrade from "../models/userTradeModel.js";
 import User from "../models/userModel.js";
 import { sendTradingSignalEmail } from "../utils/emailService.js";
 
+// ==================== HELPERS ====================
+
+const ALLOWED_RESULTS = ["profit", "loss"];
+const ALLOWED_SIGNAL_STATUSES = ["active", "completed", "expired"];
+
+const toNumber = (value) => Number(value);
+
+const isValidPositiveNumber = (value) =>
+  !Number.isNaN(Number(value)) && Number(value) > 0;
+
+const isValidPercentage = (value) =>
+  !Number.isNaN(Number(value)) && Number(value) > 0 && Number(value) <= 100;
+
+const getSignalOutcomeType = (signal) => {
+  if (Number(signal?.profitPercentage || 0) > 0) return "profit";
+  if (Number(signal?.lossPercentage || 0) > 0) return "loss";
+  return null;
+};
+
+const buildTradeEmailSignal = (signal) => ({
+  symbol: signal.symbol,
+  entryPoint: signal.entryPoint,
+  takeProfit: signal.takeProfit,
+  stopLoss: signal.stopLoss,
+});
+
 // ==================== ADMIN SIGNAL MANAGEMENT ====================
 
 // @desc    Create trading signal (Admin)
@@ -33,41 +59,50 @@ const createSignal = asyncHandler(async (req, res) => {
     );
   }
 
-  if (!["profit", "loss"].includes(outcomeType)) {
+  if (!ALLOWED_RESULTS.includes(outcomeType)) {
     res.status(400);
     throw new Error('Outcome type must be either "profit" or "loss"');
   }
 
-  const numericEntry = Number(entryPoint);
-  const numericTP = Number(takeProfit);
-  const numericSL = Number(stopLoss);
-  const numericPercent = Number(percentage);
-
-  if (
-    Number.isNaN(numericEntry) ||
-    Number.isNaN(numericTP) ||
-    Number.isNaN(numericSL) ||
-    Number.isNaN(numericPercent)
-  ) {
+  if (!isValidPositiveNumber(entryPoint)) {
     res.status(400);
-    throw new Error("Please provide valid numeric values");
+    throw new Error("Entry point must be a valid number greater than 0");
   }
 
-  if (numericPercent <= 0 || numericPercent > 100) {
+  if (!isValidPositiveNumber(takeProfit)) {
     res.status(400);
-    throw new Error("Outcome percentage must be between 0.01 and 100");
+    throw new Error("Take profit must be a valid number greater than 0");
   }
 
-  const signal = await TradingSignal.create({
-    symbol,
-    entryPoint: numericEntry,
-    takeProfit: numericTP,
-    stopLoss: numericSL,
-    profitPercentage: outcomeType === "profit" ? numericPercent : 0,
-    lossPercentage: outcomeType === "loss" ? numericPercent : 0,
-    createdBy: req.admin._id,
+  if (!isValidPositiveNumber(stopLoss)) {
+    res.status(400);
+    throw new Error("Stop loss must be a valid number greater than 0");
+  }
+
+  if (!isValidPercentage(percentage)) {
+    res.status(400);
+    throw new Error("Percentage must be between 0.01 and 100");
+  }
+
+  const numericEntryPoint = toNumber(entryPoint);
+  const numericTakeProfit = toNumber(takeProfit);
+  const numericStopLoss = toNumber(stopLoss);
+  const numericPercentage = toNumber(percentage);
+
+  const signalPayload = {
+    symbol: String(symbol).trim().toUpperCase(),
+    entryPoint: numericEntryPoint,
+    takeProfit: numericTakeProfit,
+    stopLoss: numericStopLoss,
+    profitPercentage: outcomeType === "profit" ? numericPercentage : 0,
+    lossPercentage: outcomeType === "loss" ? numericPercentage : 0,
     status: "active",
-  });
+    result: null,
+    completedAt: null,
+    createdBy: req.admin._id,
+  };
+
+  const signal = await TradingSignal.create(signalPayload);
 
   res.status(201).json({
     success: true,
@@ -83,16 +118,19 @@ const getAllSignals = asyncHandler(async (req, res) => {
   const { status } = req.query;
 
   const filter = {};
-  if (status) filter.status = status;
+  if (status) {
+    filter.status = status;
+  }
 
   const signals = await TradingSignal.find(filter)
-    .populate("createdBy", "name email")
-    .sort("-createdAt");
+    .populate("createdBy", "name email fullName")
+    .sort({ createdAt: -1 });
 
   const stats = {
     total: signals.length,
-    active: signals.filter((s) => s.status === "active").length,
-    completed: signals.filter((s) => s.status === "completed").length,
+    active: signals.filter((signal) => signal.status === "active").length,
+    completed: signals.filter((signal) => signal.status === "completed").length,
+    expired: signals.filter((signal) => signal.status === "expired").length,
   };
 
   res.status(200).json({
@@ -109,7 +147,7 @@ const getAllSignals = asyncHandler(async (req, res) => {
 const getSignalById = asyncHandler(async (req, res) => {
   const signal = await TradingSignal.findById(req.params.id).populate(
     "createdBy",
-    "name email"
+    "name email fullName"
   );
 
   if (!signal) {
@@ -136,7 +174,7 @@ const updateSignal = asyncHandler(async (req, res) => {
 
   if (signal.status === "completed") {
     res.status(400);
-    throw new Error("Cannot update completed signal");
+    throw new Error("Cannot update a completed signal");
   }
 
   const {
@@ -145,36 +183,81 @@ const updateSignal = asyncHandler(async (req, res) => {
     takeProfit,
     stopLoss,
     outcomeType,
-    outcomePercentage,
+    percentage,
     status,
   } = req.body;
 
-  if (symbol) signal.symbol = symbol;
-  if (entryPoint !== undefined) signal.entryPoint = Number(entryPoint);
-  if (takeProfit !== undefined) signal.takeProfit = Number(takeProfit);
-  if (stopLoss !== undefined) signal.stopLoss = Number(stopLoss);
+  if (symbol !== undefined) {
+    signal.symbol = String(symbol).trim().toUpperCase();
+  }
 
-  if (outcomeType) {
-    if (!["profit", "loss"].includes(outcomeType)) {
+  if (entryPoint !== undefined) {
+    if (!isValidPositiveNumber(entryPoint)) {
+      res.status(400);
+      throw new Error("Entry point must be a valid number greater than 0");
+    }
+    signal.entryPoint = toNumber(entryPoint);
+  }
+
+  if (takeProfit !== undefined) {
+    if (!isValidPositiveNumber(takeProfit)) {
+      res.status(400);
+      throw new Error("Take profit must be a valid number greater than 0");
+    }
+    signal.takeProfit = toNumber(takeProfit);
+  }
+
+  if (stopLoss !== undefined) {
+    if (!isValidPositiveNumber(stopLoss)) {
+      res.status(400);
+      throw new Error("Stop loss must be a valid number greater than 0");
+    }
+    signal.stopLoss = toNumber(stopLoss);
+  }
+
+  if (outcomeType !== undefined || percentage !== undefined) {
+    const nextOutcomeType = outcomeType || getSignalOutcomeType(signal);
+    const nextPercentage =
+      percentage !== undefined
+        ? toNumber(percentage)
+        : nextOutcomeType === "profit"
+          ? Number(signal.profitPercentage || 0)
+          : Number(signal.lossPercentage || 0);
+
+    if (!ALLOWED_RESULTS.includes(nextOutcomeType)) {
       res.status(400);
       throw new Error('Outcome type must be either "profit" or "loss"');
     }
-    signal.outcomeType = outcomeType;
-  }
 
-  if (outcomePercentage !== undefined) {
-    const numericPercent = Number(outcomePercentage);
-    if (Number.isNaN(numericPercent) || numericPercent <= 0 || numericPercent > 100) {
+    if (!isValidPercentage(nextPercentage)) {
       res.status(400);
-      throw new Error("Outcome percentage must be between 0.01 and 100");
+      throw new Error("Percentage must be between 0.01 and 100");
     }
-    signal.outcomePercentage = numericPercent;
+
+    signal.profitPercentage =
+      nextOutcomeType === "profit" ? Number(nextPercentage) : 0;
+    signal.lossPercentage =
+      nextOutcomeType === "loss" ? Number(nextPercentage) : 0;
   }
 
-  if (status && ["active", "completed"].includes(status)) {
+  if (status !== undefined) {
+    if (!ALLOWED_SIGNAL_STATUSES.includes(status)) {
+      res.status(400);
+      throw new Error("Invalid signal status");
+    }
+
+    if (status === "completed") {
+      res.status(400);
+      throw new Error("Use the close trade endpoint to complete a signal");
+    }
+
     signal.status = status;
-    if (status === "completed" && !signal.completedAt) {
+
+    if (status === "expired") {
       signal.completedAt = new Date();
+    } else if (status === "active") {
+      signal.completedAt = null;
+      signal.result = null;
     }
   }
 
@@ -198,14 +281,14 @@ const deleteSignal = asyncHandler(async (req, res) => {
     throw new Error("Signal not found");
   }
 
-  const activeTrades = await UserTrade.findOne({
+  const activeTradeExists = await UserTrade.exists({
     signal: signal._id,
     status: "active",
   });
 
-  if (activeTrades) {
+  if (activeTradeExists) {
     res.status(400);
-    throw new Error("Cannot delete signal with active accepted trades");
+    throw new Error("Cannot delete a signal with active accepted trades");
   }
 
   await signal.deleteOne();
@@ -227,7 +310,7 @@ const completeSignal = asyncHandler(async (req, res) => {
     throw new Error("Result is required");
   }
 
-  if (result !== "profit" && result !== "loss") {
+  if (!ALLOWED_RESULTS.includes(result)) {
     res.status(400);
     throw new Error('Result must be either "profit" or "loss"');
   }
@@ -244,28 +327,34 @@ const completeSignal = asyncHandler(async (req, res) => {
     throw new Error("Signal is not active");
   }
 
+  const activeTrades = await UserTrade.find({
+    signal: signal._id,
+    status: "active",
+  }).populate("user");
+
   signal.status = "completed";
   signal.result = result;
   signal.completedAt = new Date();
   await signal.save();
 
-  const userTrades = await UserTrade.find({
-    signal: signal._id,
-    status: "active",
-  }).populate("user");
-
   let processedCount = 0;
 
-  for (const trade of userTrades) {
-    const user = trade.user;
+  for (const trade of activeTrades) {
+    const user = await User.findById(trade.user?._id || trade.user);
 
-    if (!user) continue;
+    if (!user) {
+      continue;
+    }
+
+    const currentBalanceAtClose = Number(user.balance || 0);
+    const profitPercentage = Number(signal.profitPercentage || 0);
+    const lossPercentage = Number(signal.lossPercentage || 0);
 
     let profitAmount = 0;
     let lossAmount = 0;
 
     if (result === "profit") {
-      profitAmount = ((trade.acceptedBalance || 0) * (trade.profitPercentage || 0)) / 100;
+      profitAmount = (currentBalanceAtClose * profitPercentage) / 100;
 
       trade.result = "profit";
       trade.profit = profitAmount;
@@ -273,25 +362,27 @@ const completeSignal = asyncHandler(async (req, res) => {
       trade.status = "completed";
       trade.completedAt = new Date();
 
-      user.balance = (user.balance || 0) + profitAmount;
-      user.totalProfit = (user.totalProfit || 0) + profitAmount;
+      user.balance = currentBalanceAtClose + profitAmount;
+      user.totalProfit = Number(user.totalProfit || 0) + profitAmount;
 
-      await sendTradingSignalEmail({
-        to: user.email,
-        fullName: user.fullName,
-        type: "profit",
-        signal: {
-          symbol: signal.symbol,
-          entryPoint: signal.entryPoint,
-          takeProfit: signal.takeProfit,
-          stopLoss: signal.stopLoss,
-        },
-        profitAmount,
-        lossAmount: 0,
-        newBalance: user.balance,
-      });
+      await trade.save();
+      await user.save();
+
+      try {
+        await sendTradingSignalEmail({
+          to: user.email,
+          fullName: user.fullName,
+          type: "profit",
+          signal: buildTradeEmailSignal(signal),
+          profitAmount,
+          lossAmount: 0,
+          newBalance: user.balance,
+        });
+      } catch (error) {
+        console.error("Failed to send profit email:", error);
+      }
     } else {
-      lossAmount = ((trade.acceptedBalance || 0) * (trade.lossPercentage || 0)) / 100;
+      lossAmount = (currentBalanceAtClose * lossPercentage) / 100;
 
       trade.result = "loss";
       trade.loss = lossAmount;
@@ -299,26 +390,26 @@ const completeSignal = asyncHandler(async (req, res) => {
       trade.status = "completed";
       trade.completedAt = new Date();
 
-      user.balance = Math.max(0, (user.balance || 0) - lossAmount);
+      user.balance = Math.max(0, currentBalanceAtClose - lossAmount);
 
-      await sendTradingSignalEmail({
-        to: user.email,
-        fullName: user.fullName,
-        type: "loss",
-        signal: {
-          symbol: signal.symbol,
-          entryPoint: signal.entryPoint,
-          takeProfit: signal.takeProfit,
-          stopLoss: signal.stopLoss,
-        },
-        profitAmount: 0,
-        lossAmount,
-        newBalance: user.balance,
-      });
+      await trade.save();
+      await user.save();
+
+      try {
+        await sendTradingSignalEmail({
+          to: user.email,
+          fullName: user.fullName,
+          type: "loss",
+          signal: buildTradeEmailSignal(signal),
+          profitAmount: 0,
+          lossAmount,
+          newBalance: user.balance,
+        });
+      } catch (error) {
+        console.error("Failed to send loss email:", error);
+      }
     }
 
-    await trade.save();
-    await user.save();
     processedCount += 1;
   }
 
@@ -339,18 +430,20 @@ const completeSignal = asyncHandler(async (req, res) => {
 // @route   GET /api/trading/signals/available
 // @access  Private
 const getAvailableSignals = asyncHandler(async (req, res) => {
-  const signals = await TradingSignal.find({
+  const activeSignals = await TradingSignal.find({
     status: "active",
-  }).sort("-createdAt");
+  }).sort({ createdAt: -1 });
 
-  const userTrades = await UserTrade.find({
+  const existingUserTrades = await UserTrade.find({
     user: req.user._id,
   }).select("signal");
 
-  const takenSignalIds = userTrades.map((t) => t.signal.toString());
+  const takenSignalIds = new Set(
+    existingUserTrades.map((trade) => String(trade.signal))
+  );
 
-  const availableSignals = signals.filter(
-    (signal) => !takenSignalIds.includes(signal._id.toString())
+  const availableSignals = activeSignals.filter(
+    (signal) => !takenSignalIds.has(String(signal._id))
   );
 
   res.status(200).json({
@@ -386,12 +479,11 @@ const takeSignal = asyncHandler(async (req, res) => {
     throw new Error("You have already accepted this signal");
   }
 
-  if (Number(req.user.balance || 0) <= 0) {
+  const currentUserBalance = Number(req.user.balance || 0);
+  if (currentUserBalance <= 0) {
     res.status(400);
     throw new Error("Insufficient balance to accept this trade");
   }
-
-  const acceptedBalance = Number(req.user.balance || 0);
 
   const trade = await UserTrade.create({
     user: req.user._id,
@@ -400,9 +492,9 @@ const takeSignal = asyncHandler(async (req, res) => {
     entryPoint: signal.entryPoint,
     takeProfit: signal.takeProfit,
     stopLoss: signal.stopLoss,
-    profitPercentage: signal.profitPercentage || 0,
-    lossPercentage: signal.lossPercentage || 0,
-    acceptedBalance: Number(req.user.balance || 0),
+    profitPercentage: Number(signal.profitPercentage || 0),
+    lossPercentage: Number(signal.lossPercentage || 0),
+    acceptedBalance: currentUserBalance,
     status: "active",
   });
 
@@ -420,21 +512,29 @@ const getMyTrades = asyncHandler(async (req, res) => {
   const { status } = req.query;
 
   const filter = { user: req.user._id };
-  if (status) filter.status = status;
+  if (status) {
+    filter.status = status;
+  }
 
   const trades = await UserTrade.find(filter)
-    .populate("signal", "symbol entryPoint takeProfit stopLoss outcomeType outcomePercentage status")
-    .sort("-createdAt");
+    .populate(
+      "signal",
+      "symbol entryPoint takeProfit stopLoss profitPercentage lossPercentage status result completedAt"
+    )
+    .sort({ createdAt: -1 });
 
   const stats = {
     total: trades.length,
-    active: trades.filter((t) => t.status === "active").length,
-    completed: trades.filter((t) => t.status === "completed").length,
-    totalProfit: trades.reduce((sum, t) => sum + Number(t.profit || 0), 0),
-    totalLoss: trades.reduce((sum, t) => sum + Number(t.loss || 0), 0),
+    active: trades.filter((trade) => trade.status === "active").length,
+    completed: trades.filter((trade) => trade.status === "completed").length,
+    totalProfit: trades.reduce(
+      (sum, trade) => sum + Number(trade.profit || 0),
+      0
+    ),
+    totalLoss: trades.reduce((sum, trade) => sum + Number(trade.loss || 0), 0),
     netProfit:
-      trades.reduce((sum, t) => sum + Number(t.profit || 0), 0) -
-      trades.reduce((sum, t) => sum + Number(t.loss || 0), 0),
+      trades.reduce((sum, trade) => sum + Number(trade.profit || 0), 0) -
+      trades.reduce((sum, trade) => sum + Number(trade.loss || 0), 0),
   };
 
   res.status(200).json({
@@ -459,7 +559,7 @@ const getTradeById = asyncHandler(async (req, res) => {
   }
 
   if (
-    trade.user._id.toString() !== req.user._id.toString() &&
+    String(trade.user._id) !== String(req.user._id) &&
     req.user.role !== "admin"
   ) {
     res.status(403);
@@ -481,23 +581,33 @@ const getAllUserTrades = asyncHandler(async (req, res) => {
   const { status, userId } = req.query;
 
   const filter = {};
-  if (status) filter.status = status;
-  if (userId) filter.user = userId;
+  if (status) {
+    filter.status = status;
+  }
+  if (userId) {
+    filter.user = userId;
+  }
 
   const trades = await UserTrade.find(filter)
     .populate("user", "fullName email balance")
-    .populate("signal", "symbol outcomeType outcomePercentage status")
-    .sort("-createdAt");
+    .populate(
+      "signal",
+      "symbol profitPercentage lossPercentage status result completedAt"
+    )
+    .sort({ createdAt: -1 });
 
   const stats = {
     total: trades.length,
-    active: trades.filter((t) => t.status === "active").length,
-    completed: trades.filter((t) => t.status === "completed").length,
-    totalProfit: trades.reduce((sum, t) => sum + Number(t.profit || 0), 0),
-    totalLoss: trades.reduce((sum, t) => sum + Number(t.loss || 0), 0),
+    active: trades.filter((trade) => trade.status === "active").length,
+    completed: trades.filter((trade) => trade.status === "completed").length,
+    totalProfit: trades.reduce(
+      (sum, trade) => sum + Number(trade.profit || 0),
+      0
+    ),
+    totalLoss: trades.reduce((sum, trade) => sum + Number(trade.loss || 0), 0),
     netProfit:
-      trades.reduce((sum, t) => sum + Number(t.profit || 0), 0) -
-      trades.reduce((sum, t) => sum + Number(t.loss || 0), 0),
+      trades.reduce((sum, trade) => sum + Number(trade.profit || 0), 0) -
+      trades.reduce((sum, trade) => sum + Number(trade.loss || 0), 0),
   };
 
   res.status(200).json({
