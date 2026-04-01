@@ -267,52 +267,74 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  function buildChartPoints(completedTrades, balance) {
+  function buildChartPoints(completedTrades, balance, totalProfit = 0) {
     const sortedTrades = [...completedTrades].sort(
       (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
     );
 
-    if (!sortedTrades.length) {
-      return [20, 28, 35, 40, 46, 55, 62, 70];
+    const safeBalance = Number(balance || 0);
+    const safeProfit = Number(totalProfit || 0);
+
+    // If there are no completed trades and no growth, keep chart flat
+    if (!sortedTrades.length && safeProfit <= 0) {
+      return [50, 50, 50, 50, 50, 50, 50, 50];
     }
 
-    let runningValue = Math.max(Number(balance || 0) - 1, 1);
+    // If there are completed trades, build from actual profit/loss movement
+    if (sortedTrades.length) {
+      let runningValue = Math.max(safeBalance - safeProfit, 1);
 
-    const points = sortedTrades.map((trade) => {
-      const profit = Number(trade.profit || 0);
-      const loss = Number(trade.loss || 0);
-      runningValue += profit - loss;
-      return Math.max(runningValue, 1);
-    });
+      const points = sortedTrades.map((trade) => {
+        const profit = Number(trade.profit || 0);
+        const loss = Number(trade.loss || 0);
+        runningValue += profit - loss;
+        return Math.max(runningValue, 1);
+      });
 
-    if (points.length === 1) {
-      return [points[0] * 0.92, points[0]];
+      // if all values are the same, keep it flat
+      const allSame = points.every((point) => point === points[0]);
+      if (allSame) {
+        return new Array(Math.min(Math.max(points.length, 2), 8)).fill(points[0]);
+      }
+
+      return points.slice(-8);
     }
 
-    return points.slice(-8);
+    // fallback: if profit exists but no trades found, show gentle rise
+    return [50, 52, 54, 56, 58, 60, 63, 66];
   }
 
-  function renderPerformanceChart(completedTrades, balance) {
+  function renderPerformanceChart(completedTrades, balance, totalProfit = 0) {
     if (!chartLinePath || !chartFillPath) return;
 
-    const values = buildChartPoints(completedTrades, balance);
+    const values = buildChartPoints(completedTrades, balance, totalProfit);
     const width = 800;
     const height = 240;
     const baseY = 220;
 
     const minValue = Math.min(...values);
     const maxValue = Math.max(...values);
-    const range = Math.max(maxValue - minValue, 1);
+    const range = maxValue - minValue;
+
     const stepX = values.length > 1 ? width / (values.length - 1) : width;
 
     const points = values.map((value, index) => {
       const x = index * stepX;
-      const normalized = (value - minValue) / range;
-      const y = baseY - normalized * 140;
+
+      // flat line when no growth
+      let y;
+      if (range === 0) {
+        y = 120;
+      } else {
+        const normalized = (value - minValue) / range;
+        y = baseY - normalized * 140;
+      }
+
       return { x, y };
     });
 
     let linePath = `M ${points[0].x} ${points[0].y}`;
+
     for (let i = 1; i < points.length; i += 1) {
       const prev = points[i - 1];
       const curr = points[i];
@@ -514,7 +536,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       growthValue.textContent = formatPercent(growthPercent);
     }
 
-    renderPerformanceChart(chartSourceTrades, user.balance || 0);
+    renderPerformanceChart(
+      chartSourceTrades,
+      user.balance || 0,
+      user.totalProfit || 0
+    );
     renderTransactions(deposits, withdrawals, trades);
   }
 
