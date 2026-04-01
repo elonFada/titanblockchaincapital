@@ -95,17 +95,49 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function loadDashboardStats() {
     try {
-      const [usersResponse, depositsResponse] = await Promise.all([
+      const [
+        usersResponse,
+        depositsResponse,
+        withdrawalsResponse,
+        botPaymentsResponse,
+      ] = await Promise.all([
         window.API.get("/user/admin/users"),
         window.API.get("/deposit/admin/stats"),
+        window.API.get("/withdrawal/admin/stats"),
+        window.API.get("/trading-bot/payment/admin/all?status=pending"),
       ]);
 
-      const totalUsers = usersResponse?.count ?? usersResponse?.data?.length ?? 0;
-      const pendingDeposits = depositsResponse?.stats?.pending?.count ?? 0;
+      const totalUsers =
+        usersResponse?.count ??
+        usersResponse?.data?.length ??
+        0;
 
-      if (totalUsersValue) totalUsersValue.textContent = formatNumber(totalUsers);
+      const pendingDeposits =
+        depositsResponse?.stats?.pending?.count ?? 0;
+
+      const pendingWithdrawals =
+        withdrawalsResponse?.stats?.pending?.count ?? 0;
+
+      const pendingBotPayments =
+        botPaymentsResponse?.count ??
+        botPaymentsResponse?.data?.length ??
+        botPaymentsResponse?.stats?.pending ??
+        0;
+
+      if (totalUsersValue) {
+        totalUsersValue.textContent = formatNumber(totalUsers);
+      }
+
       if (pendingDepositsValue) {
         pendingDepositsValue.textContent = formatNumber(pendingDeposits);
+      }
+
+      if (pendingWithdrawalsValue) {
+        pendingWithdrawalsValue.textContent = formatNumber(pendingWithdrawals);
+      }
+
+      if (pendingBotPaymentsValue) {
+        pendingBotPaymentsValue.textContent = formatNumber(pendingBotPayments);
       }
 
       if (totalUsersSubtext) {
@@ -117,15 +149,14 @@ document.addEventListener("DOMContentLoaded", async () => {
           pendingDeposits > 0 ? "Awaiting approval" : "No pending deposits";
       }
 
-      if (pendingWithdrawalsValue) pendingWithdrawalsValue.textContent = "--";
-      if (pendingBotPaymentsValue) pendingBotPaymentsValue.textContent = "--";
-
       if (pendingWithdrawalsSubtext) {
-        pendingWithdrawalsSubtext.textContent = "Withdrawal backend not added yet";
+        pendingWithdrawalsSubtext.textContent =
+          pendingWithdrawals > 0 ? "Awaiting approval" : "No pending withdrawals";
       }
 
       if (pendingBotPaymentsSubtext) {
-        pendingBotPaymentsSubtext.textContent = "Bot payment backend not added yet";
+        pendingBotPaymentsSubtext.textContent =
+          pendingBotPayments > 0 ? "Awaiting review" : "No pending bot payments";
       }
     } catch (error) {
       console.error("Failed to load admin dashboard stats:", error);
@@ -142,8 +173,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (totalUsersSubtext) totalUsersSubtext.textContent = "Unable to load";
       if (pendingDepositsSubtext) pendingDepositsSubtext.textContent = "Unable to load";
-      if (pendingWithdrawalsSubtext) pendingWithdrawalsSubtext.textContent = "Not available";
-      if (pendingBotPaymentsSubtext) pendingBotPaymentsSubtext.textContent = "Not available";
+      if (pendingWithdrawalsSubtext) pendingWithdrawalsSubtext.textContent = "Unable to load";
+      if (pendingBotPaymentsSubtext) pendingBotPaymentsSubtext.textContent = "Unable to load";
     }
   }
 

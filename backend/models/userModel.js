@@ -183,7 +183,20 @@ const userSchema = mongoose.Schema({
     twitter: { type: String, default: null },
     linkedin: { type: String, default: null },
     github: { type: String, default: null }
-  }
+  },
+  tradingBotSubscribed: {
+  type: Boolean,
+  default: false
+  },
+  tradingBotActivatedAt: {
+    type: Date,
+    default: null
+  },
+  tradingBotPaymentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "TradingBotPayment",
+    default: null
+  },
 }, {
   timestamps: true
 });
