@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
-    <title>TitanBlockchainCapital Admin | All Users</title>
+    <title>TitanBlockchainCapital Admin | Trade Signals</title>
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -15,6 +15,26 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="images/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="images/favicon-16x16.png"
+    />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <link rel="manifest" href="images/site.webmanifest" />
 
     <script>
       tailwind.config = {
@@ -72,8 +92,7 @@
           linear-gradient(180deg, #060913 0%, #070b14 45%, #09101b 100%);
       }
 
-      body.sidebar-open,
-      body.modal-open {
+      body.sidebar-open {
         overflow: hidden;
       }
 
@@ -130,6 +149,23 @@
         );
       }
 
+      .form-input {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: black;
+      }
+
+      .form-input::placeholder {
+        color: rgb(148 163 184);
+      }
+
+      .form-input:focus {
+        border-color: rgba(228, 184, 79, 0.45);
+        box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.08);
+        outline: none;
+        color: black;
+      }
+
       .sidebar-link.active {
         background: rgba(228, 184, 79, 0.1);
         border-color: rgba(228, 184, 79, 0.22);
@@ -140,33 +176,42 @@
         color: #e4b84f;
       }
 
+      .status-pill {
+        padding: 0.45rem 0.85rem;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .status-live {
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        color: #4ade80;
+      }
+
+      .status-profit {
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        color: #4ade80;
+      }
+
+      .status-loss {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #f87171;
+      }
+
       .table-scroll::-webkit-scrollbar {
-        height: 8px;
         width: 8px;
+        height: 8px;
       }
 
       .table-scroll::-webkit-scrollbar-thumb {
         background: rgba(255, 255, 255, 0.12);
         border-radius: 999px;
-      }
-
-      .form-input {
-        background: rgba(255, 255, 255, 0.04) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        color: white !important;
-        appearance: none;
-        font-size: 16px !important;
-      }
-
-      .form-input::placeholder {
-        color: rgb(148 163 184) !important;
-      }
-
-      .form-input:focus {
-        background: rgba(255, 255, 255, 0.06) !important;
-        border-color: rgba(228, 184, 79, 0.45) !important;
-        box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.08) !important;
-        outline: none;
       }
 
       @keyframes menuFloatPulse {
@@ -193,6 +238,9 @@
         25% {
           transform: rotate(-8deg);
         }
+        50% {
+          transform: rotate(0deg);
+        }
         75% {
           transform: rotate(8deg);
         }
@@ -206,26 +254,6 @@
       .menu-attention svg {
         animation: menuIconWiggle 2.2s ease-in-out infinite;
         transform-origin: center;
-      }
-
-      .modal-overlay {
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.25s ease;
-      }
-
-      .modal-overlay.active {
-        opacity: 1;
-        visibility: visible;
-      }
-
-      .modal-card {
-        transform: translateY(16px) scale(0.98);
-        transition: all 0.25s ease;
-      }
-
-      .modal-overlay.active .modal-card {
-        transform: translateY(0) scale(1);
       }
     </style>
   </head>
@@ -250,13 +278,12 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <button
-              id="logoutBtn"
-              type="button"
+            <a
+              href="admin-dashboard.html"
               class="px-3 xs:px-4 py-2 text-xs xs:text-sm font-bold text-white bg-surface-dark hover:bg-slate-700 rounded-lg transition-all"
             >
-              Logout
-            </button>
+              Dashboard
+            </a>
           </div>
         </div>
       </div>
@@ -287,15 +314,15 @@
                 class="flex items-center justify-between pb-5 border-b border-white/10"
               >
                 <div class="flex items-center gap-3 min-w-0">
-                  <img
-                    src="images/logo.png"
-                    alt="Titan Logo"
-                    class="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-cover shrink-0"
-                  />
+                  <div
+                    class="h-12 w-12 rounded-2xl gold-gradient flex items-center justify-center shrink-0"
+                  >
+                    <i data-lucide="shield" class="w-6 h-6 text-black"></i>
+                  </div>
                   <div class="min-w-0">
                     <p class="text-white font-bold truncate">Admin Panel</p>
                     <p class="text-slate-400 text-sm truncate">
-                      Control Center
+                      Signal Control
                     </p>
                   </div>
                 </div>
@@ -325,7 +352,7 @@
 
                 <a
                   href="all-users.html"
-                  class="sidebar-link active flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
                 >
                   <i data-lucide="users" class="w-5 h-5 text-slate-300"></i>
                   <span class="text-sm font-semibold text-white"
@@ -368,7 +395,7 @@
 
                 <a
                   href="admin-signals.html"
-                  class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
+                  class="sidebar-link active flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
                 >
                   <i
                     data-lucide="candlestick-chart"
@@ -378,6 +405,7 @@
                     >Trade Signals</span
                   >
                 </a>
+
                 <a
                   href="admin-chat.html"
                   class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
@@ -398,61 +426,178 @@
                 class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
               >
                 <div
-                  class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
+                  class="grid xl:grid-cols-[1.1fr_0.9fr] gap-6 lg:gap-8 items-center"
                 >
-                  <div>
+                  <div class="min-w-0">
                     <div
                       class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] xs:text-[11px] font-bold uppercase tracking-widest mb-4"
                     >
-                      User Management
+                      Admin Signal Placement
                     </div>
+
                     <h1
                       class="text-white text-2xl xs:text-3xl sm:text-4xl font-black leading-tight tracking-tight"
                     >
-                      All Users
+                      Create and manage live trade signals
                     </h1>
+
                     <p
                       class="text-slate-300 text-sm xs:text-base sm:text-lg leading-relaxed mt-4 max-w-2xl"
                     >
-                      Review registration fee payments, verify users, and manage
-                      account status in one place.
+                      Place market signals that users can see and accept. Define
+                      the pair, entry zone, TP, SL, and the percentage impact
+                      before publishing the signal live.
                     </p>
-                  </div>
 
-                  <div class="w-full lg:max-w-md">
-                    <input
-                      id="userSearchInput"
-                      type="text"
-                      placeholder="Search by name, email, wallet or user ID..."
-                      class="form-input w-full rounded-2xl px-4 py-4 text-sm"
-                    />
+                    <div class="mt-6 flex flex-wrap gap-3">
+                      <div
+                        class="px-4 py-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-sm"
+                      >
+                        Live signals managed from one place
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div
-                class="grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-5"
-              >
-                <div class="glass-card rounded-3xl p-5 sm:p-6">
-                  <p class="text-slate-400 text-sm">Verified Users</p>
-                  <p
-                    id="verifiedUsersCount"
-                    class="text-white text-3xl font-black mt-3"
-                  >
-                    0
-                  </p>
-                  <p class="text-emerald-400 text-sm mt-2">Active accounts</p>
-                </div>
+              <div class="w-full">
+                <div
+                  class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
+                >
+                  <div class="flex items-center gap-3 mb-5">
+                    <i
+                      data-lucide="plus-circle"
+                      class="w-5 h-5 text-primary"
+                    ></i>
+                    <h3 class="text-white text-xl sm:text-2xl font-black">
+                      Create New Signal
+                    </h3>
+                  </div>
 
-                <div class="glass-card rounded-3xl p-5 sm:p-6">
-                  <p class="text-slate-400 text-sm">Pending Verification</p>
-                  <p
-                    id="pendingUsersCount"
-                    class="text-white text-3xl font-black mt-3"
-                  >
-                    0
-                  </p>
-                  <p class="text-yellow-400 text-sm mt-2">Needs review</p>
+                  <form id="signalForm" class="space-y-5">
+                    <div class="grid md:grid-cols-2 gap-5">
+                      <div>
+                        <label
+                          class="block text-sm font-semibold text-slate-200 mb-2"
+                          >Trading Pair</label
+                        >
+                        <select
+                          id="signalSymbol"
+                          class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                        >
+                          <option value="">Select pair</option>
+                          <option value="EURUSD">EURUSD</option>
+                          <option value="GBPUSD">GBPUSD</option>
+                          <option value="USDJPY">USDJPY</option>
+                          <option value="USDCHF">USDCHF</option>
+                          <option value="USDCAD">USDCAD</option>
+                          <option value="AUDUSD">AUDUSD</option>
+                          <option value="NZDUSD">NZDUSD</option>
+                          <option value="EURGBP">EURGBP</option>
+                          <option value="EURJPY">EURJPY</option>
+                          <option value="GBPJPY">GBPJPY</option>
+                          <option value="XAUUSD">XAUUSD</option>
+                          <option value="XAGUSD">XAGUSD</option>
+                          <option value="BTCUSD">BTCUSD</option>
+                          <option value="ETHUSD">ETHUSD</option>
+                          <option value="SOLUSD">SOLUSD</option>
+                          <option value="BNBUSD">BNBUSD</option>
+                          <option value="NAS100">NAS100</option>
+                          <option value="US30">US30</option>
+                          <option value="SPX500">SPX500</option>
+                          <option value="GER40">GER40</option>
+                          <option value="UK100">UK100</option>
+                          <option value="JP225">JP225</option>
+                          <option value="AAPL">AAPL</option>
+                          <option value="AMZN">AMZN</option>
+                          <option value="TSLA">TSLA</option>
+                          <option value="META">META</option>
+                          <option value="MSFT">MSFT</option>
+                          <option value="NVDA">NVDA</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label
+                          class="block text-sm font-semibold text-slate-200 mb-2"
+                          >Entry</label
+                        >
+                        <input
+                          id="signalEntry"
+                          type="number"
+                          step="any"
+                          class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                          placeholder="Enter entry point"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          class="block text-sm font-semibold text-slate-200 mb-2"
+                          >Take Profit</label
+                        >
+                        <input
+                          id="signalTakeProfit"
+                          type="number"
+                          step="any"
+                          class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                          placeholder="Enter take profit"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          class="block text-sm font-semibold text-slate-200 mb-2"
+                          >Stop Loss</label
+                        >
+                        <input
+                          id="signalStopLoss"
+                          type="number"
+                          step="any"
+                          class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                          placeholder="Enter stop loss"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          class="block text-sm font-semibold text-slate-200 mb-2"
+                          >Outcome Type</label
+                        >
+                        <select
+                          id="signalOutcomeType"
+                          class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                        >
+                          <option value="profit">Profit</option>
+                          <option value="loss">Loss</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label
+                          class="block text-sm font-semibold text-slate-200 mb-2"
+                          >Percentage</label
+                        >
+                        <input
+                          id="signalOutcomePercent"
+                          type="number"
+                          min="0.01"
+                          max="100"
+                          step="0.01"
+                          class="form-input w-full rounded-2xl px-4 py-4 text-sm"
+                          placeholder="e.g. 10"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      id="createSignalBtn"
+                      type="submit"
+                      class="w-full py-4 text-black font-bold rounded-2xl gold-gradient shadow-xl shadow-primary/20 hover:scale-[1.01] transition-transform"
+                    >
+                      Create Signal
+                    </button>
+                  </form>
                 </div>
               </div>
 
@@ -460,38 +605,49 @@
                 class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
               >
                 <div
-                  class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 sm:mb-6"
+                  class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-5 sm:mb-6"
                 >
-                  <div>
+                  <div class="min-w-0">
                     <h3
                       class="text-white text-xl sm:text-2xl font-black tracking-tight"
                     >
-                      Payment Requests
+                      Active / Recent Signals
                     </h3>
                     <p class="text-slate-400 text-sm mt-2">
-                      Review user payment proofs and approve or reject requests.
+                      Manage currently published signals and recently placed
+                      setups.
                     </p>
                   </div>
                 </div>
 
                 <div class="table-scroll overflow-x-auto">
-                  <table class="min-w-[800px] w-full">
+                  <table class="min-w-[960px] w-full">
                     <thead>
                       <tr class="border-b border-white/10 text-left">
                         <th
                           class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
                         >
-                          Username
+                          Signal
                         </th>
                         <th
                           class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
                         >
-                          Email
+                          Entry / TP / SL
                         </th>
                         <th
                           class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
                         >
-                          Payment Proof
+                          Outcome
+                        </th>
+                        <th
+                          class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
+                        >
+                          Percentage
+                        </th>
+                        <th
+                          class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
+                        >
+                          Status
                         </th>
                         <th
                           class="pb-4 text-slate-400 text-xs uppercase tracking-widest"
@@ -502,79 +658,9 @@
                     </thead>
 
                     <tbody
-                      id="paymentRequestsTableBody"
+                      id="signalsTableBody"
                       class="divide-y divide-white/10"
-                    >
-                      <tr>
-                        <td colspan="4" class="py-8 text-center text-slate-400">
-                          Loading payment requests...
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div
-                class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-8"
-              >
-                <div
-                  class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 sm:mb-6"
-                >
-                  <div>
-                    <h3
-                      class="text-white text-xl sm:text-2xl font-black tracking-tight"
-                    >
-                      All Users
-                    </h3>
-                    <p class="text-slate-400 text-sm mt-2">
-                      View all users and their current registration status.
-                    </p>
-                  </div>
-                </div>
-
-                <div class="table-scroll overflow-x-auto">
-                  <table class="min-w-[950px] w-full">
-                    <thead>
-                      <tr class="border-b border-white/10 text-left">
-                        <th
-                          class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
-                        >
-                          Username
-                        </th>
-                        <th
-                          class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
-                        >
-                          Email
-                        </th>
-                        <th
-                          class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
-                        >
-                          Phone
-                        </th>
-                        <th
-                          class="pb-4 pr-4 text-slate-400 text-xs uppercase tracking-widest"
-                        >
-                          Status
-                        </th>
-                        <th
-                          class="pb-4 text-slate-400 text-xs uppercase tracking-widest"
-                        >
-                          Joined
-                        </th>
-                      </tr>
-                    </thead>
-
-                    <tbody
-                      id="allUsersTableBody"
-                      class="divide-y divide-white/10"
-                    >
-                      <tr>
-                        <td colspan="5" class="py-8 text-center text-slate-400">
-                          Loading users...
-                        </td>
-                      </tr>
-                    </tbody>
+                    ></tbody>
                   </table>
                 </div>
               </div>
@@ -584,54 +670,8 @@
       </div>
     </main>
 
-    <!-- Logout Modal -->
-    <div
-      id="logoutModal"
-      class="modal-overlay fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4"
-    >
-      <div
-        class="modal-card premium-panel premium-border rounded-3xl w-full max-w-md p-6 sm:p-7 shadow-2xl shadow-black/50"
-      >
-        <div class="flex items-start gap-4">
-          <div
-            class="h-12 w-12 rounded-2xl gold-gradient flex items-center justify-center shrink-0"
-          >
-            <i data-lucide="log-out" class="w-6 h-6 text-black"></i>
-          </div>
-
-          <div class="flex-1">
-            <h3 class="text-white text-xl font-bold">Confirm Logout</h3>
-            <p class="text-slate-400 text-sm sm:text-base leading-7 mt-2">
-              Are you sure you want to log out of the admin panel?
-            </p>
-          </div>
-        </div>
-
-        <div class="mt-6 flex flex-col sm:flex-row gap-3">
-          <button
-            id="cancelLogoutBtn"
-            type="button"
-            class="w-full px-5 py-3 rounded-2xl border border-white/10 bg-white/5 text-white font-semibold hover:bg-white/10 transition-all"
-          >
-            No, Stay Here
-          </button>
-
-          <button
-            id="confirmLogoutBtn"
-            type="button"
-            class="w-full px-5 py-3 rounded-2xl gold-gradient text-black font-bold hover:scale-[1.01] transition-all"
-          >
-            Yes, Logout
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      lucide.createIcons();
-    </script>
     <script src="js/toast.js"></script>
     <script src="js/api.js"></script>
-    <script src="js/all-users.js"></script>
+    <script src="js/admin-signals.js"></script>
   </body>
 </html>
