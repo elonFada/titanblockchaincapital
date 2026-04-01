@@ -20,9 +20,16 @@ const submitDeposit = asyncHandler(async (req, res) => {
     throw new Error('Deposit receipt is required');
   }
 
-  if (amount < 100) {
+  const numericAmount = Number(amount);
+
+  if (Number.isNaN(numericAmount) || numericAmount <= 0) {
     res.status(400);
-    throw new Error('Minimum deposit amount is $100');
+    throw new Error('Please enter a valid deposit amount');
+  }
+
+  if (numericAmount < 5000) {
+    res.status(400);
+    throw new Error('Minimum deposit amount is $5000');
   }
 
   // Check for pending deposit
@@ -39,8 +46,8 @@ const submitDeposit = asyncHandler(async (req, res) => {
   // Create deposit record
   const deposit = await Deposit.create({
     user: user._id,
-    amount: parseFloat(amount),
-    transactionId,
+    amount: numericAmount,
+    transactionId: transactionId.trim(),
     coinType,
     receipt: req.file.path,
     receiptPublicId: req.file.filename,
@@ -96,7 +103,6 @@ const getDepositById = asyncHandler(async (req, res) => {
     throw new Error('Deposit not found');
   }
 
-  // Check if user owns this deposit or is admin
   if (deposit.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
     res.status(403);
     throw new Error('Not authorized to view this deposit');
@@ -129,7 +135,9 @@ const getAllDeposits = asyncHandler(async (req, res) => {
     pending: deposits.filter(d => d.status === 'pending').length,
     approved: deposits.filter(d => d.status === 'approved').length,
     rejected: deposits.filter(d => d.status === 'rejected').length,
-    totalAmount: deposits.filter(d => d.status === 'approved').reduce((sum, d) => sum + d.amount, 0)
+    totalAmount: deposits
+      .filter(d => d.status === 'approved')
+      .reduce((sum, d) => sum + d.amount, 0)
   };
 
   res.status(200).json({
@@ -161,21 +169,17 @@ const approveDeposit = asyncHandler(async (req, res) => {
     throw new Error('Deposit was rejected. User must submit a new deposit.');
   }
 
-  // Update deposit status
   deposit.status = 'approved';
   deposit.approvedBy = req.admin._id;
   deposit.approvedAt = new Date();
   await deposit.save();
 
-  // Update user's balance
   const user = await User.findById(deposit.user._id);
-  
-  // Add to total deposit and balance
+
   user.totalDeposit = (user.totalDeposit || 0) + deposit.amount;
   user.balance = (user.balance || 0) + deposit.amount;
   await user.save();
 
-  // Send approval email
   await sendDepositEmail({
     to: user.email,
     fullName: user.fullName,
@@ -226,14 +230,12 @@ const rejectDeposit = asyncHandler(async (req, res) => {
     throw new Error('Deposit has already been rejected');
   }
 
-  // Update deposit status
   deposit.status = 'rejected';
   deposit.rejectionReason = reason;
   deposit.approvedBy = req.admin._id;
   deposit.approvedAt = new Date();
   await deposit.save();
 
-  // Send rejection email
   await sendDepositEmail({
     to: deposit.user.email,
     fullName: deposit.user.fullName,
@@ -241,7 +243,7 @@ const rejectDeposit = asyncHandler(async (req, res) => {
     amount: deposit.amount,
     transactionId: deposit.transactionId,
     coinType: deposit.coinType,
-    reason: reason
+    reason
   });
 
   res.status(200).json({
@@ -279,7 +281,10 @@ const getDepositStats = asyncHandler(async (req, res) => {
       pending: { count: pending.count, amount: pending.totalAmount },
       approved: { count: approved.count, amount: approved.totalAmount },
       rejected: { count: rejected.count, amount: rejected.totalAmount },
-      total: { count: pending.count + approved.count + rejected.count, amount: pending.totalAmount + approved.totalAmount + rejected.totalAmount }
+      total: {
+        count: pending.count + approved.count + rejected.count,
+        amount: pending.totalAmount + approved.totalAmount + rejected.totalAmount
+      }
     }
   });
 });

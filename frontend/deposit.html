@@ -125,12 +125,19 @@
               >
                 <div class="flex items-center gap-3 min-w-0">
                   <img
+                    id="sidebarUserAvatar"
                     src="images/logo.png"
                     alt="Titan Logo"
                     class="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-cover shrink-0"
                   />
+
                   <div class="min-w-0">
-                    <p class="text-white font-bold truncate">Client Account</p>
+                    <p
+                      id="sidebarUserName"
+                      class="text-white font-bold truncate"
+                    >
+                      Client Account
+                    </p>
                     <p class="text-slate-400 text-sm truncate">Verified User</p>
                   </div>
                 </div>
@@ -251,7 +258,7 @@
                     </h3>
                   </div>
 
-                  <form class="space-y-5">
+                  <form id="depositForm" class="space-y-5">
                     <div>
                       <label
                         class="block text-sm font-semibold text-slate-200 mb-2"
@@ -260,36 +267,14 @@
                       </label>
                       <div class="relative">
                         <select
+                          id="coinSelect"
                           class="form-input w-full rounded-2xl px-4 py-4 pr-12 text-sm"
                         >
-                          <option>Bitcoin (BTC)</option>
-                          <option>Ethereum (ETH)</option>
-                          <option>USDT (TRC20)</option>
-                          <option>USDT (ERC20)</option>
-                          <option>BNB</option>
-                        </select>
-                        <i
-                          data-lucide="chevron-down"
-                          class="w-5 h-5 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
-                        ></i>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label
-                        class="block text-sm font-semibold text-slate-200 mb-2"
-                      >
-                        Select Network
-                      </label>
-                      <div class="relative">
-                        <select
-                          class="form-input w-full rounded-2xl px-4 py-4 pr-12 text-sm"
-                        >
-                          <option>TRC20</option>
-                          <option>ERC20</option>
-                          <option>BEP20</option>
-                          <option>Bitcoin Network</option>
-                          <option>Ethereum Network</option>
+                          <option value="BTC">Bitcoin (BTC)</option>
+                          <option value="ETH">Ethereum (ETH)</option>
+                          <option value="USDT_TRC20">USDT (TRC20)</option>
+                          <option value="USDT_ERC20">USDT (ERC20)</option>
+                          <option value="BNB">BNB</option>
                         </select>
                         <i
                           data-lucide="chevron-down"
@@ -305,6 +290,7 @@
                         Deposit Amount
                       </label>
                       <input
+                        id="depositAmount"
                         type="number"
                         placeholder="Minimum $5000"
                         class="form-input w-full rounded-2xl px-4 py-4 text-sm"
@@ -319,12 +305,15 @@
                       </label>
                       <div class="relative">
                         <input
+                          id="walletAddress"
                           type="text"
                           value="TBC-DEPOSIT-WALLET-ADDRESS-1234567890"
                           readonly
                           class="form-input w-full rounded-2xl px-4 py-4 pr-24 text-sm"
                         />
+
                         <button
+                          id="copyWalletBtn"
                           type="button"
                           class="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
                         >
@@ -340,6 +329,7 @@
                         Transaction Hash / ID
                       </label>
                       <input
+                        id="transactionId"
                         type="text"
                         placeholder="Enter transaction hash"
                         class="form-input w-full rounded-2xl px-4 py-4 text-sm"
@@ -362,15 +352,24 @@
                         <p class="text-white font-semibold">
                           Upload screenshot / receipt
                         </p>
-                        <p class="text-slate-400 text-sm mt-2">
+                        <p
+                          id="paymentProofText"
+                          class="text-slate-400 text-sm mt-2"
+                        >
                           Upload a clear payment screenshot for review.
                         </p>
-                        <input type="file" class="hidden" />
+
+                        <input
+                          id="paymentProofInput"
+                          type="file"
+                          class="hidden"
+                        />
                       </label>
                     </div>
 
                     <button
-                      type="button"
+                      id="submitDepositBtn"
+                      type="submit"
                       class="w-full py-4 text-black font-bold rounded-2xl gold-gradient shadow-xl shadow-primary/20 hover:scale-[1.01] transition-transform"
                     >
                       Submit Deposit
@@ -441,7 +440,7 @@
                   </div>
                 </div>
 
-                <div class="space-y-3">
+                <div id="depositHistoryContainer" class="space-y-3">
                   <div
                     class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
                   >
@@ -541,7 +540,11 @@
         </div>
       </div>
     </main>
-
-    <script src="js/script.js"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/deposit.js"></script>
   </body>
 </html>
