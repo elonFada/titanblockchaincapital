@@ -197,6 +197,10 @@ const userSchema = mongoose.Schema({
     ref: "TradingBotPayment",
     default: null
   },
+  supportChatOpenedAt: {
+    type: Date,
+    default: null,
+  },
 }, {
   timestamps: true
 });

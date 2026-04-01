@@ -5,9 +5,19 @@ const API_BASE_URL =
     : "https://titanblockchaincapital-xo4q.onrender.com/api";
 
 function getStoredToken() {
+  const isAdminPage =
+    window.location.pathname.includes("admin") ||
+    document.title.toLowerCase().includes("admin");
+
+  if (isAdminPage) {
+    return (
+      localStorage.getItem("admin_token") ||
+      sessionStorage.getItem("admin_token") ||
+      ""
+    );
+  }
+
   return (
-    localStorage.getItem("admin_token") ||
-    sessionStorage.getItem("admin_token") ||
     localStorage.getItem("token") ||
     sessionStorage.getItem("token") ||
     ""
