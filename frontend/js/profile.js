@@ -38,6 +38,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const walletConfirmCheckbox = document.getElementById("walletConfirmCheckbox");
   const saveWalletBtn = document.getElementById("saveWalletBtn");
 
+  const passwordToggleButtons = document.querySelectorAll(".password-toggle");
+
   function getPageUrl(page) {
     const isLocal =
       window.location.hostname === "localhost" ||
@@ -53,17 +55,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     sessionStorage.removeItem("userInfo");
   }
 
-  function escapeHtml(text = "") {
-    return String(text)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+  function getStoredUser() {
+    const raw =
+      localStorage.getItem("userInfo") || sessionStorage.getItem("userInfo");
+    if (!raw) return null;
+
+    try {
+      return JSON.parse(raw);
+    } catch (error) {
+      console.error("Failed to parse stored user:", error);
+      return null;
+    }
+  }
+
+  function saveStoredUser(user) {
+    const hasLocal = !!localStorage.getItem("userInfo");
+    const hasSession = !!sessionStorage.getItem("userInfo");
+
+    if (hasLocal) {
+      localStorage.setItem("userInfo", JSON.stringify(user));
+    }
+
+    if (hasSession) {
+      sessionStorage.setItem("userInfo", JSON.stringify(user));
+    }
+
+    if (!hasLocal && !hasSession) {
+      localStorage.setItem("userInfo", JSON.stringify(user));
+    }
   }
 
   function openSidebar() {
     if (!dashboardSidebar || !mobileSidebarOverlay) return;
+
     dashboardSidebar.classList.remove("-translate-x-full");
     mobileSidebarOverlay.classList.remove("opacity-0", "invisible");
     mobileSidebarOverlay.classList.add("opacity-100", "visible");
@@ -72,6 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function closeSidebar() {
     if (!dashboardSidebar || !mobileSidebarOverlay) return;
+
     dashboardSidebar.classList.add("-translate-x-full");
     mobileSidebarOverlay.classList.remove("opacity-100", "visible");
     mobileSidebarOverlay.classList.add("opacity-0", "invisible");
@@ -80,6 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function openWalletModal() {
     if (!walletModal || !walletModalCard) return;
+
     walletModal.classList.remove("modal-hidden");
     walletModal.classList.add("modal-visible");
     walletModalCard.classList.remove("modal-card-hidden");
@@ -89,6 +115,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function closeWalletModal() {
     if (!walletModal || !walletModalCard) return;
+
     walletModal.classList.remove("modal-visible");
     walletModal.classList.add("modal-hidden");
     walletModalCard.classList.remove("modal-card-visible");
@@ -96,12 +123,118 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.body.classList.remove("modal-open");
   }
 
+    function resetPasswordVisibility() {
+    const passwordFields = [
+        currentPasswordInput,
+        newPasswordInput,
+        confirmNewPasswordInput,
+    ];
+
+    passwordFields.forEach((input) => {
+        if (input) input.type = "password";
+    });
+
+    passwordToggleButtons.forEach((button) => {
+        button.innerHTML = '<i data-lucide="eye" class="w-5 h-5"></i>';
+    });
+
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+    }
+
+    function bindPasswordToggles() {
+    passwordToggleButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+        const targetId = button.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+
+        if (!input) return;
+
+        const isHidden = input.type === "password";
+        input.type = isHidden ? "text" : "password";
+
+        button.innerHTML = isHidden
+            ? '<i data-lucide="eye-off" class="w-5 h-5"></i>'
+            : '<i data-lucide="eye" class="w-5 h-5"></i>';
+
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+        });
+    });
+    }
+
+  function getWalletType(user) {
+    return (
+      user?.withdrawalWalletType ||
+      user?.walletType ||
+      user?.withdrawalWallet?.type ||
+      ""
+    );
+  }
+
+  function getWalletAddress(user) {
+    return (
+      user?.withdrawalWalletAddress ||
+      user?.walletAddress ||
+      user?.withdrawalWallet?.address ||
+      ""
+    );
+  }
+
+  function hydrateProfile(user) {
+    if (!user) return;
+
+    const fullName = user.fullName || "Client Account";
+    const email = user.email || "No email";
+    const profileImage = user.profileImage || "images/logo.png";
+    const statusText =
+      user.kycStatus === "verified" ? "Verified User" : "Client User";
+
+    if (sidebarUserAvatar) {
+      sidebarUserAvatar.src = profileImage;
+      sidebarUserAvatar.alt = fullName;
+    }
+
+    if (sidebarUserName) sidebarUserName.textContent = fullName;
+    if (sidebarUserStatus) sidebarUserStatus.textContent = statusText;
+
+    if (profileMainImage) {
+      profileMainImage.src = profileImage;
+      profileMainImage.alt = fullName;
+    }
+
+    if (profileMainName) profileMainName.textContent = fullName;
+    if (profileMainStatus) profileMainStatus.textContent = statusText;
+    if (profileFullName) profileFullName.textContent = fullName;
+    if (profileEmail) profileEmail.textContent = email;
+
+    const walletType = getWalletType(user);
+    const walletAddress = getWalletAddress(user);
+    const hasWallet = Boolean(walletType && walletAddress);
+
+    if (hasWallet) {
+      if (walletAddressDisplay) walletAddressDisplay.textContent = walletAddress;
+      if (walletTypeDisplay) walletTypeDisplay.textContent = walletType;
+
+      walletNoticeCard?.classList.add("hidden");
+      walletActionCard?.classList.add("hidden");
+      walletLockedCard?.classList.remove("hidden");
+    } else {
+      if (walletAddressDisplay) walletAddressDisplay.textContent = "Not Added Yet";
+      if (walletTypeDisplay) walletTypeDisplay.textContent = "No wallet added";
+
+      walletNoticeCard?.classList.remove("hidden");
+      walletActionCard?.classList.remove("hidden");
+      walletLockedCard?.classList.add("hidden");
+    }
+  }
+
   async function guardProfile() {
     const token =
       localStorage.getItem("token") || sessionStorage.getItem("token");
-    const userInfoRaw =
-      localStorage.getItem("userInfo") || sessionStorage.getItem("userInfo");
-    const storedUser = userInfoRaw ? JSON.parse(userInfoRaw) : null;
+    const storedUser = getStoredUser();
 
     if (!token || !storedUser) {
       clearStoredAuth();
@@ -110,13 +243,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     try {
-      const profileResponse = await window.API.get("/user/profile");
-      const liveUser = profileResponse?.data || storedUser;
+      const response = await window.API.get("/user/profile");
+      const liveUser = response?.data || storedUser;
 
-      localStorage.setItem("userInfo", JSON.stringify(liveUser));
+      saveStoredUser(liveUser);
       return liveUser;
     } catch (error) {
       console.error("Failed to load profile:", error);
+
       if (storedUser) return storedUser;
 
       clearStoredAuth();
@@ -125,76 +259,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  function hydrateProfile(user) {
-    const profileImage = user?.profileImage || "images/logo.png";
-    const fullName = user?.fullName || "Client Account";
-    const email = user?.email || "No email";
-    const verifiedText =
-      user?.kycStatus === "verified" ? "Verified User" : "Client User";
-
-    if (sidebarUserAvatar) {
-      sidebarUserAvatar.src = profileImage;
-      sidebarUserAvatar.alt = fullName;
-    }
-
-    if (sidebarUserName) sidebarUserName.textContent = fullName;
-    if (sidebarUserStatus) sidebarUserStatus.textContent = verifiedText;
-
-    if (profileMainImage) {
-      profileMainImage.src = profileImage;
-      profileMainImage.alt = fullName;
-    }
-
-    if (profileMainName) profileMainName.textContent = fullName;
-    if (profileMainStatus) profileMainStatus.textContent = verifiedText;
-    if (profileFullName) profileFullName.textContent = fullName;
-    if (profileEmail) profileEmail.textContent = email;
-
-    const hasWallet =
-      Boolean(user?.withdrawalWalletAddress) && Boolean(user?.withdrawalWalletType);
-
-    if (hasWallet) {
-      if (walletAddressDisplay) {
-        walletAddressDisplay.textContent = user.withdrawalWalletAddress;
-      }
-
-      if (walletTypeDisplay) {
-        walletTypeDisplay.textContent = user.withdrawalWalletType;
-      }
-
-      walletNoticeCard?.classList.add("hidden");
-      walletActionCard?.classList.add("hidden");
-      walletLockedCard?.classList.remove("hidden");
-    } else {
-      if (walletAddressDisplay) {
-        walletAddressDisplay.textContent = "Not Added Yet";
-      }
-
-      if (walletTypeDisplay) {
-        walletTypeDisplay.textContent = "No wallet added";
-      }
-
-      walletNoticeCard?.classList.remove("hidden");
-      walletActionCard?.classList.remove("hidden");
-      walletLockedCard?.classList.add("hidden");
-    }
-  }
-
   async function handlePasswordChange(event) {
     event.preventDefault();
 
-    const currentPassword = currentPasswordInput?.value.trim() || "";
-    const newPassword = newPasswordInput?.value.trim() || "";
-    const confirmNewPassword = confirmNewPasswordInput?.value.trim() || "";
+    const currentPassword = currentPasswordInput?.value?.trim() || "";
+    const newPassword = newPasswordInput?.value?.trim() || "";
+    const confirmNewPassword = confirmNewPasswordInput?.value?.trim() || "";
 
     if (!currentPassword || !newPassword || !confirmNewPassword) {
       showToast("Please fill all password fields.", "error");
       return;
     }
 
-    const originalText = updatePasswordBtn.textContent;
-    updatePasswordBtn.disabled = true;
-    updatePasswordBtn.textContent = "Updating...";
+    if (newPassword !== confirmNewPassword) {
+      showToast("New passwords do not match.", "error");
+      return;
+    }
+
+    const originalText = updatePasswordBtn?.textContent || "Update Password";
+
+    if (updatePasswordBtn) {
+      updatePasswordBtn.disabled = true;
+      updatePasswordBtn.textContent = "Updating...";
+    }
 
     try {
       const response = await window.API.post("/user/change-password", {
@@ -204,23 +291,26 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       showToast(response?.message || "Password changed successfully.", "success");
-      passwordForm.reset();
+      passwordForm?.reset();
       passwordPanel?.classList.add("hidden");
+      resetPasswordVisibility();
     } catch (error) {
       console.error("Password change failed:", error);
       showToast(error.message || "Failed to change password.", "error");
     } finally {
-      updatePasswordBtn.disabled = false;
-      updatePasswordBtn.textContent = originalText;
+      if (updatePasswordBtn) {
+        updatePasswordBtn.disabled = false;
+        updatePasswordBtn.textContent = originalText;
+      }
     }
   }
 
   async function handleWalletSave(event) {
     event.preventDefault();
 
-    const walletType = walletTypeInput?.value.trim() || "";
-    const walletAddress = walletAddressInput?.value.trim() || "";
-    const confirmed = walletConfirmCheckbox?.checked;
+    const walletType = walletTypeInput?.value?.trim() || "";
+    const walletAddress = walletAddressInput?.value?.trim() || "";
+    const confirmed = Boolean(walletConfirmCheckbox?.checked);
 
     if (!walletType || !walletAddress) {
       showToast("Please enter wallet type and wallet address.", "error");
@@ -232,9 +322,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    const originalText = saveWalletBtn.textContent;
-    saveWalletBtn.disabled = true;
-    saveWalletBtn.textContent = "Saving...";
+    const currentStoredUser = getStoredUser();
+    const existingWalletType = getWalletType(currentStoredUser);
+    const existingWalletAddress = getWalletAddress(currentStoredUser);
+
+    if (existingWalletType && existingWalletAddress) {
+      showToast("Withdrawal wallet is already locked and cannot be changed.", "error");
+      closeWalletModal();
+      return;
+    }
+
+    const originalText = saveWalletBtn?.textContent || "Save Wallet Address";
+
+    if (saveWalletBtn) {
+      saveWalletBtn.disabled = true;
+      saveWalletBtn.textContent = "Saving...";
+    }
 
     try {
       const response = await window.API.put("/user/profile", {
@@ -242,23 +345,33 @@ document.addEventListener("DOMContentLoaded", async () => {
         withdrawalWalletAddress: walletAddress,
       });
 
-      const updatedUser = {
-        ...(JSON.parse(localStorage.getItem("userInfo") || "{}")),
-        ...(response?.data || {}),
+      const updatedFromApi = response?.data || {};
+      const mergedUser = {
+        ...(currentStoredUser || {}),
+        ...updatedFromApi,
+        withdrawalWalletType: walletType,
+        withdrawalWalletAddress: walletAddress,
       };
 
-      localStorage.setItem("userInfo", JSON.stringify(updatedUser));
+      saveStoredUser(mergedUser);
+      hydrateProfile(mergedUser);
 
-      showToast(response?.message || "Wallet saved successfully.", "success");
-      hydrateProfile(updatedUser);
-      walletForm.reset();
+      showToast(
+        response?.message ||
+          "Wallet saved on the frontend. Add the wallet fields in your backend model/controller for permanent database save.",
+        "success"
+      );
+
+      walletForm?.reset();
       closeWalletModal();
     } catch (error) {
       console.error("Wallet save failed:", error);
       showToast(error.message || "Failed to save wallet address.", "error");
     } finally {
-      saveWalletBtn.disabled = false;
-      saveWalletBtn.textContent = originalText;
+      if (saveWalletBtn) {
+        saveWalletBtn.disabled = false;
+        saveWalletBtn.textContent = originalText;
+      }
     }
   }
 
@@ -294,6 +407,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       closeSidebar();
     }
   });
+
+  bindPasswordToggles();
 
   if (window.lucide) {
     window.lucide.createIcons();

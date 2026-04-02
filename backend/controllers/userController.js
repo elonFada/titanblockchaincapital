@@ -584,39 +584,52 @@ const deleteProfileImage = asyncHandler(async (req, res) => {
 // @route   POST /api/user/change-password
 // @access  Private
 const changePassword = asyncHandler(async (req, res) => {
-  const user = req.user;
   const { currentPassword, newPassword, confirmNewPassword } = req.body;
 
   if (!currentPassword || !newPassword || !confirmNewPassword) {
     res.status(400);
-    throw new Error('Please provide all password fields');
+    throw new Error("Please provide all password fields");
+  }
+
+  const user = await User.findById(req.user._id).select("+password");
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
   }
 
   const isValidPassword = await user.comparePassword(currentPassword);
 
   if (!isValidPassword) {
     res.status(401);
-    throw new Error('Current password is incorrect');
+    throw new Error("Current password is incorrect");
   }
 
   if (newPassword !== confirmNewPassword) {
     res.status(400);
-    throw new Error('New passwords do not match');
+    throw new Error("New passwords do not match");
+  }
+
+  const isSameAsCurrent = await user.comparePassword(newPassword);
+
+  if (isSameAsCurrent) {
+    res.status(400);
+    throw new Error("Try another password. You cannot use your current password again");
   }
 
   const passwordValidation = validatePassword(newPassword);
   if (!passwordValidation.isValid) {
     const errorMessages = Object.values(passwordValidation.errors).filter(Boolean);
     res.status(400);
-    throw new Error(errorMessages.join('. '));
+    throw new Error(errorMessages.join(". "));
   }
 
   user.password = newPassword;
   await user.save();
 
   res.status(200).json({
-    status: 'success',
-    message: 'Password changed successfully',
+    status: "success",
+    message: "Password changed successfully",
   });
 });
 
