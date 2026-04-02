@@ -17,19 +17,21 @@ const submitWithdrawal = asyncHandler(async (req, res) => {
 
   const numericAmount = Number(amount);
 
-  if (numericAmount <= 0) {
+  if (Number.isNaN(numericAmount) || numericAmount <= 0) {
     res.status(400);
     throw new Error("Withdrawal amount must be greater than 0");
   }
 
-  const pendingWithdrawal = await Withdrawal.findOne({
+  const pendingOrApprovedWithdrawal = await Withdrawal.findOne({
     user: user._id,
-    status: "pending",
+    status: { $in: ["pending", "approved"] },
   });
 
-  if (pendingWithdrawal) {
+  if (pendingOrApprovedWithdrawal) {
     res.status(400);
-    throw new Error("You already have a pending withdrawal request");
+    throw new Error(
+      "You already have a withdrawal request being processed. Please wait until it is completed."
+    );
   }
 
   const availableProfit = (user.totalProfit || 0) - (user.totalWithdrawal || 0);
@@ -41,7 +43,9 @@ const submitWithdrawal = asyncHandler(async (req, res) => {
 
   if (numericAmount > availableProfit) {
     res.status(400);
-    throw new Error(`You can only withdraw from profit. Available profit: $${availableProfit.toFixed(2)}`);
+    throw new Error(
+      "This withdrawal amount exceeds your available profit. Only realized profit is eligible for withdrawal at this time, while your principal capital remains engaged in active trading."
+    );
   }
 
   if (numericAmount > (user.balance || 0)) {
@@ -58,19 +62,18 @@ const submitWithdrawal = asyncHandler(async (req, res) => {
     status: "pending",
   });
 
-  // Send email notification for withdrawal request
   try {
     await sendWithdrawalEmail({
       to: user.email,
       fullName: user.fullName,
-      type: 'submitted',
+      type: "submitted",
       amount: numericAmount,
       coinType,
       walletAddress,
-      network
+      network,
     });
   } catch (error) {
-    console.error('Failed to send withdrawal submission email:', error);
+    console.error("Failed to send withdrawal submission email:", error);
   }
 
   res.status(201).json({
@@ -95,6 +98,11 @@ const approveWithdrawal = asyncHandler(async (req, res) => {
   if (withdrawal.status === "approved") {
     res.status(400);
     throw new Error("Withdrawal has already been approved");
+  }
+
+  if (withdrawal.status === "paid") {
+    res.status(400);
+    throw new Error("Withdrawal has already been marked as paid");
   }
 
   if (withdrawal.status === "rejected") {
@@ -127,31 +135,107 @@ const approveWithdrawal = asyncHandler(async (req, res) => {
   withdrawal.rejectionReason = null;
   await withdrawal.save();
 
-  user.totalWithdrawal = (user.totalWithdrawal || 0) + withdrawal.amount;
-  user.balance = (user.balance || 0) - withdrawal.amount;
-  await user.save();
-
-  // Send approval email notification
-  let emailSent = false;
   try {
     await sendWithdrawalEmail({
       to: user.email,
       fullName: user.fullName,
-      type: 'approved',
+      type: "approved",
       amount: withdrawal.amount,
       coinType: withdrawal.coinType,
       walletAddress: withdrawal.walletAddress,
-      network: withdrawal.network
+      network: withdrawal.network,
     });
-    emailSent = true;
   } catch (error) {
-    console.error('Failed to send withdrawal approval email:', error);
+    console.error("Failed to send withdrawal approval email:", error);
   }
 
   res.status(200).json({
     success: true,
     message: "Withdrawal approved successfully",
-    emailSent,
+    data: {
+      withdrawal,
+      user: {
+        id: user._id,
+        balance: user.balance,
+        totalProfit: user.totalProfit,
+        totalWithdrawal: user.totalWithdrawal,
+        availableProfit,
+      },
+    },
+  });
+});
+
+// @desc    Mark withdrawal as paid
+// @route   POST /api/withdrawal/admin/:id/pay
+// @access  Private/Admin
+const payWithdrawal = asyncHandler(async (req, res) => {
+  const withdrawal = await Withdrawal.findById(req.params.id).populate("user");
+
+  if (!withdrawal) {
+    res.status(404);
+    throw new Error("Withdrawal not found");
+  }
+
+  if (withdrawal.status === "paid") {
+    res.status(400);
+    throw new Error("Withdrawal has already been marked as paid");
+  }
+
+  if (withdrawal.status === "pending") {
+    res.status(400);
+    throw new Error("Withdrawal must be approved before it can be marked as paid");
+  }
+
+  if (withdrawal.status === "rejected") {
+    res.status(400);
+    throw new Error("Rejected withdrawal cannot be marked as paid");
+  }
+
+  const user = await User.findById(withdrawal.user._id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  const availableProfit = (user.totalProfit || 0) - (user.totalWithdrawal || 0);
+
+  if (withdrawal.amount > availableProfit) {
+    res.status(400);
+    throw new Error("User no longer has enough withdrawable profit");
+  }
+
+  if (withdrawal.amount > (user.balance || 0)) {
+    res.status(400);
+    throw new Error("User balance is too low for this withdrawal");
+  }
+
+  withdrawal.status = "paid";
+  withdrawal.paidBy = req.admin._id;
+  withdrawal.paidAt = new Date();
+  await withdrawal.save();
+
+  user.totalWithdrawal = (user.totalWithdrawal || 0) + withdrawal.amount;
+  user.balance = (user.balance || 0) - withdrawal.amount;
+  await user.save();
+
+  try {
+    await sendWithdrawalEmail({
+      to: user.email,
+      fullName: user.fullName,
+      type: "paid",
+      amount: withdrawal.amount,
+      coinType: withdrawal.coinType,
+      walletAddress: withdrawal.walletAddress,
+      network: withdrawal.network,
+    });
+  } catch (error) {
+    console.error("Failed to send withdrawal paid email:", error);
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Withdrawal marked as paid successfully",
     data: {
       withdrawal,
       user: {
@@ -207,8 +291,6 @@ const getWithdrawalById = asyncHandler(async (req, res) => {
   });
 });
 
-// ==================== ADMIN ====================
-
 // @desc    Get all withdrawals
 // @route   GET /api/withdrawal/admin/all
 // @access  Private/Admin
@@ -221,15 +303,17 @@ const getAllWithdrawals = asyncHandler(async (req, res) => {
   const withdrawals = await Withdrawal.find(filter)
     .populate("user", "fullName email phoneNumber balance totalProfit totalWithdrawal")
     .populate("reviewedBy", "fullName email")
+    .populate("paidBy", "fullName email")
     .sort("-createdAt");
 
   const stats = {
     total: withdrawals.length,
     pending: withdrawals.filter((w) => w.status === "pending").length,
     approved: withdrawals.filter((w) => w.status === "approved").length,
+    paid: withdrawals.filter((w) => w.status === "paid").length,
     rejected: withdrawals.filter((w) => w.status === "rejected").length,
     totalAmount: withdrawals
-      .filter((w) => w.status === "approved")
+      .filter((w) => w.status === "paid")
       .reduce((sum, w) => sum + w.amount, 0),
   };
 
@@ -241,9 +325,6 @@ const getAllWithdrawals = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Reject withdrawal
-// @route   POST /api/withdrawal/admin/:id/reject
-// @access  Private/Admin
 // @desc    Reject withdrawal
 // @route   POST /api/withdrawal/admin/:id/reject
 // @access  Private/Admin
@@ -262,9 +343,9 @@ const rejectWithdrawal = asyncHandler(async (req, res) => {
     throw new Error("Withdrawal not found");
   }
 
-  if (withdrawal.status === "approved") {
+  if (withdrawal.status === "paid") {
     res.status(400);
-    throw new Error("Approved withdrawal cannot be rejected");
+    throw new Error("Paid withdrawal cannot be rejected");
   }
 
   if (withdrawal.status === "rejected") {
@@ -278,28 +359,24 @@ const rejectWithdrawal = asyncHandler(async (req, res) => {
   withdrawal.rejectionReason = reason;
   await withdrawal.save();
 
-  // Send rejection email notification
-  let emailSent = false;
   try {
     await sendWithdrawalEmail({
       to: withdrawal.user.email,
       fullName: withdrawal.user.fullName,
-      type: 'rejected',
+      type: "rejected",
       amount: withdrawal.amount,
       coinType: withdrawal.coinType,
       walletAddress: withdrawal.walletAddress,
       network: withdrawal.network,
-      reason: reason
+      reason,
     });
-    emailSent = true;
   } catch (error) {
-    console.error('Failed to send withdrawal rejection email:', error);
+    console.error("Failed to send withdrawal rejection email:", error);
   }
 
   res.status(200).json({
     success: true,
     message: "Withdrawal rejected",
-    emailSent,
     data: withdrawal,
   });
 });
@@ -318,29 +395,25 @@ const getWithdrawalStats = asyncHandler(async (req, res) => {
     },
   ]);
 
-  const pending = stats.find((s) => s._id === "pending") || {
-    count: 0,
-    totalAmount: 0,
-  };
-  const approved = stats.find((s) => s._id === "approved") || {
-    count: 0,
-    totalAmount: 0,
-  };
-  const rejected = stats.find((s) => s._id === "rejected") || {
-    count: 0,
-    totalAmount: 0,
-  };
+  const pending = stats.find((s) => s._id === "pending") || { count: 0, totalAmount: 0 };
+  const approved = stats.find((s) => s._id === "approved") || { count: 0, totalAmount: 0 };
+  const paid = stats.find((s) => s._id === "paid") || { count: 0, totalAmount: 0 };
+  const rejected = stats.find((s) => s._id === "rejected") || { count: 0, totalAmount: 0 };
 
   res.status(200).json({
     success: true,
     stats: {
       pending: { count: pending.count, amount: pending.totalAmount },
       approved: { count: approved.count, amount: approved.totalAmount },
+      paid: { count: paid.count, amount: paid.totalAmount },
       rejected: { count: rejected.count, amount: rejected.totalAmount },
       total: {
-        count: pending.count + approved.count + rejected.count,
+        count: pending.count + approved.count + paid.count + rejected.count,
         amount:
-          pending.totalAmount + approved.totalAmount + rejected.totalAmount,
+          pending.totalAmount +
+          approved.totalAmount +
+          paid.totalAmount +
+          rejected.totalAmount,
       },
     },
   });
@@ -352,6 +425,7 @@ export {
   getWithdrawalById,
   getAllWithdrawals,
   approveWithdrawal,
+  payWithdrawal,
   rejectWithdrawal,
   getWithdrawalStats,
 };

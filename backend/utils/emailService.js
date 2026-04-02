@@ -685,19 +685,22 @@ Need help? Contact ${SUPPORT_EMAIL}
   });
 };
 
-// ==================== WITHDRAWAL EMAIL ====================
 const sendWithdrawalEmail = async ({
   to,
   fullName = "",
   type,
   amount,
-  walletAddress,
   coinType,
+  walletAddress,
   network,
   reason,
 }) => {
-  const safeAmount = formatMoney(amount);
-  const safeDashboardUrl = `${FRONTEND_URL}/dashboard.html`;
+  const safeAmount =
+    amount !== undefined && amount !== null ? Number(amount).toLocaleString() : "0";
+
+  const walletLine = `${coinType || "Crypto"}${network ? ` • ${network}` : ""}${
+    walletAddress ? ` • ${walletAddress}` : ""
+  }`;
 
   const templates = {
     submitted: {
@@ -705,29 +708,24 @@ const sendWithdrawalEmail = async ({
       eyebrow: "Withdrawal Update",
       heading: "Your withdrawal request has been received",
       intro:
-        "Your withdrawal request has been submitted successfully and is now awaiting review.",
+        "Your withdrawal request has been submitted successfully and is now awaiting admin review.",
       bodyHtml: `
         <div style="font-size:16px;line-height:1.8;color:#334155;margin-bottom:18px;">
           Hello <strong style="color:#0f172a;">${escapeHtml(fullName || "there")}</strong>,
         </div>
-
         <div style="font-size:15px;line-height:1.8;color:#475569;margin-bottom:20px;">
-          We have received your withdrawal request for <strong>$${escapeHtml(safeAmount)}</strong>.
+          We have received your withdrawal request for <strong>$${safeAmount}</strong>.
         </div>
-
-        ${buildInfoCard("Withdrawal Details", [
-          { label: "Amount", value: `$${safeAmount}` },
-          { label: "Asset", value: coinType || "N/A" },
-          { label: "Network", value: network || "N/A" },
-          { label: "Wallet Address", value: walletAddress || "N/A", breakWord: true },
-        ])}
-
-        ${buildNotice({
-          color: "gold",
-          text: "Your withdrawal is currently under review. You will receive another update once processing is complete.",
-        })}
+        <div style="margin:22px 0;padding:18px;border-left:4px solid #e4b84f;background:#fff8e7;border-radius:14px;">
+          <div style="font-size:14px;line-height:1.8;color:#7c5a10;">
+            <strong>Wallet:</strong> ${escapeHtml(walletLine)}
+          </div>
+        </div>
+        <div style="font-size:14px;line-height:1.8;color:#64748b;">
+          Your request is currently <strong>pending review</strong>. You will receive another email once it has been approved or paid.
+        </div>
       `,
-      text: `We have received your withdrawal request for $${safeAmount}. Wallet Address: ${walletAddress || "N/A"}`,
+      text: `We have received your withdrawal request for $${safeAmount}. Wallet: ${walletLine}. Your request is pending review.`,
     },
 
     approved: {
@@ -735,55 +733,74 @@ const sendWithdrawalEmail = async ({
       eyebrow: "Withdrawal Approved",
       heading: "Your withdrawal has been approved",
       intro:
-        "Your withdrawal request has been reviewed and approved successfully.",
+        "Your withdrawal request has been approved and is now queued for final payment processing.",
       bodyHtml: `
         <div style="font-size:16px;line-height:1.8;color:#334155;margin-bottom:18px;">
           Hello <strong style="color:#0f172a;">${escapeHtml(fullName || "there")}</strong>,
         </div>
-
         <div style="font-size:15px;line-height:1.8;color:#475569;margin-bottom:20px;">
-          Great news. Your withdrawal of <strong>$${escapeHtml(safeAmount)}</strong> has been <strong>approved</strong>.
+          Your withdrawal request for <strong>$${safeAmount}</strong> has been <strong>approved</strong>.
         </div>
-
-        ${buildInfoCard("Withdrawal Details", [
-          { label: "Amount", value: `$${safeAmount}` },
-          { label: "Asset", value: coinType || "N/A" },
-          { label: "Network", value: network || "N/A" },
-          { label: "Wallet Address", value: walletAddress || "N/A", breakWord: true },
-        ])}
-
-        ${buildNotice({
-          color: "green",
-          text: "Your withdrawal is now being processed to the destination wallet address you provided.",
-        })}
-
-        ${buildButton("View Dashboard", safeDashboardUrl)}
+        <div style="margin:22px 0;padding:18px;border-left:4px solid #22c55e;background:#ecfdf5;border-radius:14px;">
+          <div style="font-size:14px;line-height:1.8;color:#166534;">
+            <strong>Wallet:</strong> ${escapeHtml(walletLine)}
+          </div>
+        </div>
+        <div style="font-size:14px;line-height:1.8;color:#64748b;">
+          Your withdrawal has not yet been marked as paid. You will receive a final confirmation email once payment has been completed.
+        </div>
       `,
-      text: `Your withdrawal of $${safeAmount} has been approved.`,
+      text: `Your withdrawal request for $${safeAmount} has been approved. Wallet: ${walletLine}. Final payment is pending.`,
+    },
+
+    paid: {
+      subject: "Withdrawal Paid – Titan Blockchain Capital",
+      eyebrow: "Withdrawal Completed",
+      heading: "Your withdrawal has been marked as paid",
+      intro:
+        "Your withdrawal has been fully processed and marked as paid by our team.",
+      bodyHtml: `
+        <div style="font-size:16px;line-height:1.8;color:#334155;margin-bottom:18px;">
+          Hello <strong style="color:#0f172a;">${escapeHtml(fullName || "there")}</strong>,
+        </div>
+        <div style="font-size:15px;line-height:1.8;color:#475569;margin-bottom:20px;">
+          Your withdrawal of <strong>$${safeAmount}</strong> has been <strong>marked as paid</strong>.
+        </div>
+        <div style="margin:22px 0;padding:18px;border-left:4px solid #22c55e;background:#ecfdf5;border-radius:14px;">
+          <div style="font-size:14px;line-height:1.8;color:#166534;">
+            <strong>Wallet:</strong> ${escapeHtml(walletLine)}
+          </div>
+        </div>
+        <div style="font-size:14px;line-height:1.8;color:#64748b;">
+          If you do not see the funds immediately, please allow for normal blockchain/network confirmation time.
+        </div>
+      `,
+      text: `Your withdrawal of $${safeAmount} has been marked as paid. Wallet: ${walletLine}.`,
     },
 
     rejected: {
       subject: "Withdrawal Rejected – Titan Blockchain Capital",
       eyebrow: "Withdrawal Update",
-      heading: "Your withdrawal could not be approved",
+      heading: "Your withdrawal request was not approved",
       intro:
-        "We were unable to approve your withdrawal request at this time.",
+        "We were unable to process your withdrawal request at this time.",
       bodyHtml: `
         <div style="font-size:16px;line-height:1.8;color:#334155;margin-bottom:18px;">
           Hello <strong style="color:#0f172a;">${escapeHtml(fullName || "there")}</strong>,
         </div>
-
         <div style="font-size:15px;line-height:1.8;color:#475569;margin-bottom:20px;">
-          Unfortunately, your withdrawal request for <strong>$${escapeHtml(safeAmount)}</strong> could not be approved.
+          Your withdrawal request for <strong>$${safeAmount}</strong> has been rejected.
         </div>
-
-        ${buildNotice({
-          color: "red",
-          title: "Reason:",
-          text: reason || "Your withdrawal could not be approved.",
-        })}
+        <div style="margin:22px 0;padding:18px;border-left:4px solid #ef4444;background:#fef2f2;border-radius:14px;">
+          <div style="font-size:14px;line-height:1.8;color:#991b1b;">
+            <strong>Reason:</strong> ${escapeHtml(reason || "Your withdrawal request could not be processed.")}
+          </div>
+        </div>
+        <div style="font-size:14px;line-height:1.8;color:#64748b;">
+          Please review the issue and submit a new request if necessary.
+        </div>
       `,
-      text: `Your withdrawal request for $${safeAmount} could not be approved. Reason: ${reason || "Your withdrawal could not be approved."}`,
+      text: `Your withdrawal request for $${safeAmount} has been rejected. Reason: ${reason || "Your withdrawal request could not be processed."}`,
     },
   };
 
@@ -808,14 +825,35 @@ ${template.text}
 Need help? Contact ${SUPPORT_EMAIL}
   `.trim();
 
-  return sendBrandedEmail({
-    from: FROM_WITHDRAWAL_EMAIL,
-    to,
-    subject: template.subject,
-    html,
-    text,
-    mailer: "Titan Withdrawal System",
-  });
+  try {
+    const { data, error } = await resend.emails.send({
+      from: FROM_NOTIFICATION_EMAIL,
+      to: [to],
+      subject: template.subject,
+      html,
+      text,
+      headers: {
+        "X-Priority": "1",
+        "X-Mailer": "Titan Withdrawal System",
+        "X-Entity-Ref-ID": `${Date.now()}-${crypto.randomBytes(6).toString("hex")}`,
+      },
+    });
+
+    if (error) {
+      throw new Error(error.message || "Unable to send withdrawal email");
+    }
+
+    return {
+      success: true,
+      messageId: data?.id || null,
+    };
+  } catch (error) {
+    console.error("❌ Withdrawal email delivery failed:", error);
+    return {
+      success: false,
+      error: error.message || "Unable to send withdrawal email",
+    };
+  }
 };
 
 // ==================== TRADING SIGNAL EMAIL ====================

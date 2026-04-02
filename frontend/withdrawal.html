@@ -125,13 +125,24 @@
               >
                 <div class="flex items-center gap-3 min-w-0">
                   <img
+                    id="sidebarUserAvatar"
                     src="images/logo.png"
                     alt="Titan Logo"
                     class="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-cover shrink-0"
                   />
                   <div class="min-w-0">
-                    <p class="text-white font-bold truncate">Client Account</p>
-                    <p class="text-slate-400 text-sm truncate">Verified User</p>
+                    <p
+                      id="sidebarUserName"
+                      class="text-white font-bold truncate"
+                    >
+                      Client Account
+                    </p>
+                    <p
+                      id="sidebarUserStatus"
+                      class="text-slate-400 text-sm truncate"
+                    >
+                      Verified User
+                    </p>
                   </div>
                 </div>
 
@@ -229,12 +240,16 @@
                   <div
                     class="glass-card rounded-3xl p-5 sm:p-6 min-w-0 w-full lg:max-w-sm"
                   >
-                    <p class="text-slate-400 text-sm">Available Balance</p>
-                    <h2 class="text-white text-3xl sm:text-4xl font-black mt-2">
-                      $24,580.00
+                    <p class="text-slate-400 text-sm">Account Balance</p>
+                    <h2
+                      id="accountBalanceValue"
+                      class="text-white text-3xl sm:text-4xl font-black mt-2"
+                    >
+                      $0.00
                     </h2>
                     <p class="text-primary text-sm mt-2 font-semibold">
-                      Withdraw only to your secured wallet.
+                      Withdrawals are processed to your saved trusted wallet
+                      address.
                     </p>
                   </div>
                 </div>
@@ -254,7 +269,7 @@
                     </h3>
                   </div>
 
-                  <form class="space-y-5">
+                  <form id="withdrawalForm" class="space-y-5">
                     <div>
                       <label
                         class="block text-sm font-semibold text-slate-200 mb-2"
@@ -262,7 +277,10 @@
                         Withdrawal Amount
                       </label>
                       <input
+                        id="withdrawalAmount"
                         type="number"
+                        min="0"
+                        step="0.01"
                         placeholder="Enter amount"
                         class="form-input w-full rounded-2xl px-4 py-4 text-sm"
                       />
@@ -276,19 +294,27 @@
                       </label>
                       <div class="relative">
                         <select
+                          id="walletSelect"
                           class="form-input w-full rounded-2xl px-4 py-4 pr-12 text-sm"
                         >
-                          <option>Main Wallet • TRC20 • TXf3...27md</option>
+                          <option value="">Loading wallet...</option>
                         </select>
                         <i
                           data-lucide="chevron-down"
                           class="w-5 h-5 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
                         ></i>
                       </div>
+                      <p
+                        id="walletHelpText"
+                        class="text-slate-400 text-xs sm:text-sm mt-3 leading-6"
+                      >
+                        Your saved wallet address will appear here.
+                      </p>
                     </div>
 
                     <button
-                      type="button"
+                      id="submitWithdrawalBtn"
+                      type="submit"
                       class="w-full py-4 text-black font-bold rounded-2xl gold-gradient shadow-xl shadow-primary/20 hover:scale-[1.01] transition-transform"
                     >
                       Submit Withdrawal Request
@@ -315,7 +341,8 @@
                         submitting.
                       </p>
                       <p>
-                        4. Submit your request and wait for admin confirmation.
+                        4. Submit your request and wait for admin review and
+                        payment.
                       </p>
                     </div>
                   </div>
@@ -360,90 +387,29 @@
                   </div>
                 </div>
 
-                <div class="space-y-3">
+                <div id="withdrawalHistoryContainer" class="space-y-3">
                   <div
                     class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
                   >
                     <button
                       type="button"
-                      class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
+                      class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left"
                     >
                       <div class="min-w-0">
                         <p class="text-white font-bold text-sm sm:text-base">
-                          Withdrawal
+                          Loading withdrawal history...
                         </p>
                         <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                          21 Mar 2026 • BTC • bc1q...8k92
+                          Please wait while your records are being fetched.
                         </p>
                       </div>
 
                       <div class="flex items-center gap-3 shrink-0">
                         <span
-                          class="px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
+                          class="px-3 py-1 rounded-full bg-white/10 border border-white/10 text-slate-300 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
                         >
-                          Pending
+                          Loading
                         </span>
-                        <p class="text-red-400 font-bold text-sm sm:text-base">
-                          -$1,200
-                        </p>
-                      </div>
-                    </button>
-                  </div>
-
-                  <div
-                    class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
-                  >
-                    <button
-                      type="button"
-                      class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
-                    >
-                      <div class="min-w-0">
-                        <p class="text-white font-bold text-sm sm:text-base">
-                          Withdrawal
-                        </p>
-                        <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                          14 Mar 2026 • TRC20 • TXf3...27md
-                        </p>
-                      </div>
-
-                      <div class="flex items-center gap-3 shrink-0">
-                        <span
-                          class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
-                        >
-                          Approved
-                        </span>
-                        <p class="text-red-400 font-bold text-sm sm:text-base">
-                          -$2,000
-                        </p>
-                      </div>
-                    </button>
-                  </div>
-
-                  <div
-                    class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
-                  >
-                    <button
-                      type="button"
-                      class="w-full flex items-center justify-between gap-4 px-4 sm:px-5 py-4 text-left hover:bg-white/[0.03] transition-colors"
-                    >
-                      <div class="min-w-0">
-                        <p class="text-white font-bold text-sm sm:text-base">
-                          Withdrawal
-                        </p>
-                        <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                          08 Mar 2026 • ERC20 • 0x84...ab91
-                        </p>
-                      </div>
-
-                      <div class="flex items-center gap-3 shrink-0">
-                        <span
-                          class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider"
-                        >
-                          Approved
-                        </span>
-                        <p class="text-red-400 font-bold text-sm sm:text-base">
-                          -$950
-                        </p>
                       </div>
                     </button>
                   </div>
@@ -455,6 +421,11 @@
       </div>
     </main>
 
-    <script src="js/script.js"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/withdrawal.js"></script>
   </body>
 </html>

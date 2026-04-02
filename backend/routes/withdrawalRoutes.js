@@ -5,6 +5,7 @@ import {
   getWithdrawalById,
   getAllWithdrawals,
   approveWithdrawal,
+  payWithdrawal,
   rejectWithdrawal,
   getWithdrawalStats,
 } from "../controllers/withdrawalController.js";
@@ -21,6 +22,7 @@ router.get("/:id", protect, getWithdrawalById);
 router.get("/admin/all", adminProtect, getAllWithdrawals);
 router.get("/admin/stats", adminProtect, getWithdrawalStats);
 router.post("/admin/:id/approve", adminProtect, approveWithdrawal);
+router.post("/admin/:id/pay", adminProtect, payWithdrawal);
 router.post("/admin/:id/reject", adminProtect, rejectWithdrawal);
 
 export default router;
