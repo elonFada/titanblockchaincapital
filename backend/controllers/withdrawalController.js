@@ -1,7 +1,45 @@
 import asyncHandler from "express-async-handler";
 import Withdrawal from "../models/withdrawalModel.js";
 import User from "../models/userModel.js";
+import UserTrade from "../models/userTradeModel.js";
 import { sendWithdrawalEmail } from "../utils/emailService.js";
+
+const calculateWithdrawableProfit = async (userId) => {
+  const completedTrades = await UserTrade.find({
+    user: userId,
+    status: "completed",
+  }).select("profit loss");
+
+  const totalTradeProfit = completedTrades.reduce(
+    (sum, trade) => sum + Number(trade.profit || 0),
+    0
+  );
+
+  const totalTradeLoss = completedTrades.reduce(
+    (sum, trade) => sum + Number(trade.loss || 0),
+    0
+  );
+
+  const approvedOrPaidWithdrawals = await Withdrawal.find({
+    user: userId,
+    status: { $in: ["approved", "paid"] },
+  }).select("amount");
+
+  const totalProcessedWithdrawals = approvedOrPaidWithdrawals.reduce(
+    (sum, withdrawal) => sum + Number(withdrawal.amount || 0),
+    0
+  );
+
+  const withdrawableProfit =
+    totalTradeProfit - totalTradeLoss - totalProcessedWithdrawals;
+
+  return {
+    totalTradeProfit,
+    totalTradeLoss,
+    totalProcessedWithdrawals,
+    withdrawableProfit: Math.max(0, withdrawableProfit),
+  };
+};
 
 // @desc    Submit withdrawal request
 // @route   POST /api/withdrawal
@@ -32,17 +70,17 @@ const submitWithdrawal = asyncHandler(async (req, res) => {
     throw new Error("You already have a pending withdrawal request");
   }
 
-  const availableProfit = Number(user.totalProfit || 0) - Number(user.totalWithdrawal || 0);
+  const { withdrawableProfit } = await calculateWithdrawableProfit(user._id);
 
-  if (availableProfit <= 0) {
+  if (withdrawableProfit <= 0) {
     res.status(400);
-    throw new Error("You do not have withdrawable profit yet");
+    throw new Error("You do not have withdrawable profit available at this time");
   }
 
-  if (numericAmount > availableProfit) {
+  if (numericAmount > withdrawableProfit) {
     res.status(400);
     throw new Error(
-      "You can only withdraw realized profit. Your capital is still actively trading."
+      "This withdrawal amount exceeds your withdrawable profit. Only realized net profit is available for withdrawal, while your principal capital remains engaged in active trading."
     );
   }
 
@@ -78,7 +116,7 @@ const submitWithdrawal = asyncHandler(async (req, res) => {
     success: true,
     message: "Withdrawal request submitted successfully",
     data: withdrawal,
-    availableProfit,
+    availableProfit: withdrawableProfit,
   });
 });
 
@@ -88,13 +126,23 @@ const submitWithdrawal = asyncHandler(async (req, res) => {
 const getMyWithdrawals = asyncHandler(async (req, res) => {
   const withdrawals = await Withdrawal.find({ user: req.user._id }).sort("-createdAt");
 
-  const availableProfit =
-    Number(req.user.totalProfit || 0) - Number(req.user.totalWithdrawal || 0);
+  const {
+    totalTradeProfit,
+    totalTradeLoss,
+    totalProcessedWithdrawals,
+    withdrawableProfit,
+  } = await calculateWithdrawableProfit(req.user._id);
 
   res.status(200).json({
     success: true,
     count: withdrawals.length,
-    availableProfit,
+    availableProfit: withdrawableProfit,
+    stats: {
+      totalTradeProfit,
+      totalTradeLoss,
+      totalProcessedWithdrawals,
+      withdrawableProfit,
+    },
     data: withdrawals,
   });
 });
@@ -188,10 +236,9 @@ const approveWithdrawal = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 
-  const availableProfit =
-    Number(user.totalProfit || 0) - Number(user.totalWithdrawal || 0);
+  const { withdrawableProfit } = await calculateWithdrawableProfit(user._id);
 
-  if (withdrawal.amount > availableProfit) {
+  if (withdrawal.amount > withdrawableProfit) {
     res.status(400);
     throw new Error("User no longer has enough withdrawable profit");
   }
@@ -201,18 +248,14 @@ const approveWithdrawal = asyncHandler(async (req, res) => {
     throw new Error("User balance is too low for this withdrawal");
   }
 
-  // IMPORTANT:
-  // Approval is where balance and totalWithdrawal are updated.
   withdrawal.status = "approved";
   withdrawal.reviewedBy = req.admin._id;
   withdrawal.reviewedAt = new Date();
   withdrawal.rejectionReason = null;
-
-  user.balance = Number(user.balance || 0) - Number(withdrawal.amount || 0);
-  user.totalWithdrawal =
-    Number(user.totalWithdrawal || 0) + Number(withdrawal.amount || 0);
-
   await withdrawal.save();
+
+  user.totalWithdrawal = Number(user.totalWithdrawal || 0) + Number(withdrawal.amount || 0);
+  user.balance = Number(user.balance || 0) - Number(withdrawal.amount || 0);
   await user.save();
 
   let emailSent = false;
@@ -231,6 +274,8 @@ const approveWithdrawal = asyncHandler(async (req, res) => {
     console.error("Failed to send withdrawal approval email:", error);
   }
 
+  const recalculated = await calculateWithdrawableProfit(user._id);
+
   res.status(200).json({
     success: true,
     message: "Withdrawal approved successfully",
@@ -242,8 +287,7 @@ const approveWithdrawal = asyncHandler(async (req, res) => {
         balance: user.balance,
         totalProfit: user.totalProfit,
         totalWithdrawal: user.totalWithdrawal,
-        availableProfit:
-          Number(user.totalProfit || 0) - Number(user.totalWithdrawal || 0),
+        availableProfit: recalculated.withdrawableProfit,
       },
     },
   });
