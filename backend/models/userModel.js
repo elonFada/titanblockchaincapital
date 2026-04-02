@@ -192,7 +192,7 @@ const userSchema = mongoose.Schema({
     type: Date,
     default: null
   },
-  tradingBotPaymentId: {
+tradingBotPaymentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "TradingBotPayment",
     default: null
@@ -200,6 +200,21 @@ const userSchema = mongoose.Schema({
   supportChatOpenedAt: {
     type: Date,
     default: null,
+  },
+
+  withdrawalWalletType: {
+    type: String,
+    default: null,
+    trim: true,
+  },
+  withdrawalWalletAddress: {
+    type: String,
+    default: null,
+    trim: true,
+  },
+  withdrawalWalletLocked: {
+    type: Boolean,
+    default: false,
   },
 }, {
   timestamps: true

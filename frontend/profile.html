@@ -190,25 +190,6 @@
         color: #e4b84f;
       }
 
-      .form-input {
-        background: rgba(255, 255, 255, 0.04) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        color: white !important;
-        -webkit-appearance: none;
-        appearance: none;
-      }
-
-      .form-input::placeholder {
-        color: rgb(148 163 184) !important;
-      }
-
-      .form-input:focus {
-        background: rgba(255, 255, 255, 0.06) !important;
-        border-color: rgba(228, 184, 79, 0.45) !important;
-        box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.08) !important;
-        outline: none;
-      }
-
       #walletModalCard .overflow-y-auto {
         scrollbar-width: thin;
         scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
@@ -346,13 +327,24 @@
               >
                 <div class="flex items-center gap-3 min-w-0">
                   <img
+                    id="sidebarUserAvatar"
                     src="images/logo.png"
                     alt="Titan Logo"
                     class="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl object-cover shrink-0"
                   />
                   <div class="min-w-0">
-                    <p class="text-white font-bold truncate">Client Account</p>
-                    <p class="text-slate-400 text-sm truncate">Verified User</p>
+                    <p
+                      id="sidebarUserName"
+                      class="text-white font-bold truncate"
+                    >
+                      Client Account
+                    </p>
+                    <p
+                      id="sidebarUserStatus"
+                      class="text-slate-400 text-sm truncate"
+                    >
+                      Verified User
+                    </p>
                   </div>
                 </div>
 
@@ -429,24 +421,28 @@
                   <div class="flex flex-col items-center text-center">
                     <div class="relative">
                       <img
+                        id="profileMainImage"
                         src="images/logo.png"
                         alt="Profile"
                         class="h-28 w-28 xs:h-32 xs:w-32 rounded-3xl object-cover border border-white/10"
                       />
-                      <button
-                        type="button"
-                        class="absolute -bottom-2 -right-2 h-11 w-11 rounded-2xl gold-gradient flex items-center justify-center shadow-lg"
-                      >
-                        <i data-lucide="camera" class="w-5 h-5 text-black"></i>
-                      </button>
                     </div>
 
-                    <h3 class="text-white text-2xl font-black mt-5">
-                      Samuel Joshua
+                    <h3
+                      id="profileMainName"
+                      class="text-white text-2xl font-black mt-5"
+                    >
+                      Client Account
                     </h3>
-                    <p class="text-slate-400 text-sm mt-2">Verified User</p>
+                    <p
+                      id="profileMainStatus"
+                      class="text-slate-400 text-sm mt-2"
+                    >
+                      Verified User
+                    </p>
 
                     <div
+                      id="walletNoticeCard"
                       class="mt-6 w-full rounded-3xl bg-white/5 border border-white/10 p-5"
                     >
                       <div class="flex items-center gap-3 mb-4">
@@ -468,7 +464,6 @@
                 </div>
 
                 <div class="space-y-4 sm:space-y-6">
-                  <!-- Full Name -->
                   <div
                     class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
                   >
@@ -476,38 +471,15 @@
                       <div>
                         <p class="text-slate-400 text-sm">Full Name</p>
                         <h3
+                          id="profileFullName"
                           class="text-white text-xl sm:text-2xl font-black mt-2"
                         >
-                          Samuel Joshua
+                          Client Account
                         </h3>
-                      </div>
-                      <button
-                        type="button"
-                        class="h-11 w-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:bg-white/10 transition-colors"
-                        data-edit-target="name"
-                      >
-                        <i data-lucide="pencil" class="w-5 h-5"></i>
-                      </button>
-                    </div>
-
-                    <div id="edit-name" class="hidden mt-4">
-                      <div class="space-y-4">
-                        <input
-                          type="text"
-                          value="Samuel Joshua"
-                          class="form-input w-full rounded-2xl px-4 py-4 text-sm"
-                        />
-                        <button
-                          type="button"
-                          class="px-5 py-3 text-black font-bold rounded-2xl gold-gradient"
-                        >
-                          Save Changes
-                        </button>
                       </div>
                     </div>
                   </div>
 
-                  <!-- Email -->
                   <div
                     class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
                   >
@@ -515,38 +487,15 @@
                       <div class="min-w-0">
                         <p class="text-slate-400 text-sm">Email Address</p>
                         <h3
+                          id="profileEmail"
                           class="text-white text-base sm:text-xl font-black mt-2 break-all"
                         >
-                          samueljoshua@email.com
+                          example@email.com
                         </h3>
-                      </div>
-                      <button
-                        type="button"
-                        class="h-11 w-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:bg-white/10 transition-colors shrink-0"
-                        data-edit-target="email"
-                      >
-                        <i data-lucide="pencil" class="w-5 h-5"></i>
-                      </button>
-                    </div>
-
-                    <div id="edit-email" class="hidden mt-4">
-                      <div class="space-y-4">
-                        <input
-                          type="email"
-                          value="samueljoshua@email.com"
-                          class="form-input w-full rounded-2xl px-4 py-4 text-sm"
-                        />
-                        <button
-                          type="button"
-                          class="px-5 py-3 text-black font-bold rounded-2xl gold-gradient"
-                        >
-                          Save Changes
-                        </button>
                       </div>
                     </div>
                   </div>
 
-                  <!-- Password -->
                   <div
                     class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
                   >
@@ -561,41 +510,44 @@
                       </div>
                       <button
                         type="button"
+                        id="togglePasswordEdit"
                         class="h-11 w-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:bg-white/10 transition-colors"
-                        data-edit-target="password"
                       >
                         <i data-lucide="pencil" class="w-5 h-5"></i>
                       </button>
                     </div>
 
                     <div id="edit-password" class="hidden mt-4">
-                      <div class="space-y-4">
+                      <form id="passwordForm" class="space-y-4">
                         <input
+                          id="currentPassword"
                           type="password"
                           placeholder="Enter current password"
                           class="form-input w-full rounded-2xl px-4 py-4 text-sm"
                         />
                         <input
+                          id="newPassword"
                           type="password"
                           placeholder="Enter new password"
                           class="form-input w-full rounded-2xl px-4 py-4 text-sm"
                         />
                         <input
+                          id="confirmNewPassword"
                           type="password"
                           placeholder="Confirm new password"
                           class="form-input w-full rounded-2xl px-4 py-4 text-sm"
                         />
                         <button
-                          type="button"
+                          id="updatePasswordBtn"
+                          type="submit"
                           class="px-5 py-3 text-black font-bold rounded-2xl gold-gradient"
                         >
                           Update Password
                         </button>
-                      </div>
+                      </form>
                     </div>
                   </div>
 
-                  <!-- Wallet Address -->
                   <div
                     class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
                   >
@@ -605,10 +557,17 @@
                           Withdrawal Wallet Address
                         </p>
                         <h3
+                          id="walletAddressDisplay"
                           class="text-white text-base sm:text-lg font-black mt-2 break-all"
                         >
                           Not Added Yet
                         </h3>
+                        <p
+                          id="walletTypeDisplay"
+                          class="text-slate-400 text-sm mt-2"
+                        >
+                          No wallet added
+                        </p>
                       </div>
                       <div
                         class="px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-bold uppercase tracking-wider shrink-0"
@@ -618,6 +577,7 @@
                     </div>
 
                     <div
+                      id="walletActionCard"
                       class="rounded-2xl bg-white/5 border border-white/10 p-5"
                     >
                       <p class="text-slate-300 text-sm leading-7 mb-5">
@@ -634,6 +594,16 @@
                         Add Withdrawal Wallet
                       </button>
                     </div>
+
+                    <div
+                      id="walletLockedCard"
+                      class="hidden rounded-2xl bg-white/5 border border-white/10 p-5"
+                    >
+                      <p class="text-slate-300 text-sm leading-7">
+                        Your withdrawal wallet has already been saved and
+                        locked. It cannot be changed.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -643,7 +613,6 @@
       </div>
     </main>
 
-    <!-- Wallet Modal -->
     <div
       id="walletModal"
       class="fixed inset-0 z-[70] bg-black/70 backdrop-blur-[3px] transition-all duration-300 modal-hidden"
@@ -693,7 +662,7 @@
               </p>
             </div>
 
-            <form class="space-y-5">
+            <form id="walletForm" class="space-y-5">
               <div>
                 <label class="mb-2 block text-sm font-semibold text-slate-200">
                   Wallet Type / Network
@@ -701,13 +670,15 @@
 
                 <div class="relative">
                   <select
+                    id="walletType"
                     class="form-input w-full rounded-2xl px-4 py-4 pr-12 text-sm"
                   >
-                    <option>USDT (TRC20)</option>
-                    <option>USDT (ERC20)</option>
-                    <option>Bitcoin (BTC)</option>
-                    <option>Ethereum (ETH)</option>
-                    <option>BNB (BEP20)</option>
+                    <option value="">Select wallet type</option>
+                    <option value="USDT (TRC20)">USDT (TRC20)</option>
+                    <option value="USDT (ERC20)">USDT (ERC20)</option>
+                    <option value="Bitcoin (BTC)">Bitcoin (BTC)</option>
+                    <option value="Ethereum (ETH)">Ethereum (ETH)</option>
+                    <option value="BNB (BEP20)">BNB (BEP20)</option>
                   </select>
 
                   <i
@@ -723,6 +694,7 @@
                 </label>
 
                 <input
+                  id="walletAddress"
                   type="text"
                   placeholder="Enter your main trusted wallet address"
                   class="form-input w-full rounded-2xl px-4 py-4 text-sm"
@@ -731,6 +703,7 @@
 
               <label class="flex items-start gap-3 text-sm text-slate-300">
                 <input
+                  id="walletConfirmCheckbox"
                   type="checkbox"
                   class="mt-1 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/30"
                 />
@@ -742,7 +715,8 @@
               </label>
 
               <button
-                type="button"
+                id="saveWalletBtn"
+                type="submit"
                 class="gold-gradient w-full rounded-2xl py-4 font-bold text-black shadow-xl shadow-primary/20"
               >
                 Save Wallet Address
@@ -755,87 +729,9 @@
 
     <script>
       lucide.createIcons();
-
-      const mobileSidebarToggle = document.getElementById(
-        "mobileSidebarToggle",
-      );
-      const mobileSidebarClose = document.getElementById("mobileSidebarClose");
-      const mobileSidebarOverlay = document.getElementById(
-        "mobileSidebarOverlay",
-      );
-      const dashboardSidebar = document.getElementById("dashboardSidebar");
-
-      function openSidebar() {
-        if (!dashboardSidebar || !mobileSidebarOverlay) return;
-        dashboardSidebar.classList.remove("-translate-x-full");
-        mobileSidebarOverlay.classList.remove("opacity-0", "invisible");
-        mobileSidebarOverlay.classList.add("opacity-100", "visible");
-        document.body.classList.add("sidebar-open");
-      }
-
-      function closeSidebar() {
-        if (!dashboardSidebar || !mobileSidebarOverlay) return;
-        dashboardSidebar.classList.add("-translate-x-full");
-        mobileSidebarOverlay.classList.remove("opacity-100", "visible");
-        mobileSidebarOverlay.classList.add("opacity-0", "invisible");
-        document.body.classList.remove("sidebar-open");
-      }
-
-      if (mobileSidebarToggle) {
-        mobileSidebarToggle.addEventListener("click", openSidebar);
-      }
-
-      if (mobileSidebarClose) {
-        mobileSidebarClose.addEventListener("click", closeSidebar);
-      }
-
-      if (mobileSidebarOverlay) {
-        mobileSidebarOverlay.addEventListener("click", closeSidebar);
-      }
-
-      const editButtons = document.querySelectorAll("[data-edit-target]");
-      editButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          const target = button.getAttribute("data-edit-target");
-          const panel = document.getElementById(`edit-${target}`);
-          if (panel) panel.classList.toggle("hidden");
-        });
-      });
-
-      const openWalletModal = document.getElementById("openWalletModal");
-      const closeWalletModal = document.getElementById("closeWalletModal");
-      const walletModal = document.getElementById("walletModal");
-      const walletModalCard = document.getElementById("walletModalCard");
-
-      function openModal() {
-        walletModal.classList.remove("modal-hidden");
-        walletModal.classList.add("modal-visible");
-        walletModalCard.classList.remove("modal-card-hidden");
-        walletModalCard.classList.add("modal-card-visible");
-        document.body.classList.add("modal-open");
-      }
-
-      function closeModal() {
-        walletModal.classList.remove("modal-visible");
-        walletModal.classList.add("modal-hidden");
-        walletModalCard.classList.remove("modal-card-visible");
-        walletModalCard.classList.add("modal-card-hidden");
-        document.body.classList.remove("modal-open");
-      }
-
-      if (openWalletModal) {
-        openWalletModal.addEventListener("click", openModal);
-      }
-
-      if (closeWalletModal) {
-        closeWalletModal.addEventListener("click", closeModal);
-      }
-
-      if (walletModal) {
-        walletModal.addEventListener("click", (e) => {
-          if (e.target === walletModal) closeModal();
-        });
-      }
     </script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/profile.js"></script>
   </body>
 </html>

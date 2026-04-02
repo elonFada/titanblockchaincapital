@@ -33,6 +33,9 @@ const sanitizeUserResponse = (user) => ({
   isVerified: user.isVerified,
   verifiedAt: user.verifiedAt,
   isActive: user.isActive,
+  withdrawalWalletType: user.withdrawalWalletType,
+  withdrawalWalletAddress: user.withdrawalWalletAddress,
+  withdrawalWalletLocked: user.withdrawalWalletLocked,
   createdAt: user.createdAt,
   updatedAt: user.updatedAt,
   lastLoginAt: user.lastLoginAt,
@@ -484,7 +487,14 @@ const getProfile = asyncHandler(async (req, res) => {
 // @access  Private
 const updateProfile = asyncHandler(async (req, res) => {
   const user = req.user;
-  const { fullName, phoneNumber, countryCode, preferences } = req.body;
+
+  const {
+    phoneNumber,
+    countryCode,
+    preferences,
+    withdrawalWalletType,
+    withdrawalWalletAddress,
+  } = req.body;
 
   if (req.file) {
     if (user.profileImagePublicId) {
@@ -495,9 +505,9 @@ const updateProfile = asyncHandler(async (req, res) => {
     user.profileImagePublicId = req.file.filename;
   }
 
-  if (fullName) user.fullName = fullName;
   if (phoneNumber) user.phoneNumber = phoneNumber;
   if (countryCode) user.countryCode = countryCode;
+
   if (preferences) {
     user.preferences = {
       ...user.preferences,
@@ -505,11 +515,33 @@ const updateProfile = asyncHandler(async (req, res) => {
     };
   }
 
+  const hasWalletPayload =
+    typeof withdrawalWalletType !== "undefined" ||
+    typeof withdrawalWalletAddress !== "undefined";
+
+  if (hasWalletPayload) {
+    if (user.withdrawalWalletLocked || user.withdrawalWalletAddress) {
+      res.status(400);
+      throw new Error(
+        "Withdrawal wallet has already been added and cannot be changed"
+      );
+    }
+
+    if (!withdrawalWalletType || !withdrawalWalletAddress) {
+      res.status(400);
+      throw new Error("Wallet type and wallet address are required");
+    }
+
+    user.withdrawalWalletType = String(withdrawalWalletType).trim();
+    user.withdrawalWalletAddress = String(withdrawalWalletAddress).trim();
+    user.withdrawalWalletLocked = true;
+  }
+
   await user.save();
 
   res.status(200).json({
-    status: 'success',
-    message: 'Profile updated successfully',
+    status: "success",
+    message: "Profile updated successfully",
     data: {
       id: user._id,
       fullName: user.fullName,
@@ -517,6 +549,9 @@ const updateProfile = asyncHandler(async (req, res) => {
       phoneNumber: `${user.countryCode}${user.phoneNumber}`,
       preferences: user.preferences,
       profileImage: user.profileImage,
+      withdrawalWalletType: user.withdrawalWalletType,
+      withdrawalWalletAddress: user.withdrawalWalletAddress,
+      withdrawalWalletLocked: user.withdrawalWalletLocked,
       updatedAt: user.updatedAt,
     },
   });
