@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.error("Failed to load withdrawal page data:", error);
 
       if (typeof showToast === "function") {
-        showToast(error.message || "Unable to load withdrawal details.", "error");
+        showToast(error.message || "Unable to load withdrawal details.");
       }
 
       if (accountBalanceValue) {
@@ -347,34 +347,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     const hasWallet = Boolean(currentWalletType && currentWalletAddress);
 
     if (!amountValue) {
-      showToast("Please enter a withdrawal amount.", "error");
+      showToast("Please enter a withdrawal amount.",);
       return;
     }
 
     const amount = Number(amountValue);
 
     if (Number.isNaN(amount) || amount <= 0) {
-      showToast("Please enter a valid withdrawal amount.", "error");
+      showToast("Please enter a valid withdrawal amount.");
       return;
     }
 
     if (!hasWallet) {
       showToast(
         "Please go to your profile and add your trusted withdrawal wallet address before submitting a withdrawal request.",
-        "error"
       );
       return;
     }
 
     if (amount > Number(currentUser?.balance || 0)) {
-      showToast("Insufficient account balance for this withdrawal request.", "error");
+      showToast("Insufficient account balance for this withdrawal request.");
       return;
     }
 
     if (amount > currentAvailableProfit) {
       showToast(
         "This withdrawal amount exceeds your available profit. Only realized profit is eligible for withdrawal at this time, while your principal capital remains engaged in active trading.",
-        "error"
       );
       return;
     }
@@ -406,7 +404,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (typeof showToast === "function") {
         showToast(
           error.message || "Failed to submit withdrawal request.",
-          "error"
         );
       }
     } finally {
