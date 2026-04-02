@@ -418,15 +418,26 @@ document.addEventListener("DOMContentLoaded", async () => {
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
 
-      const monthlyProfit = trades
-        .filter((trade) => {
-          if (trade.status !== "completed" || trade.result !== "profit" || !trade.completedAt) {
-            return false;
-          }
-          const date = new Date(trade.completedAt);
-          return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
-        })
+      const monthlyCompletedTrades = trades.filter((trade) => {
+        if (trade.status !== "completed" || !trade.completedAt) return false;
+
+        const date = new Date(trade.completedAt);
+        return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+      });
+
+      const monthlyProfitTotal = monthlyCompletedTrades
+        .filter((trade) => trade.result === "profit")
         .reduce((sum, trade) => sum + Number(trade.profit || 0), 0);
+
+      const monthlyLossTotal = monthlyCompletedTrades
+        .filter((trade) => trade.result === "loss")
+        .reduce((sum, trade) => sum + Number(trade.loss || 0), 0);
+
+      const monthlyNetProfit = monthlyProfitTotal - monthlyLossTotal;
+
+      // percent based on total deposit
+      const monthlyPerformancePercent =
+        totalDeposit > 0 ? (monthlyNetProfit / totalDeposit) * 100 : 0;
 
       const depositChangePercent =
         balance > 0 && totalDeposit > 0 ? (totalDeposit / Math.max(balance, 1)) * 100 : 0;
@@ -474,22 +485,29 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       if (monthlyProfitValue) {
-        monthlyProfitValue.textContent = formatMoney(monthlyProfit);
+        monthlyProfitValue.textContent = formatMoney(monthlyNetProfit);
+        monthlyProfitValue.className =
+          monthlyNetProfit > 0
+            ? "text-emerald-400 text-2xl font-black mt-4 xl:mt-6 xl:leading-none"
+            : monthlyNetProfit < 0
+              ? "text-red-400 text-2xl font-black mt-4 xl:mt-6 xl:leading-none"
+              : "text-white text-2xl font-black mt-4 xl:mt-6 xl:leading-none";
       }
 
       if (monthlyProfitMeta) {
-        if (monthlyProfit > 0) {
-          monthlyProfitMeta.textContent = "Profitable performance";
-          monthlyProfitMeta.className =
-            "text-emerald-400 text-sm mt-2 xl:mt-5 xl:leading-6";
-        } else {
-          monthlyProfitMeta.textContent = "No profit booked this month";
-          monthlyProfitMeta.className =
-            "text-slate-400 text-sm mt-2 xl:mt-5 xl:leading-6";
-        }
+        const sign = monthlyPerformancePercent > 0 ? "+" : "";
+
+        monthlyProfitMeta.textContent = `${sign}${monthlyPerformancePercent.toFixed(1)}% this month`;
+
+        monthlyProfitMeta.className =
+          monthlyPerformancePercent > 0
+            ? "text-emerald-400 text-sm mt-2 xl:mt-5 xl:leading-6"
+            : monthlyPerformancePercent < 0
+              ? "text-red-400 text-sm mt-2 xl:mt-5 xl:leading-6"
+              : "text-slate-400 text-sm mt-2 xl:mt-5 xl:leading-6";
       }
 
-      updateChart(monthlyProfit, totalDeposit, totalProfit);
+      updateChart(monthlyNetProfit > 0 ? monthlyNetProfit : 0, totalDeposit, totalProfit);
 
       const recentTransactions = [
         ...approvedDeposits.map((d) => ({
