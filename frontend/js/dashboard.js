@@ -437,7 +437,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // percent based on total deposit
       const monthlyPerformancePercent =
-        totalDeposit > 0 ? (monthlyNetProfit / totalDeposit) * 100 : 0;
+        balance > 0 ? (monthlyNetProfit / balance) * 100 : 0;
 
       const depositChangePercent =
         balance > 0 && totalDeposit > 0 ? (totalDeposit / Math.max(balance, 1)) * 100 : 0;
