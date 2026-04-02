@@ -64,9 +64,11 @@
           ),
           linear-gradient(180deg, #060913 0%, #070b14 45%, #09101b 100%);
       }
+
       body.sidebar-open {
         overflow: hidden;
       }
+
       .premium-panel {
         background: linear-gradient(
           180deg,
@@ -77,9 +79,11 @@
         -webkit-backdrop-filter: blur(18px);
         border: 1px solid rgba(255, 255, 255, 0.08);
       }
+
       .premium-border {
         position: relative;
       }
+
       .premium-border::before {
         content: "";
         position: absolute;
@@ -102,11 +106,13 @@
         mask-composite: exclude;
         pointer-events: none;
       }
+
       .glass-card {
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.08);
         backdrop-filter: blur(14px);
       }
+
       .gold-gradient {
         background: linear-gradient(
           135deg,
@@ -115,29 +121,35 @@
           #b47a15 100%
         );
       }
+
       .sidebar-link.active {
         background: rgba(228, 184, 79, 0.1);
         border-color: rgba(228, 184, 79, 0.22);
       }
+
       .sidebar-link.active span,
       .sidebar-link.active i {
         color: #e4b84f;
       }
+
       .form-input {
         background: rgba(255, 255, 255, 0.04) !important;
         border: 1px solid rgba(255, 255, 255, 0.08) !important;
         color: white !important;
         appearance: none;
       }
+
       .form-input::placeholder {
         color: rgb(148 163 184) !important;
       }
+
       .form-input:focus {
         background: rgba(255, 255, 255, 0.06) !important;
         border-color: rgba(228, 184, 79, 0.45) !important;
         box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.08) !important;
         outline: none;
       }
+
       @keyframes menuFloatPulse {
         0%,
         100% {
@@ -147,6 +159,7 @@
           transform: translateY(-6px) scale(1.04);
         }
       }
+
       @keyframes menuIconWiggle {
         0%,
         100% {
@@ -159,9 +172,11 @@
           transform: rotate(8deg);
         }
       }
+
       .menu-attention {
         animation: menuFloatPulse 2.2s ease-in-out infinite;
       }
+
       .menu-attention i,
       .menu-attention svg {
         animation: menuIconWiggle 2.2s ease-in-out infinite;
@@ -188,6 +203,7 @@
               TITAN <span class="text-primary">ADMIN</span>
             </h2>
           </div>
+
           <a
             href="admin-dashboard.html"
             class="px-3 xs:px-4 py-2 text-xs xs:text-sm font-bold text-white bg-surface-dark hover:bg-slate-700 rounded-lg transition-all"
@@ -235,6 +251,7 @@
                     </p>
                   </div>
                 </div>
+
                 <button
                   id="mobileSidebarClose"
                   class="lg:hidden h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 shrink-0"
@@ -253,28 +270,31 @@
                     data-lucide="layout-dashboard"
                     class="w-5 h-5 text-slate-300"
                   ></i>
-                  <span class="text-sm font-semibold text-white"
-                    >Dashboard</span
-                  >
+                  <span class="text-sm font-semibold text-white">
+                    Dashboard
+                  </span>
                 </a>
+
                 <a
                   href="all-users.html"
                   class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
                 >
                   <i data-lucide="users" class="w-5 h-5 text-slate-300"></i>
-                  <span class="text-sm font-semibold text-white"
-                    >All Users</span
-                  >
+                  <span class="text-sm font-semibold text-white">
+                    All Users
+                  </span>
                 </a>
+
                 <a
                   href="users-deposit.html"
                   class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
                 >
                   <i data-lucide="wallet" class="w-5 h-5 text-slate-300"></i>
-                  <span class="text-sm font-semibold text-white"
-                    >Users Deposit</span
-                  >
+                  <span class="text-sm font-semibold text-white">
+                    Users Deposit
+                  </span>
                 </a>
+
                 <a
                   href="users-withdrawal.html"
                   class="sidebar-link active flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
@@ -283,18 +303,19 @@
                     data-lucide="arrow-up-right"
                     class="w-5 h-5 text-slate-300"
                   ></i>
-                  <span class="text-sm font-semibold text-white"
-                    >Users Withdrawal</span
-                  >
+                  <span class="text-sm font-semibold text-white">
+                    Users Withdrawal
+                  </span>
                 </a>
+
                 <a
                   href="tradingbot-payment.html"
                   class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
                 >
                   <i data-lucide="bot" class="w-5 h-5 text-slate-300"></i>
-                  <span class="text-sm font-semibold text-white"
-                    >Trading Bot Payment</span
-                  >
+                  <span class="text-sm font-semibold text-white">
+                    Trading Bot Payment
+                  </span>
                 </a>
 
                 <a
@@ -305,9 +326,9 @@
                     data-lucide="candlestick-chart"
                     class="w-5 h-5 text-slate-300"
                   ></i>
-                  <span class="text-sm font-semibold text-white"
-                    >Trade Signals</span
-                  >
+                  <span class="text-sm font-semibold text-white">
+                    Trade Signals
+                  </span>
                 </a>
 
                 <a
@@ -318,9 +339,9 @@
                     data-lucide="messages-square"
                     class="w-5 h-5 text-slate-300"
                   ></i>
-                  <span class="text-sm font-semibold text-white"
-                    >Support Chat</span
-                  >
+                  <span class="text-sm font-semibold text-white">
+                    Support Chat
+                  </span>
                 </a>
               </nav>
             </aside>
@@ -338,11 +359,13 @@
                     >
                       Withdrawal Management
                     </div>
+
                     <h1
                       class="text-white text-2xl xs:text-3xl sm:text-4xl font-black leading-tight tracking-tight"
                     >
                       User withdrawal requests
                     </h1>
+
                     <p
                       class="text-slate-300 text-sm xs:text-base sm:text-lg leading-relaxed mt-4 max-w-2xl"
                     >
@@ -366,24 +389,47 @@
               >
                 <div class="glass-card rounded-3xl p-5 sm:p-6">
                   <p class="text-slate-400 text-sm">Pending Withdrawals</p>
-                  <p class="text-white text-3xl font-black mt-3">11</p>
+                  <p
+                    id="pendingWithdrawalsCount"
+                    class="text-white text-3xl font-black mt-3"
+                  >
+                    0
+                  </p>
                   <p class="text-yellow-400 text-sm mt-2">Needs approval</p>
                 </div>
+
                 <div class="glass-card rounded-3xl p-5 sm:p-6">
                   <p class="text-slate-400 text-sm">Approved Not Paid</p>
-                  <p class="text-white text-3xl font-black mt-3">6</p>
+                  <p
+                    id="approvedNotPaidCount"
+                    class="text-white text-3xl font-black mt-3"
+                  >
+                    0
+                  </p>
                   <p class="text-primary text-sm mt-2">Awaiting payout</p>
                 </div>
+
                 <div class="glass-card rounded-3xl p-5 sm:p-6">
                   <p class="text-slate-400 text-sm">Paid Today</p>
-                  <p class="text-white text-3xl font-black mt-3">4</p>
+                  <p
+                    id="paidTodayCount"
+                    class="text-white text-3xl font-black mt-3"
+                  >
+                    0
+                  </p>
                   <p class="text-emerald-400 text-sm mt-2">
                     Completed transfers
                   </p>
                 </div>
+
                 <div class="glass-card rounded-3xl p-5 sm:p-6">
                   <p class="text-slate-400 text-sm">Total Withdrawal Volume</p>
-                  <p class="text-white text-3xl font-black mt-3">$73,920</p>
+                  <p
+                    id="totalWithdrawalVolume"
+                    class="text-white text-3xl font-black mt-3"
+                  >
+                    $0.00
+                  </p>
                   <p class="text-red-400 text-sm mt-2">Current cycle</p>
                 </div>
               </div>
@@ -400,217 +446,14 @@
 
                 <div class="space-y-4">
                   <div
-                    class="rounded-3xl bg-white/5 border border-white/10 p-4 sm:p-5"
+                    class="rounded-3xl bg-white/5 border border-white/10 p-6 text-center"
                   >
-                    <div
-                      class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5"
-                    >
-                      <div
-                        class="grid sm:grid-cols-2 xl:grid-cols-5 gap-4 flex-1"
-                      >
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            User
-                          </p>
-                          <p class="text-white font-bold mt-2">Samuel Joshua</p>
-                          <p class="text-slate-400 text-sm mt-1">TBC-00124</p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Amount
-                          </p>
-                          <p class="text-white font-bold mt-2">$1,200.00</p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Wallet
-                          </p>
-                          <p class="text-slate-300 font-medium mt-2 break-all">
-                            bc1q...8k92
-                          </p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Network
-                          </p>
-                          <p class="text-slate-300 font-medium mt-2">BTC</p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Status
-                          </p>
-                          <span
-                            class="inline-flex mt-2 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-bold uppercase tracking-wider"
-                          >
-                            Pending
-                          </span>
-                        </div>
-                      </div>
-
-                      <div class="flex flex-wrap gap-3">
-                        <button
-                          class="px-4 py-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold"
-                        >
-                          Reject
-                        </button>
-                        <button
-                          class="px-4 py-3 rounded-2xl gold-gradient text-black text-sm font-bold"
-                        >
-                          Approve Withdrawal
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    class="rounded-3xl bg-white/5 border border-white/10 p-4 sm:p-5"
-                  >
-                    <div
-                      class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5"
-                    >
-                      <div
-                        class="grid sm:grid-cols-2 xl:grid-cols-5 gap-4 flex-1"
-                      >
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            User
-                          </p>
-                          <p class="text-white font-bold mt-2">Daniel Robert</p>
-                          <p class="text-slate-400 text-sm mt-1">TBC-00125</p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Amount
-                          </p>
-                          <p class="text-white font-bold mt-2">$2,000.00</p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Wallet
-                          </p>
-                          <p class="text-slate-300 font-medium mt-2 break-all">
-                            TXf3...27md
-                          </p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Network
-                          </p>
-                          <p class="text-slate-300 font-medium mt-2">TRC20</p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Status
-                          </p>
-                          <span
-                            class="inline-flex mt-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider"
-                          >
-                            Approved
-                          </span>
-                        </div>
-                      </div>
-
-                      <div class="flex flex-wrap gap-3">
-                        <button
-                          class="px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white text-sm font-semibold"
-                        >
-                          View Details
-                        </button>
-                        <button
-                          class="px-4 py-3 rounded-2xl gold-gradient text-black text-sm font-bold"
-                        >
-                          Mark As Paid
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    class="rounded-3xl bg-white/5 border border-white/10 p-4 sm:p-5"
-                  >
-                    <div
-                      class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5"
-                    >
-                      <div
-                        class="grid sm:grid-cols-2 xl:grid-cols-5 gap-4 flex-1"
-                      >
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            User
-                          </p>
-                          <p class="text-white font-bold mt-2">Grace Peter</p>
-                          <p class="text-slate-400 text-sm mt-1">TBC-00126</p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Amount
-                          </p>
-                          <p class="text-white font-bold mt-2">$950.00</p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Wallet
-                          </p>
-                          <p class="text-slate-300 font-medium mt-2 break-all">
-                            0x84...ab91
-                          </p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Network
-                          </p>
-                          <p class="text-slate-300 font-medium mt-2">ERC20</p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Status
-                          </p>
-                          <span
-                            class="inline-flex mt-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider"
-                          >
-                            Paid
-                          </span>
-                        </div>
-                      </div>
-
-                      <div class="flex flex-wrap gap-3">
-                        <button
-                          class="px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white text-sm font-semibold"
-                        >
-                          View Receipt
-                        </button>
-                      </div>
-                    </div>
+                    <p class="text-white font-bold text-lg">
+                      Loading withdrawal requests...
+                    </p>
+                    <p class="text-slate-400 text-sm mt-2">
+                      Please wait while requests are being fetched.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -623,6 +466,8 @@
     <script>
       lucide.createIcons();
     </script>
-    <script src="js/admin.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/users-withdrawal.js"></script>
   </body>
 </html>

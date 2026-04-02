@@ -698,9 +698,9 @@ const sendWithdrawalEmail = async ({
   const safeAmount =
     amount !== undefined && amount !== null ? Number(amount).toLocaleString() : "0";
 
-  const walletLine = `${coinType || "Crypto"}${network ? ` • ${network}` : ""}${
-    walletAddress ? ` • ${walletAddress}` : ""
-  }`;
+  const walletLine = `${
+    coinType || network || "Crypto"
+  }${walletAddress ? ` • ${walletAddress}` : ""}`;
 
   const templates = {
     submitted: {

@@ -72,7 +72,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function formatDate(dateString) {
     if (!dateString) return "";
-    return new Date(dateString).toLocaleDateString(undefined, {
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleDateString(undefined, {
       day: "2-digit",
       month: "short",
       year: "numeric",
@@ -81,7 +83,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function formatTime(dateString) {
     if (!dateString) return "";
-    return new Date(dateString).toLocaleString([], {
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleString([], {
       day: "2-digit",
       month: "short",
       hour: "2-digit",
@@ -211,8 +215,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   async function guardDashboard() {
-    const token = localStorage.getItem("token");
-    const userInfoRaw = localStorage.getItem("userInfo");
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+    const userInfoRaw =
+      localStorage.getItem("userInfo") || sessionStorage.getItem("userInfo");
     const storedUser = userInfoRaw ? JSON.parse(userInfoRaw) : null;
 
     if (!token || !storedUser) {
@@ -226,6 +232,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const liveUser = profileResponse?.data || storedUser;
 
       localStorage.setItem("userInfo", JSON.stringify(liveUser));
+      sessionStorage.setItem("userInfo", JSON.stringify(liveUser));
       routeUser(liveUser);
 
       if (liveUser.kycStatus !== "verified") return null;
@@ -246,11 +253,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (sidebarUserStatus) {
-      sidebarUserStatus.textContent = user.kycStatus === "verified" ? "Verified User" : "Client User";
+      sidebarUserStatus.textContent =
+        user.kycStatus === "verified" ? "Verified User" : "Client User";
     }
 
-    if (sidebarUserAvatar && user.profileImage) {
-      sidebarUserAvatar.src = user.profileImage;
+    if (sidebarUserAvatar) {
+      sidebarUserAvatar.src = user.profileImage || "images/logo.png";
       sidebarUserAvatar.alt = user.fullName || "User";
     }
   }
@@ -266,7 +274,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const flat = `M0 ${baselineY} L800 ${baselineY}`;
       return {
         line: flat,
-        fill: `${flat} V240 H0 Z`,
+        fill: `${flat} V${chartHeight} H0 Z`,
       };
     }
 
@@ -277,7 +285,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const flat = `M0 ${baselineY} L800 ${baselineY}`;
       return {
         line: flat,
-        fill: `${flat} V240 H0 Z`,
+        fill: `${flat} V${chartHeight} H0 Z`,
       };
     }
 
@@ -291,7 +299,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     let line = `M${points[0].x} ${points[0].y}`;
-    for (let i = 1; i < points.length; i++) {
+
+    for (let i = 1; i < points.length; i += 1) {
       const prev = points[i - 1];
       const current = points[i];
       const cx1 = prev.x + stepX / 3;
@@ -303,13 +312,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     return {
       line,
-      fill: `${line} V240 H0 Z`,
+      fill: `${line} V${chartHeight} H0 Z`,
     };
   }
 
-  function updateChart(monthlyProfit, totalDeposit, totalProfit) {
-    const growth =
-      totalDeposit > 0 ? ((totalProfit || 0) / totalDeposit) * 100 : 0;
+  function updateChart(netMonthlyValue, currentBalance) {
+    const safeBalance = Number(currentBalance || 0);
+    const safeNet = Number(netMonthlyValue || 0);
+
+    const growth = safeBalance > 0 ? (safeNet / safeBalance) * 100 : 0;
 
     if (growthValue) {
       const sign = growth > 0 ? "+" : "";
@@ -322,23 +333,28 @@ document.addEventListener("DOMContentLoaded", async () => {
             : "text-slate-400 font-bold";
     }
 
+    const absoluteNet = Math.abs(safeNet);
     const values =
-      growth <= 0
+      absoluteNet <= 0
         ? [0, 0, 0, 0, 0, 0, 0]
         : [
             0,
-            monthlyProfit * 0.18,
-            monthlyProfit * 0.32,
-            monthlyProfit * 0.48,
-            monthlyProfit * 0.64,
-            monthlyProfit * 0.82,
-            monthlyProfit,
+            absoluteNet * 0.18,
+            absoluteNet * 0.32,
+            absoluteNet * 0.48,
+            absoluteNet * 0.64,
+            absoluteNet * 0.82,
+            absoluteNet,
           ];
 
     const chartPath = buildChartPath(values);
 
     if (performanceChartLine) {
       performanceChartLine.setAttribute("d", chartPath.line);
+      performanceChartLine.setAttribute(
+        "stroke",
+        safeNet < 0 ? "#ef4444" : "#e4b84f"
+      );
     }
 
     if (performanceChartFill) {
@@ -354,7 +370,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-5">
           <p class="text-white font-bold text-sm sm:text-base">No transactions yet</p>
           <p class="text-slate-400 text-xs sm:text-sm mt-1">
-            Your recent deposits, withdrawals, and profit credits will appear here.
+            Your recent deposits, withdrawals, profit credits, and loss debits will appear here.
           </p>
         </div>
       `;
@@ -363,7 +379,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     recentTransactionsContainer.innerHTML = items
       .map((item) => {
-        const isPositive = item.amount >= 0;
+        const isPositive = Number(item.amount || 0) >= 0;
         const colorClass = isPositive ? "text-emerald-400" : "text-red-400";
         const sign = isPositive ? "+" : "-";
 
@@ -384,7 +400,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
               <div class="flex items-center gap-3 shrink-0">
                 <p class="${colorClass} font-bold text-sm sm:text-base">
-                  ${sign}${formatMoney(Math.abs(item.amount))}
+                  ${sign}${formatMoney(Math.abs(Number(item.amount || 0)))}
                 </p>
               </div>
             </button>
@@ -394,35 +410,59 @@ document.addEventListener("DOMContentLoaded", async () => {
       .join("");
   }
 
-  async function loadDashboardData(user) {
+  async function loadDashboardData() {
     try {
-      const [depositsResponse, withdrawalsResponse, tradesResponse] = await Promise.all([
-        window.API.get("/deposit/me").catch(() => null),
-        window.API.get("/withdrawal/me").catch(() => null),
-        window.API.get("/trading/my-trades").catch(() => null),
-      ]);
+      const [profileResponse, depositsResponse, withdrawalsResponse, tradesResponse] =
+        await Promise.all([
+          window.API.get("/user/profile").catch(() => null),
+          window.API.get("/deposit/me").catch(() => null),
+          window.API.get("/withdrawal/me").catch(() => null),
+          window.API.get("/trading/my-trades").catch(() => null),
+        ]);
 
-      const deposits = depositsResponse?.data || [];
-      const withdrawals = withdrawalsResponse?.data || [];
-      const trades = tradesResponse?.data || [];
+      const liveUser = profileResponse?.data || {};
+      const deposits = Array.isArray(depositsResponse?.data)
+        ? depositsResponse.data
+        : [];
+      const withdrawals = Array.isArray(withdrawalsResponse?.data)
+        ? withdrawalsResponse.data
+        : [];
+      const trades = Array.isArray(tradesResponse?.data)
+        ? tradesResponse.data
+        : [];
 
-      const approvedDeposits = deposits.filter((d) => d.status === "approved");
-      const approvedWithdrawals = withdrawals.filter((w) => w.status === "approved");
-      const activeTrades = trades.filter((t) => t.status === "active");
+      if (profileResponse?.data) {
+        localStorage.setItem("userInfo", JSON.stringify(liveUser));
+        sessionStorage.setItem("userInfo", JSON.stringify(liveUser));
+        hydrateSidebar(liveUser);
+      }
 
-      const totalDeposit = Number(user.totalDeposit || 0);
-      const totalWithdrawal = Number(user.totalWithdrawal || 0);
-      const totalProfit = Number(user.totalProfit || 0);
-      const balance = Number(user.balance || 0);
+      const approvedDeposits = deposits.filter(
+        (deposit) => deposit.status === "approved"
+      );
+
+      const processedWithdrawals = withdrawals.filter(
+        (withdrawal) =>
+          withdrawal.status === "approved" || withdrawal.status === "paid"
+      );
+
+      const activeTrades = trades.filter((trade) => trade.status === "active");
+
+      const totalDeposit = Number(liveUser.totalDeposit || 0);
+      const totalWithdrawal = Number(liveUser.totalWithdrawal || 0);
+      const totalProfit = Number(liveUser.totalProfit || 0);
+      const balance = Number(liveUser.balance || 0);
 
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
 
       const monthlyCompletedTrades = trades.filter((trade) => {
         if (trade.status !== "completed" || !trade.completedAt) return false;
-
         const date = new Date(trade.completedAt);
-        return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+        return (
+          date.getMonth() === currentMonth &&
+          date.getFullYear() === currentYear
+        );
       });
 
       const monthlyProfitTotal = monthlyCompletedTrades
@@ -435,12 +475,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const monthlyNetProfit = monthlyProfitTotal - monthlyLossTotal;
 
-      // percent based on total deposit
       const monthlyPerformancePercent =
         balance > 0 ? (monthlyNetProfit / balance) * 100 : 0;
 
       const depositChangePercent =
-        balance > 0 && totalDeposit > 0 ? (totalDeposit / Math.max(balance, 1)) * 100 : 0;
+        balance > 0 && totalDeposit > 0
+          ? (totalDeposit / Math.max(balance, 1)) * 100
+          : 0;
 
       if (accountBalanceValue) {
         accountBalanceValue.textContent = formatMoney(balance);
@@ -452,7 +493,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (totalDepositMeta) {
         if (totalDeposit > 0) {
-          totalDepositMeta.textContent = `+${depositChangePercent.toFixed(1)}% overall funding`;
+          totalDepositMeta.textContent = `+${depositChangePercent.toFixed(
+            1
+          )}% overall funding`;
           totalDepositMeta.className =
             "text-emerald-400 text-sm mt-2 xl:mt-5 xl:leading-6";
         } else {
@@ -469,8 +512,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (totalWithdrawalMeta) {
         totalWithdrawalMeta.textContent =
           totalWithdrawal > 0
-            ? `${formatNumber(approvedWithdrawals.length)} approved withdrawal(s)`
-            : "No approved withdrawals yet";
+            ? `${formatNumber(processedWithdrawals.length)} processed withdrawal(s)`
+            : "No processed withdrawals yet";
       }
 
       if (openPositionsValue) {
@@ -495,65 +538,85 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       if (monthlyProfitMeta) {
-        const sign = monthlyPerformancePercent > 0 ? "+" : "";
-
-        monthlyProfitMeta.textContent = `${sign}${monthlyPerformancePercent.toFixed(1)}% this month`;
-
-        monthlyProfitMeta.className =
-          monthlyPerformancePercent > 0
-            ? "text-emerald-400 text-sm mt-2 xl:mt-5 xl:leading-6"
-            : monthlyPerformancePercent < 0
-              ? "text-red-400 text-sm mt-2 xl:mt-5 xl:leading-6"
-              : "text-slate-400 text-sm mt-2 xl:mt-5 xl:leading-6";
+        if (monthlyNetProfit === 0) {
+          monthlyProfitMeta.textContent = "0.0% this month";
+          monthlyProfitMeta.className =
+            "text-slate-400 text-sm mt-2 xl:mt-5 xl:leading-6";
+        } else {
+          const sign = monthlyPerformancePercent > 0 ? "+" : "";
+          monthlyProfitMeta.textContent = `${sign}${monthlyPerformancePercent.toFixed(
+            1
+          )}% this month`;
+          monthlyProfitMeta.className =
+            monthlyPerformancePercent > 0
+              ? "text-emerald-400 text-sm mt-2 xl:mt-5 xl:leading-6"
+              : "text-red-400 text-sm mt-2 xl:mt-5 xl:leading-6";
+        }
       }
 
-      updateChart(monthlyNetProfit > 0 ? monthlyNetProfit : 0, totalDeposit, totalProfit);
+      updateChart(monthlyNetProfit, balance);
 
       const recentTransactions = [
-        ...approvedDeposits.map((d) => ({
+        ...approvedDeposits.map((deposit) => ({
           type: "deposit",
           title: "Deposit",
-          subtitle: `${formatDate(d.updatedAt || d.createdAt)} • ${d.coinType || "Crypto"}`,
-          amount: Number(d.amount || 0),
-          createdAt: new Date(d.updatedAt || d.createdAt).getTime(),
+          subtitle: `${formatDate(
+            deposit.updatedAt || deposit.createdAt
+          )} • ${deposit.coinType || "Crypto"}`,
+          amount: Number(deposit.amount || 0),
+          createdAt: new Date(
+            deposit.updatedAt || deposit.createdAt
+          ).getTime(),
         })),
 
-        ...approvedWithdrawals.map((w) => ({
+        ...processedWithdrawals.map((withdrawal) => ({
           type: "withdrawal",
           title: "Withdrawal",
-          subtitle: `${formatDate(w.updatedAt || w.createdAt)} • ${w.coinType || w.network || "Crypto"}`,
-          amount: -Number(w.amount || 0),
-          createdAt: new Date(w.updatedAt || w.createdAt).getTime(),
+          subtitle: `${formatDate(
+            withdrawal.updatedAt || withdrawal.createdAt
+          )} • ${withdrawal.coinType || withdrawal.network || "Crypto"}`,
+          amount: -Number(withdrawal.amount || 0),
+          createdAt: new Date(
+            withdrawal.updatedAt || withdrawal.createdAt
+          ).getTime(),
         })),
 
         ...trades
           .filter(
-            (t) =>
-              t.status === "completed" &&
-              t.result === "profit" &&
-              Number(t.profit || 0) > 0
+            (trade) =>
+              trade.status === "completed" &&
+              trade.result === "profit" &&
+              Number(trade.profit || 0) > 0
           )
-          .map((t) => ({
+          .map((trade) => ({
             type: "profit",
             title: "Profit Credit",
-            subtitle: `${formatDate(t.completedAt || t.updatedAt || t.createdAt)} • ${t.symbol || "System"}`,
-            amount: Number(t.profit || 0),
-            createdAt: new Date(t.completedAt || t.updatedAt || t.createdAt).getTime(),
+            subtitle: `${formatDate(
+              trade.completedAt || trade.updatedAt || trade.createdAt
+            )} • ${trade.symbol || "System"}`,
+            amount: Number(trade.profit || 0),
+            createdAt: new Date(
+              trade.completedAt || trade.updatedAt || trade.createdAt
+            ).getTime(),
           })),
 
         ...trades
           .filter(
-            (t) =>
-              t.status === "completed" &&
-              t.result === "loss" &&
-              Number(t.loss || 0) > 0
+            (trade) =>
+              trade.status === "completed" &&
+              trade.result === "loss" &&
+              Number(trade.loss || 0) > 0
           )
-          .map((t) => ({
+          .map((trade) => ({
             type: "loss",
             title: "Loss Debit",
-            subtitle: `${formatDate(t.completedAt || t.updatedAt || t.createdAt)} • ${t.symbol || "System"}`,
-            amount: -Number(t.loss || 0),
-            createdAt: new Date(t.completedAt || t.updatedAt || t.createdAt).getTime(),
+            subtitle: `${formatDate(
+              trade.completedAt || trade.updatedAt || trade.createdAt
+            )} • ${trade.symbol || "System"}`,
+            amount: -Number(trade.loss || 0),
+            createdAt: new Date(
+              trade.completedAt || trade.updatedAt || trade.createdAt
+            ).getTime(),
           })),
       ]
         .sort((a, b) => b.createdAt - a.createdAt)
@@ -562,15 +625,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderRecentTransactions(recentTransactions);
     } catch (error) {
       console.error("Failed to load dashboard data:", error);
-      showToast(error.message || "Unable to load dashboard data.", "error");
+      if (typeof showToast === "function") {
+        showToast(error.message || "Unable to load dashboard data.", "error");
+      }
 
       if (accountBalanceValue) accountBalanceValue.textContent = formatMoney(0);
       if (totalDepositValue) totalDepositValue.textContent = formatMoney(0);
       if (totalWithdrawalValue) totalWithdrawalValue.textContent = formatMoney(0);
       if (openPositionsValue) openPositionsValue.textContent = "0";
       if (monthlyProfitValue) monthlyProfitValue.textContent = formatMoney(0);
+      if (monthlyProfitMeta) {
+        monthlyProfitMeta.textContent = "0.0% this month";
+        monthlyProfitMeta.className =
+          "text-slate-400 text-sm mt-2 xl:mt-5 xl:leading-6";
+      }
 
-      updateChart(0, 0, 0);
+      updateChart(0, 0);
       renderRecentTransactions([]);
     }
   }
@@ -600,15 +670,17 @@ document.addEventListener("DOMContentLoaded", async () => {
               ${
                 msg.attachmentUrl
                   ? `
-                  <a
-                    href="${msg.attachmentUrl}"
-                    target="_blank"
-                    class="mt-3 flex items-center gap-2 rounded-xl bg-black/10 px-3 py-2 text-black text-sm font-semibold break-all"
-                  >
-                    <i data-lucide="paperclip" class="w-4 h-4 shrink-0"></i>
-                    <span class="min-w-0 break-all">${escapeHtml(msg.attachmentName || "View attachment")}</span>
-                  </a>
-                `
+                    <a
+                      href="${msg.attachmentUrl}"
+                      target="_blank"
+                      class="mt-3 flex items-center gap-2 rounded-xl bg-black/10 px-3 py-2 text-black text-sm font-semibold break-all"
+                    >
+                      <i data-lucide="paperclip" class="w-4 h-4 shrink-0"></i>
+                      <span class="min-w-0 break-all">${escapeHtml(
+                        msg.attachmentName || "View attachment"
+                      )}</span>
+                    </a>
+                  `
                   : ""
               }
             </div>
@@ -632,20 +704,24 @@ document.addEventListener("DOMContentLoaded", async () => {
               ${
                 msg.attachmentUrl
                   ? `
-                  <a
-                    href="${msg.attachmentUrl}"
-                    target="_blank"
-                    class="mt-3 flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-primary text-sm font-semibold break-all"
-                  >
-                    <i data-lucide="paperclip" class="w-4 h-4 shrink-0"></i>
-                    <span class="min-w-0 break-all">${escapeHtml(msg.attachmentName || "View attachment")}</span>
-                  </a>
-                `
+                    <a
+                      href="${msg.attachmentUrl}"
+                      target="_blank"
+                      class="mt-3 flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-primary text-sm font-semibold break-all"
+                    >
+                      <i data-lucide="paperclip" class="w-4 h-4 shrink-0"></i>
+                      <span class="min-w-0 break-all">${escapeHtml(
+                        msg.attachmentName || "View attachment"
+                      )}</span>
+                    </a>
+                  `
                   : ""
               }
             </div>
             <p class="text-slate-500 text-[11px] mt-1 ml-1">
-              ${msg.senderType === "system" ? "Support" : "Agent"} • ${formatTime(msg.createdAt)}
+              ${msg.senderType === "system" ? "Support" : "Agent"} • ${formatTime(
+                msg.createdAt
+              )}
             </p>
           </div>
         `;
@@ -694,13 +770,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       attachBtn.innerHTML = file
         ? `
-          <i data-lucide="paperclip" class="w-4 h-4 shrink-0"></i>
-          <span class="max-w-[180px] truncate inline-block align-middle">${escapeHtml(file.name)}</span>
-        `
+            <i data-lucide="paperclip" class="w-4 h-4 shrink-0"></i>
+            <span class="max-w-[180px] truncate inline-block align-middle">${escapeHtml(
+              file.name
+            )}</span>
+          `
         : `
-          <i data-lucide="paperclip" class="w-4 h-4"></i>
-          Attach file
-        `;
+            <i data-lucide="paperclip" class="w-4 h-4"></i>
+            Attach file
+          `;
 
       if (window.lucide) window.lucide.createIcons();
     });
@@ -712,7 +790,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const text = chatInput?.value.trim() || "";
 
     if (!text && !selectedAttachment) {
-      showToast("Type a message or attach a file.", "error");
+      if (typeof showToast === "function") {
+        showToast("Type a message or attach a file.", "error");
+      }
       return;
     }
 
@@ -745,7 +825,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       await loadChat();
     } catch (error) {
-      showToast(error.message || "Unable to send message.", "error");
+      if (typeof showToast === "function") {
+        showToast(error.message || "Unable to send message.", "error");
+      }
     }
   }
 
@@ -759,7 +841,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   hydrateSidebar(currentUser);
   ensureChatAttachmentUI();
-  await loadDashboardData(currentUser);
+  await loadDashboardData();
   await loadChat();
   startChatPolling();
 
