@@ -1,4 +1,3 @@
-// public/js/withdrawal.js
 document.addEventListener("DOMContentLoaded", async () => {
   const mobileSidebarToggle = document.getElementById("mobileSidebarToggle");
   const mobileSidebarClose = document.getElementById("mobileSidebarClose");
@@ -9,21 +8,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   const sidebarUserName = document.getElementById("sidebarUserName");
   const sidebarUserStatus = document.getElementById("sidebarUserStatus");
 
-  const accountBalanceValue = document.getElementById("accountBalanceValue");
   const availableProfitValue = document.getElementById("availableProfitValue");
+  const availableProfitMeta = document.getElementById("availableProfitMeta");
+
+  const withdrawalForm = document.getElementById("withdrawalForm");
+  const withdrawalAmountInput = document.getElementById("withdrawalAmount");
   const walletSelect = document.getElementById("walletSelect");
   const walletHelpText = document.getElementById("walletHelpText");
-  const withdrawalAmountInput = document.getElementById("withdrawalAmount");
-  const withdrawalForm = document.getElementById("withdrawalForm");
   const submitWithdrawalBtn = document.getElementById("submitWithdrawalBtn");
+
   const withdrawalHistoryContainer = document.getElementById(
     "withdrawalHistoryContainer"
   );
 
   let currentUser = null;
-  let currentAvailableProfit = 0;
-  let currentWalletType = "";
-  let currentWalletAddress = "";
+  let availableProfit = 0;
 
   function getPageUrl(page) {
     const isLocal =
@@ -58,25 +57,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function formatDate(dateString) {
     if (!dateString) return "";
-    const date = new Date(dateString);
-
-    if (Number.isNaN(date.getTime())) return "";
-
-    return date.toLocaleDateString(undefined, {
+    return new Date(dateString).toLocaleDateString(undefined, {
       day: "2-digit",
       month: "short",
       year: "numeric",
     });
   }
 
-  function maskWalletAddress(address = "") {
-    if (!address || address.length <= 10) return address || "—";
-    return `${address.slice(0, 4)}...${address.slice(-4)}`;
-  }
-
   function openSidebar() {
     if (!dashboardSidebar || !mobileSidebarOverlay) return;
-
     dashboardSidebar.classList.remove("-translate-x-full");
     mobileSidebarOverlay.classList.remove("opacity-0", "invisible");
     mobileSidebarOverlay.classList.add("opacity-100", "visible");
@@ -85,14 +74,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function closeSidebar() {
     if (!dashboardSidebar || !mobileSidebarOverlay) return;
-
     dashboardSidebar.classList.add("-translate-x-full");
     mobileSidebarOverlay.classList.remove("opacity-100", "visible");
     mobileSidebarOverlay.classList.add("opacity-0", "invisible");
     document.body.classList.remove("sidebar-open");
   }
 
-  async function guardWithdrawalPage() {
+  async function guardPage() {
     const token =
       localStorage.getItem("token") || sessionStorage.getItem("token");
     const userInfoRaw =
@@ -113,7 +101,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       return liveUser;
     } catch (error) {
       console.error("Failed to load user profile:", error);
-      if (storedUser) return storedUser;
+
+      if (storedUser) {
+        return storedUser;
+      }
 
       clearStoredAuth();
       window.location.href = getPageUrl("login.html");
@@ -122,10 +113,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function hydrateSidebar(user) {
-    const profileImage = user?.profileImage || "images/logo.png";
-    const fullName = user?.fullName || "Client Account";
-    const statusText =
-      user?.kycStatus === "verified" ? "Verified User" : "Client User";
+    if (!user) return;
+
+    const profileImage = user.profileImage || "images/logo.png";
+    const fullName = user.fullName || "Client Account";
+    const verifiedText =
+      user.kycStatus === "verified" ? "Verified User" : "Client User";
 
     if (sidebarUserAvatar) {
       sidebarUserAvatar.src = profileImage;
@@ -137,51 +130,73 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (sidebarUserStatus) {
-      sidebarUserStatus.textContent = statusText;
+      sidebarUserStatus.textContent = verifiedText;
     }
   }
 
-  function hydrateWallet(user) {
-    currentWalletType = user?.withdrawalWalletType || "";
-    currentWalletAddress = user?.withdrawalWalletAddress || "";
+  function parseWalletType(walletType = "") {
+    const cleaned = String(walletType || "").trim();
 
-    const hasWallet = Boolean(currentWalletType && currentWalletAddress);
+    if (!cleaned) {
+      return {
+        coinType: "",
+        network: "",
+      };
+    }
 
-    if (!walletSelect) return;
+    const match = cleaned.match(/^(.+?)\s*\((.+)\)$/);
 
-    if (!hasWallet) {
-      walletSelect.innerHTML = `
-        <option value="">
-          No saved wallet address found
-        </option>
-      `;
+    if (match) {
+      return {
+        coinType: match[1].trim(),
+        network: match[2].trim(),
+      };
+    }
+
+    return {
+      coinType: cleaned,
+      network: cleaned,
+    };
+  }
+
+  function setWalletState(user) {
+    if (!walletSelect || !walletHelpText || !submitWithdrawalBtn) return;
+
+    const walletType = user?.withdrawalWalletType || "";
+    const walletAddress = user?.withdrawalWalletAddress || "";
+    const walletLocked = Boolean(user?.withdrawalWalletLocked);
+
+    walletSelect.innerHTML = "";
+
+    if (!walletType || !walletAddress || !walletLocked) {
+      const option = document.createElement("option");
+      option.value = "";
+      option.textContent = "No saved wallet address";
+      walletSelect.appendChild(option);
       walletSelect.disabled = true;
 
-      if (walletHelpText) {
-        walletHelpText.textContent =
-          "Please go to your profile and add your trusted withdrawal wallet address before submitting a withdrawal request.";
-        walletHelpText.className =
-          "text-warning text-xs sm:text-sm mt-3 leading-6";
-      }
+      walletHelpText.textContent =
+        "Please go to your profile and add your one trusted withdrawal wallet address before submitting a withdrawal request.";
 
+      submitWithdrawalBtn.disabled = true;
+      submitWithdrawalBtn.classList.add("opacity-60", "cursor-not-allowed");
       return;
     }
 
-    walletSelect.innerHTML = `
-      <option value="${escapeHtml(currentWalletAddress)}">
-        ${escapeHtml(currentWalletType)} • ${escapeHtml(
-      maskWalletAddress(currentWalletAddress)
-    )}
-      </option>
-    `;
-    walletSelect.disabled = false;
+    const option = document.createElement("option");
+    option.value = JSON.stringify({
+      walletType,
+      walletAddress,
+    });
+    option.textContent = `${walletType} • ${walletAddress}`;
+    walletSelect.appendChild(option);
 
-    if (walletHelpText) {
-      walletHelpText.textContent =
-        "Your withdrawal will be processed to the wallet saved in your profile.";
-      walletHelpText.className =
-        "text-slate-400 text-xs sm:text-sm mt-3 leading-6";
-    }
+    walletSelect.disabled = false;
+    walletHelpText.textContent =
+      "Your saved and locked withdrawal wallet is selected for this request.";
+
+    submitWithdrawalBtn.disabled = false;
+    submitWithdrawalBtn.classList.remove("opacity-60", "cursor-not-allowed");
   }
 
   function getStatusBadge(status) {
@@ -227,11 +242,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function getHistoryCard(withdrawal) {
-    const subtitle = `${formatDate(
-      withdrawal.updatedAt || withdrawal.createdAt
-    )} • ${escapeHtml(withdrawal.coinType || withdrawal.network || "Wallet")} • ${escapeHtml(
-      maskWalletAddress(withdrawal.walletAddress || "")
-    )}`;
+    const walletShort = withdrawal.walletAddress
+      ? withdrawal.walletAddress.length > 14
+        ? `${withdrawal.walletAddress.slice(0, 6)}...${withdrawal.walletAddress.slice(-4)}`
+        : withdrawal.walletAddress
+      : "No wallet";
 
     return `
       <div class="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
@@ -244,14 +259,14 @@ document.addEventListener("DOMContentLoaded", async () => {
               Withdrawal
             </p>
             <p class="text-slate-400 text-xs sm:text-sm mt-1">
-              ${subtitle}
+              ${escapeHtml(formatDate(withdrawal.updatedAt || withdrawal.createdAt))} • ${escapeHtml(withdrawal.coinType || withdrawal.network || "Wallet")} • ${escapeHtml(walletShort)}
             </p>
           </div>
 
           <div class="flex items-center gap-3 shrink-0">
             ${getStatusBadge(withdrawal.status)}
             <p class="text-red-400 font-bold text-sm sm:text-base">
-              -${formatMoney(withdrawal.amount || 0)}
+              -${formatMoney(Number(withdrawal.amount || 0))}
             </p>
           </div>
         </button>
@@ -271,10 +286,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           >
             <div class="min-w-0">
               <p class="text-white font-bold text-sm sm:text-base">
-                No withdrawal history yet
+                No withdrawals yet
               </p>
               <p class="text-slate-400 text-xs sm:text-sm mt-1">
-                Your withdrawal requests will appear here once submitted.
+                Your withdrawal requests and status updates will appear here.
               </p>
             </div>
           </button>
@@ -295,99 +310,105 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function loadWithdrawalData() {
     try {
-      const [profileResponse, withdrawalsResponse] = await Promise.all([
-        window.API.get("/user/profile"),
-        window.API.get("/withdrawal/me"),
-      ]);
-
-      const liveUser = profileResponse?.data || currentUser;
-      const withdrawals = Array.isArray(withdrawalsResponse?.data)
-        ? withdrawalsResponse.data
-        : [];
-
-      currentUser = liveUser;
-      currentAvailableProfit = Number(withdrawalsResponse?.availableProfit || 0);
-
-      localStorage.setItem("userInfo", JSON.stringify(liveUser));
-
-      hydrateSidebar(liveUser);
-      hydrateWallet(liveUser);
-      renderWithdrawalHistory(withdrawals);
-
-      if (accountBalanceValue) {
-        accountBalanceValue.textContent = formatMoney(liveUser?.balance || 0);
-      }
+      const response = await window.API.get("/withdrawal/me");
+      const withdrawals = Array.isArray(response?.data) ? response.data : [];
+      availableProfit = Number(response?.availableProfit || 0);
 
       if (availableProfitValue) {
-        availableProfitValue.textContent = formatMoney(currentAvailableProfit);
+        availableProfitValue.textContent = formatMoney(availableProfit);
       }
+
+      if (availableProfitMeta) {
+        availableProfitMeta.textContent =
+          availableProfit > 0
+            ? "Only realized trading profit can be withdrawn."
+            : "You do not have withdrawable profit yet.";
+        availableProfitMeta.className =
+          availableProfit > 0
+            ? "text-primary text-sm mt-2 font-semibold"
+            : "text-slate-400 text-sm mt-2 font-semibold";
+      }
+
+      renderWithdrawalHistory(withdrawals);
     } catch (error) {
-      console.error("Failed to load withdrawal page data:", error);
-
-      if (typeof showToast === "function") {
-        showToast(error.message || "Unable to load withdrawal details.");
-      }
-
-      if (accountBalanceValue) {
-        accountBalanceValue.textContent = formatMoney(0);
-      }
+      console.error("Failed to load withdrawals:", error);
 
       if (availableProfitValue) {
         availableProfitValue.textContent = formatMoney(0);
       }
 
+      if (availableProfitMeta) {
+        availableProfitMeta.textContent = "Unable to load withdrawal data.";
+        availableProfitMeta.className = "text-red-400 text-sm mt-2 font-semibold";
+      }
+
       renderWithdrawalHistory([]);
+
+      if (typeof showToast === "function") {
+        showToast(error.message || "Failed to load withdrawal data.", "error");
+      }
     }
   }
 
-  async function handleSubmitWithdrawal(event) {
+  async function handleWithdrawalSubmit(event) {
     event.preventDefault();
 
-    const amountValue = withdrawalAmountInput?.value?.trim() || "";
-    const hasWallet = Boolean(currentWalletType && currentWalletAddress);
+    if (!currentUser) return;
 
-    if (!amountValue) {
-      showToast("Please enter a withdrawal amount.",);
+    const amount = Number(withdrawalAmountInput?.value || 0);
+
+    if (!amount || Number.isNaN(amount) || amount <= 0) {
+      showToast("Please enter a valid withdrawal amount.", "error");
       return;
     }
 
-    const amount = Number(amountValue);
-
-    if (Number.isNaN(amount) || amount <= 0) {
-      showToast("Please enter a valid withdrawal amount.");
-      return;
-    }
-
-    if (!hasWallet) {
-      showToast(
-        "Please go to your profile and add your trusted withdrawal wallet address before submitting a withdrawal request.",
-      );
-      return;
-    }
-
-    if (amount > Number(currentUser?.balance || 0)) {
-      showToast("Insufficient account balance for this withdrawal request.");
-      return;
-    }
-
-    if (amount > currentAvailableProfit) {
+    if (amount > availableProfit) {
       showToast(
         "This withdrawal amount exceeds your available profit. Only realized profit is eligible for withdrawal at this time, while your principal capital remains engaged in active trading.",
+        "error"
       );
       return;
     }
+
+    if (!walletSelect?.value) {
+      showToast(
+        "Please go to your profile and add your withdrawal wallet address first.",
+        "error"
+      );
+      return;
+    }
+
+    let walletPayload;
+    try {
+      walletPayload = JSON.parse(walletSelect.value);
+    } catch (error) {
+      showToast("Invalid wallet selection.", "error");
+      return;
+    }
+
+    const walletType = walletPayload.walletType || "";
+    const walletAddress = walletPayload.walletAddress || "";
+
+    if (!walletType || !walletAddress) {
+      showToast("Invalid wallet details.", "error");
+      return;
+    }
+
+    const parsedWallet = parseWalletType(walletType);
+
+    const payload = {
+      amount,
+      coinType: parsedWallet.coinType,
+      network: parsedWallet.network,
+      walletAddress,
+    };
 
     const originalText = submitWithdrawalBtn.textContent;
     submitWithdrawalBtn.disabled = true;
     submitWithdrawalBtn.textContent = "Submitting...";
 
     try {
-      const response = await window.API.post("/withdrawal", {
-        amount,
-        coinType: currentWalletType,
-        walletAddress: currentWalletAddress,
-        network: currentWalletType,
-      });
+      const response = await window.API.post("/withdrawal", payload);
 
       if (typeof showToast === "function") {
         showToast(
@@ -397,6 +418,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       withdrawalForm.reset();
+      setWalletState(currentUser);
       await loadWithdrawalData();
     } catch (error) {
       console.error("Withdrawal submission failed:", error);
@@ -404,26 +426,37 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (typeof showToast === "function") {
         showToast(
           error.message || "Failed to submit withdrawal request.",
+          "error"
         );
       }
     } finally {
       submitWithdrawalBtn.disabled = false;
       submitWithdrawalBtn.textContent = originalText;
+
+      if (!currentUser?.withdrawalWalletAddress || !currentUser?.withdrawalWalletType) {
+        submitWithdrawalBtn.classList.add("opacity-60", "cursor-not-allowed");
+      }
     }
   }
 
-  currentUser = await guardWithdrawalPage();
+  currentUser = await guardPage();
   if (!currentUser) return;
 
   hydrateSidebar(currentUser);
+  setWalletState(currentUser);
+  await loadWithdrawalData();
 
   mobileSidebarToggle?.addEventListener("click", openSidebar);
   mobileSidebarClose?.addEventListener("click", closeSidebar);
   mobileSidebarOverlay?.addEventListener("click", closeSidebar);
 
-  withdrawalForm?.addEventListener("submit", handleSubmitWithdrawal);
+  withdrawalForm?.addEventListener("submit", handleWithdrawalSubmit);
 
-  await loadWithdrawalData();
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeSidebar();
+    }
+  });
 
   if (window.lucide) {
     window.lucide.createIcons();
