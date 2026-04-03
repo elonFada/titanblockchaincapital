@@ -39,6 +39,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   const saveWalletBtn = document.getElementById("saveWalletBtn");
 
   const passwordToggleButtons = document.querySelectorAll(".password-toggle");
+  const pageLoader = document.getElementById("pageLoader");
+
+  function showPageLoader() {
+    if (!pageLoader) return;
+    pageLoader.classList.remove("hidden", "opacity-0", "pointer-events-none");
+    pageLoader.classList.add("opacity-100");
+  }
+
+  function hidePageLoader() {
+    if (!pageLoader) return;
+    pageLoader.classList.remove("opacity-100");
+    pageLoader.classList.add("opacity-0", "pointer-events-none");
+
+    setTimeout(() => {
+      pageLoader.classList.add("hidden");
+    }, 300);
+  }
 
   function getPageUrl(page) {
     const isLocal =
@@ -123,29 +140,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.body.classList.remove("modal-open");
   }
 
-    function resetPasswordVisibility() {
+  function resetPasswordVisibility() {
     const passwordFields = [
-        currentPasswordInput,
-        newPasswordInput,
-        confirmNewPasswordInput,
+      currentPasswordInput,
+      newPasswordInput,
+      confirmNewPasswordInput,
     ];
 
     passwordFields.forEach((input) => {
-        if (input) input.type = "password";
+      if (input) input.type = "password";
     });
 
     passwordToggleButtons.forEach((button) => {
-        button.innerHTML = '<i data-lucide="eye" class="w-5 h-5"></i>';
+      button.innerHTML = '<i data-lucide="eye" class="w-5 h-5"></i>';
     });
 
     if (window.lucide) {
-        window.lucide.createIcons();
+      window.lucide.createIcons();
     }
-    }
+  }
 
-    function bindPasswordToggles() {
+  function bindPasswordToggles() {
     passwordToggleButtons.forEach((button) => {
-        button.addEventListener("click", () => {
+      button.addEventListener("click", () => {
         const targetId = button.getAttribute("data-target");
         const input = document.getElementById(targetId);
 
@@ -155,15 +172,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         input.type = isHidden ? "text" : "password";
 
         button.innerHTML = isHidden
-            ? '<i data-lucide="eye-off" class="w-5 h-5"></i>'
-            : '<i data-lucide="eye" class="w-5 h-5"></i>';
+          ? '<i data-lucide="eye-off" class="w-5 h-5"></i>'
+          : '<i data-lucide="eye" class="w-5 h-5"></i>';
 
         if (window.lucide) {
-            window.lucide.createIcons();
+          window.lucide.createIcons();
         }
-        });
+      });
     });
-    }
+  }
 
   function getWalletType(user) {
     return (
@@ -375,8 +392,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  showPageLoader();
+
   const currentUser = await guardProfile();
-  if (!currentUser) return;
+  if (!currentUser) {
+    hidePageLoader();
+    return;
+  }
 
   hydrateProfile(currentUser);
 
@@ -413,4 +435,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (window.lucide) {
     window.lucide.createIcons();
   }
+
+  hidePageLoader();
 });
