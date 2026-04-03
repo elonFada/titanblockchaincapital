@@ -1,4 +1,3 @@
-// public/js/tradingbot.js
 document.addEventListener("DOMContentLoaded", async () => {
   const mobileSidebarToggle = document.getElementById("mobileSidebarToggle");
   const mobileSidebarClose = document.getElementById("mobileSidebarClose");
@@ -40,6 +39,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   let currentPayment = null;
   let currentTrades = [];
   let botIsActive = false;
+  let refreshInterval = null;
+  let isRefreshing = false;
 
   function showPageLoader() {
     if (!pageLoader) return;
@@ -394,7 +395,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               No trade history yet
             </p>
             <p class="text-slate-400 text-xs sm:text-sm mt-2">
-              Trade records will appear here once activity is available on your account.
+              Once your trading bot is active, every new admin signal will be accepted automatically and recorded here.
             </p>
           </div>
         </div>
@@ -418,10 +419,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     const profitTrades = trades.filter((trade) => trade.result === "profit").length;
     const lossTrades = trades.filter((trade) => trade.result === "loss").length;
 
-    if (botTotalTradesValue) botTotalTradesValue.textContent = formatNumber(totalTrades);
-    if (botActiveTradesValue) botActiveTradesValue.textContent = formatNumber(activeTrades);
-    if (botProfitTradesValue) botProfitTradesValue.textContent = formatNumber(profitTrades);
-    if (botLossTradesValue) botLossTradesValue.textContent = formatNumber(lossTrades);
+    if (botTotalTradesValue) {
+      botTotalTradesValue.textContent = formatNumber(totalTrades);
+    }
+
+    if (botActiveTradesValue) {
+      botActiveTradesValue.textContent = formatNumber(activeTrades);
+    }
+
+    if (botProfitTradesValue) {
+      botProfitTradesValue.textContent = formatNumber(profitTrades);
+    }
+
+    if (botLossTradesValue) {
+      botLossTradesValue.textContent = formatNumber(lossTrades);
+    }
   }
 
   function updateBotState() {
@@ -471,7 +483,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     return window.API.get("/trading/my-trades");
   }
 
-  async function loadTradingBotPageData() {
+  async function loadTradingBotPageData(showToastOnError = true) {
+    if (isRefreshing) return;
+    isRefreshing = true;
+
     try {
       const [profileResponse, paymentResponse, tradesResponse] = await Promise.all([
         window.API.get("/user/profile").catch(() => null),
@@ -482,32 +497,50 @@ document.addEventListener("DOMContentLoaded", async () => {
       const liveUser = profileResponse?.data || currentUser || getStoredUser() || null;
       const payment = paymentResponse?.data || null;
       const botActiveFromApi = Boolean(paymentResponse?.botActive);
-      const trades = Array.isArray(tradesResponse?.data) ? tradesResponse.data : [];
+      const allTrades = Array.isArray(tradesResponse?.data) ? tradesResponse.data : [];
 
       currentUser = liveUser;
       currentPayment = payment;
-      currentTrades = trades;
-      botIsActive = Boolean(
-        botActiveFromApi || liveUser?.tradingBotSubscribed === true
-      );
+      botIsActive = Boolean(botActiveFromApi || liveUser?.tradingBotSubscribed === true);
 
       if (liveUser) {
         saveStoredUser(liveUser);
         hydrateSidebar(liveUser);
       }
 
+      currentTrades = botIsActive ? allTrades : [];
+
       setPaymentStatusNotice(payment);
       updateBotState();
     } catch (error) {
       console.error("Failed to load trading bot data:", error);
 
-      if (typeof showToast === "function") {
+      if (showToastOnError && typeof showToast === "function") {
         showToast(error.message || "Unable to load trading bot details.", "error");
       }
 
       setPaymentStatusNotice(null);
       inactiveBotSection?.classList.remove("hidden");
       activeBotSection?.classList.add("hidden");
+    } finally {
+      isRefreshing = false;
+    }
+  }
+
+  function startAutoRefresh() {
+    if (refreshInterval) {
+      clearInterval(refreshInterval);
+    }
+
+    refreshInterval = setInterval(() => {
+      loadTradingBotPageData(false);
+    }, 5000);
+  }
+
+  function stopAutoRefresh() {
+    if (refreshInterval) {
+      clearInterval(refreshInterval);
+      refreshInterval = null;
     }
   }
 
@@ -516,6 +549,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       await navigator.clipboard.writeText(botWalletAddress.value);
+
       if (typeof showToast === "function") {
         showToast("Wallet address copied successfully.", "success");
       }
@@ -566,7 +600,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       closeBotModal();
-      await loadTradingBotPageData();
+      await loadTradingBotPageData(false);
     } catch (error) {
       console.error("Trading bot payment submission failed:", error);
 
@@ -631,7 +665,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  await loadTradingBotPageData();
+  await loadTradingBotPageData(false);
+  startAutoRefresh();
+
+  window.addEventListener("beforeunload", stopAutoRefresh);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      stopAutoRefresh();
+    } else {
+      loadTradingBotPageData(false);
+      startAutoRefresh();
+    }
+  });
 
   if (window.lucide) {
     window.lucide.createIcons();

@@ -30,6 +30,54 @@ const buildTradeEmailSignal = (signal) => ({
   stopLoss: signal.stopLoss,
 });
 
+const autoAssignSignalToBotUsers = async (signal) => {
+  if (!signal?._id) return { assignedCount: 0 };
+
+  const botUsers = await User.find({
+    tradingBotSubscribed: true,
+    balance: { $gt: 0 },
+    isVerified: true,
+    isActive: true,
+    kycStatus: "verified",
+  }).select("_id balance");
+
+  if (!botUsers.length) {
+    return { assignedCount: 0 };
+  }
+
+  const existingTrades = await UserTrade.find({
+    signal: signal._id,
+    user: { $in: botUsers.map((user) => user._id) },
+  }).select("user");
+
+  const existingUserIds = new Set(
+    existingTrades.map((trade) => String(trade.user))
+  );
+
+  const tradesToInsert = botUsers
+    .filter((user) => !existingUserIds.has(String(user._id)))
+    .map((user) => ({
+      user: user._id,
+      signal: signal._id,
+      symbol: signal.symbol,
+      entryPoint: signal.entryPoint,
+      takeProfit: signal.takeProfit,
+      stopLoss: signal.stopLoss,
+      profitPercentage: Number(signal.profitPercentage || 0),
+      lossPercentage: Number(signal.lossPercentage || 0),
+      acceptedBalance: Number(user.balance || 0),
+      status: "active",
+    }));
+
+  if (!tradesToInsert.length) {
+    return { assignedCount: 0 };
+  }
+
+  await UserTrade.insertMany(tradesToInsert);
+
+  return { assignedCount: tradesToInsert.length };
+};
+
 // ==================== ADMIN SIGNAL MANAGEMENT ====================
 
 // @desc    Create trading signal (Admin)
@@ -104,10 +152,16 @@ const createSignal = asyncHandler(async (req, res) => {
 
   const signal = await TradingSignal.create(signalPayload);
 
+  const { assignedCount } = await autoAssignSignalToBotUsers(signal);
+
   res.status(201).json({
     success: true,
-    message: "Trading signal created successfully",
+    message:
+      assignedCount > 0
+        ? `Trading signal created successfully. Assigned automatically to ${assignedCount} active trading bot user(s).`
+        : "Trading signal created successfully",
     data: signal,
+    botAssignedCount: assignedCount,
   });
 });
 
@@ -589,7 +643,7 @@ const getAllUserTrades = asyncHandler(async (req, res) => {
   }
 
   const trades = await UserTrade.find(filter)
-    .populate("user", "fullName email balance")
+    .populate("user", "fullName email balance tradingBotSubscribed")
     .populate(
       "signal",
       "symbol profitPercentage lossPercentage status result completedAt"
