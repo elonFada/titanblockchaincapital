@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const monthlyProfitMeta = document.getElementById("monthlyProfitMeta");
   const growthValue = document.getElementById("growthValue");
   const recentTransactionsContainer = document.getElementById("recentTransactionsContainer");
+  const tradingBotActionBtn = document.getElementById("tradingBotActionBtn");
 
   const performanceChartLine = document.getElementById("performanceChartLine");
   const performanceChartFill = document.getElementById("performanceChartFill");
@@ -280,6 +281,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  function updateTradingBotButton(user) {
+    if (!tradingBotActionBtn) return;
+
+    const isActivated = Boolean(user?.tradingBotSubscribed);
+
+    if (isActivated) {
+      tradingBotActionBtn.textContent = "Activated";
+      tradingBotActionBtn.href = "tradingbot.html";
+      tradingBotActionBtn.className =
+        "px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold hover:bg-emerald-500/15 transition-colors text-center";
+      return;
+    }
+
+    tradingBotActionBtn.textContent = "Activate Bot";
+    tradingBotActionBtn.href = "tradingbot.html";
+    tradingBotActionBtn.className =
+      "px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-semibold hover:bg-white/10 transition-colors text-center";
+  }
+
   function buildChartPath(values) {
     const chartWidth = 800;
     const chartHeight = 240;
@@ -452,6 +472,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         localStorage.setItem("userInfo", JSON.stringify(liveUser));
         sessionStorage.setItem("userInfo", JSON.stringify(liveUser));
         hydrateSidebar(liveUser);
+        updateTradingBotButton(liveUser);
       }
 
       const approvedDeposits = deposits.filter(
@@ -864,6 +885,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   hydrateSidebar(currentUser);
+  updateTradingBotButton(currentUser);
   ensureChatAttachmentUI();
   await loadDashboardData();
   await loadChat();
