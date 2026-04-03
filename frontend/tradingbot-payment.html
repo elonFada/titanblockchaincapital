@@ -64,9 +64,11 @@
           ),
           linear-gradient(180deg, #060913 0%, #070b14 45%, #09101b 100%);
       }
+
       body.sidebar-open {
         overflow: hidden;
       }
+
       .premium-panel {
         background: linear-gradient(
           180deg,
@@ -77,9 +79,11 @@
         -webkit-backdrop-filter: blur(18px);
         border: 1px solid rgba(255, 255, 255, 0.08);
       }
+
       .premium-border {
         position: relative;
       }
+
       .premium-border::before {
         content: "";
         position: absolute;
@@ -102,11 +106,13 @@
         mask-composite: exclude;
         pointer-events: none;
       }
+
       .glass-card {
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.08);
         backdrop-filter: blur(14px);
       }
+
       .gold-gradient {
         background: linear-gradient(
           135deg,
@@ -115,29 +121,35 @@
           #b47a15 100%
         );
       }
+
       .sidebar-link.active {
         background: rgba(228, 184, 79, 0.1);
         border-color: rgba(228, 184, 79, 0.22);
       }
+
       .sidebar-link.active span,
       .sidebar-link.active i {
         color: #e4b84f;
       }
+
       .form-input {
         background: rgba(255, 255, 255, 0.04) !important;
         border: 1px solid rgba(255, 255, 255, 0.08) !important;
         color: white !important;
         appearance: none;
       }
+
       .form-input::placeholder {
         color: rgb(148 163 184) !important;
       }
+
       .form-input:focus {
         background: rgba(255, 255, 255, 0.06) !important;
         border-color: rgba(228, 184, 79, 0.45) !important;
         box-shadow: 0 0 0 3px rgba(228, 184, 79, 0.08) !important;
         outline: none;
       }
+
       @keyframes menuFloatPulse {
         0%,
         100% {
@@ -147,6 +159,7 @@
           transform: translateY(-6px) scale(1.04);
         }
       }
+
       @keyframes menuIconWiggle {
         0%,
         100% {
@@ -159,9 +172,11 @@
           transform: rotate(8deg);
         }
       }
+
       .menu-attention {
         animation: menuFloatPulse 2.2s ease-in-out infinite;
       }
+
       .menu-attention i,
       .menu-attention svg {
         animation: menuIconWiggle 2.2s ease-in-out infinite;
@@ -296,7 +311,6 @@
                     >Trading Bot Payment</span
                   >
                 </a>
-
                 <a
                   href="admin-signals.html"
                   class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
@@ -309,7 +323,6 @@
                     >Trade Signals</span
                   >
                 </a>
-
                 <a
                   href="admin-chat.html"
                   class="sidebar-link flex items-center gap-3 p-4 glass-card rounded-2xl border border-white/10"
@@ -353,8 +366,9 @@
 
                   <div class="w-full lg:max-w-md">
                     <input
+                      id="searchBotPaymentsInput"
                       type="text"
-                      placeholder="Search by user, payment hash or bot request..."
+                      placeholder="Search by user, receipt, email or request..."
                       class="form-input w-full rounded-2xl px-4 py-4 text-sm"
                     />
                   </div>
@@ -366,22 +380,42 @@
               >
                 <div class="glass-card rounded-3xl p-5 sm:p-6">
                   <p class="text-slate-400 text-sm">Pending Bot Payments</p>
-                  <p class="text-white text-3xl font-black mt-3">7</p>
+                  <p
+                    id="pendingBotPaymentsValue"
+                    class="text-white text-3xl font-black mt-3"
+                  >
+                    0
+                  </p>
                   <p class="text-yellow-400 text-sm mt-2">Awaiting approval</p>
                 </div>
                 <div class="glass-card rounded-3xl p-5 sm:p-6">
                   <p class="text-slate-400 text-sm">Active Bots</p>
-                  <p class="text-white text-3xl font-black mt-3">46</p>
+                  <p
+                    id="activeBotsValue"
+                    class="text-white text-3xl font-black mt-3"
+                  >
+                    0
+                  </p>
                   <p class="text-emerald-400 text-sm mt-2">Activated users</p>
                 </div>
                 <div class="glass-card rounded-3xl p-5 sm:p-6">
                   <p class="text-slate-400 text-sm">Bot Revenue</p>
-                  <p class="text-white text-3xl font-black mt-3">$460,000</p>
+                  <p
+                    id="botRevenueValue"
+                    class="text-white text-3xl font-black mt-3"
+                  >
+                    $0.00
+                  </p>
                   <p class="text-primary text-sm mt-2">One-time activations</p>
                 </div>
                 <div class="glass-card rounded-3xl p-5 sm:p-6">
                   <p class="text-slate-400 text-sm">Rejected Submissions</p>
-                  <p class="text-white text-3xl font-black mt-3">2</p>
+                  <p
+                    id="rejectedBotPaymentsValue"
+                    class="text-white text-3xl font-black mt-3"
+                  >
+                    0
+                  </p>
                   <p class="text-red-400 text-sm mt-2">Needs resubmission</p>
                 </div>
               </div>
@@ -392,150 +426,15 @@
                 <div class="flex items-center gap-3 mb-5">
                   <i data-lucide="sparkles" class="w-5 h-5 text-primary"></i>
                   <h3 class="text-white text-xl sm:text-2xl font-black">
-                    Pending Bot Activation Requests
+                    Trading Bot Activation Requests
                   </h3>
                 </div>
 
-                <div class="space-y-4">
+                <div id="botPaymentsListContainer" class="space-y-4">
                   <div
                     class="rounded-3xl bg-white/5 border border-white/10 p-4 sm:p-5"
                   >
-                    <div
-                      class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5"
-                    >
-                      <div
-                        class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 flex-1"
-                      >
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            User
-                          </p>
-                          <p class="text-white font-bold mt-2">Samuel Joshua</p>
-                          <p class="text-slate-400 text-sm mt-1">TBC-00124</p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Amount
-                          </p>
-                          <p class="text-white font-bold mt-2">$10,000.00</p>
-                          <p class="text-slate-400 text-sm mt-1">
-                            Bot activation fee
-                          </p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Transaction Hash
-                          </p>
-                          <p class="text-slate-300 font-medium mt-2 break-all">
-                            0xBOTPAY9034827
-                          </p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Status
-                          </p>
-                          <span
-                            class="inline-flex mt-2 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-bold uppercase tracking-wider"
-                          >
-                            Pending
-                          </span>
-                        </div>
-                      </div>
-
-                      <div class="flex flex-wrap gap-3">
-                        <button
-                          class="px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white text-sm font-semibold"
-                        >
-                          View Proof
-                        </button>
-                        <button
-                          class="px-4 py-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold"
-                        >
-                          Reject
-                        </button>
-                        <button
-                          class="px-4 py-3 rounded-2xl gold-gradient text-black text-sm font-bold"
-                        >
-                          Approve Payment
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    class="rounded-3xl bg-white/5 border border-white/10 p-4 sm:p-5"
-                  >
-                    <div
-                      class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5"
-                    >
-                      <div
-                        class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 flex-1"
-                      >
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            User
-                          </p>
-                          <p class="text-white font-bold mt-2">Grace Peter</p>
-                          <p class="text-slate-400 text-sm mt-1">TBC-00126</p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Amount
-                          </p>
-                          <p class="text-white font-bold mt-2">$10,000.00</p>
-                          <p class="text-slate-400 text-sm mt-1">
-                            Bot activation fee
-                          </p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Transaction Hash
-                          </p>
-                          <p class="text-slate-300 font-medium mt-2 break-all">
-                            0xBOTPAY1122334
-                          </p>
-                        </div>
-                        <div>
-                          <p
-                            class="text-slate-400 text-xs uppercase tracking-wider"
-                          >
-                            Status
-                          </p>
-                          <span
-                            class="inline-flex mt-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider"
-                          >
-                            Approved
-                          </span>
-                        </div>
-                      </div>
-
-                      <div class="flex flex-wrap gap-3">
-                        <button
-                          class="px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white text-sm font-semibold"
-                        >
-                          View Proof
-                        </button>
-                        <button
-                          class="px-4 py-3 rounded-2xl gold-gradient text-black text-sm font-bold"
-                        >
-                          Activate Bot
-                        </button>
-                      </div>
-                    </div>
+                    <p class="text-white font-bold">Loading payments...</p>
                   </div>
                 </div>
               </div>
@@ -550,24 +449,13 @@
                   </h3>
                 </div>
 
-                <div class="space-y-3">
+                <div id="recentlyActivatedContainer" class="space-y-3">
                   <div
-                    class="rounded-2xl border border-white/10 bg-white/5 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                    class="rounded-2xl border border-white/10 bg-white/5 p-4"
                   >
-                    <div>
-                      <p class="text-white font-bold">Michael James</p>
-                      <p class="text-slate-400 text-sm mt-1">
-                        Activated on 18 Mar 2026
-                      </p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                      <span
-                        class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider"
-                      >
-                        Active
-                      </span>
-                      <p class="text-primary font-bold">$10,000</p>
-                    </div>
+                    <p class="text-white font-bold">
+                      Loading activated history...
+                    </p>
                   </div>
                 </div>
               </div>
@@ -580,6 +468,8 @@
     <script>
       lucide.createIcons();
     </script>
-    <script src="js/admin.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/tradingbot-payment.js"></script>
   </body>
 </html>
