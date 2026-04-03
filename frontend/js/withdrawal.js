@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const availableProfitValue = document.getElementById("availableProfitValue");
   const availableProfitMeta = document.getElementById("availableProfitMeta");
 
+  const accountBalanceValue = document.getElementById("accountBalanceValue");
+
   const withdrawalForm = document.getElementById("withdrawalForm");
   const withdrawalAmountInput = document.getElementById("withdrawalAmount");
   const walletSelect = document.getElementById("walletSelect");
@@ -328,9 +330,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function loadWithdrawalData() {
     try {
-      const response = await window.API.get("/withdrawal/me");
-      const withdrawals = Array.isArray(response?.data) ? response.data : [];
-      availableProfit = Number(response?.availableProfit || 0);
+      const [profileResponse, withdrawalResponse] = await Promise.all([
+        window.API.get("/user/profile"),
+        window.API.get("/withdrawal/me"),
+      ]);
+
+      const liveUser = profileResponse?.data || currentUser;
+      const withdrawals = Array.isArray(withdrawalResponse?.data)
+        ? withdrawalResponse.data
+        : [];
+
+      currentUser = liveUser;
+      availableProfit = Number(withdrawalResponse?.availableProfit || 0);
+
+      localStorage.setItem("userInfo", JSON.stringify(liveUser));
+
+      hydrateSidebar(liveUser);
+      setWalletState(liveUser);
+
+      if (accountBalanceValue) {
+        accountBalanceValue.textContent = formatMoney(liveUser?.balance || 0);
+      }
 
       if (availableProfitValue) {
         availableProfitValue.textContent = formatMoney(availableProfit);
@@ -350,6 +370,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderWithdrawalHistory(withdrawals);
     } catch (error) {
       console.error("Failed to load withdrawals:", error);
+
+      if (accountBalanceValue) {
+        accountBalanceValue.textContent = formatMoney(0);
+      }
 
       if (availableProfitValue) {
         availableProfitValue.textContent = formatMoney(0);
