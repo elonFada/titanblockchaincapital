@@ -747,7 +747,7 @@ const sendWithdrawalEmail = async ({
           </div>
         </div>
         <div style="font-size:14px;line-height:1.8;color:#64748b;">
-          Your withdrawal has not yet been marked as paid. You will receive a final confirmation email once payment has been completed.
+          Your withdrawal has not yet been paid. You will receive a final confirmation email once payment has been completed.
         </div>
       `,
       text: `Your withdrawal request for $${safeAmount} has been approved. Wallet: ${walletLine}. Final payment is pending.`,
@@ -756,15 +756,15 @@ const sendWithdrawalEmail = async ({
     paid: {
       subject: "Withdrawal Paid – Titan Blockchain Capital",
       eyebrow: "Withdrawal Completed",
-      heading: "Your withdrawal has been marked as paid",
+      heading: "Your withdrawal has been paid",
       intro:
-        "Your withdrawal has been fully processed and marked as paid by our team.",
+        "Your withdrawal has been fully processed and paid by our team.",
       bodyHtml: `
         <div style="font-size:16px;line-height:1.8;color:#334155;margin-bottom:18px;">
           Hello <strong style="color:#0f172a;">${escapeHtml(fullName || "there")}</strong>,
         </div>
         <div style="font-size:15px;line-height:1.8;color:#475569;margin-bottom:20px;">
-          Your withdrawal of <strong>$${safeAmount}</strong> has been <strong>marked as paid</strong>.
+          Your withdrawal of <strong>$${safeAmount}</strong> has been <strong>paid</strong>.
         </div>
         <div style="margin:22px 0;padding:18px;border-left:4px solid #22c55e;background:#ecfdf5;border-radius:14px;">
           <div style="font-size:14px;line-height:1.8;color:#166534;">
@@ -775,7 +775,7 @@ const sendWithdrawalEmail = async ({
           If you do not see the funds immediately, please allow for normal blockchain/network confirmation time.
         </div>
       `,
-      text: `Your withdrawal of $${safeAmount} has been marked as paid. Wallet: ${walletLine}.`,
+      text: `Your withdrawal of $${safeAmount} has been paid. Wallet: ${walletLine}.`,
     },
 
     rejected: {
