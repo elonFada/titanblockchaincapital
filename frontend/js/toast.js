@@ -57,9 +57,6 @@
     toast.style.transition = "all 0.25s ease";
 
     toast.innerHTML = `
-      <div style="font-weight:800;font-size:13px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px;color:#fff;">
-        ${theme.title}
-      </div>
       <div style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.88);">
         ${message}
       </div>

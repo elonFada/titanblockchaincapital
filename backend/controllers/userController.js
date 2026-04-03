@@ -196,7 +196,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   res.status(201).json({
     status: 'pending',
-    message: 'Registration initiated. Verification code sent to your email.',
+    message: 'Registration successful. Verification code sent to your email.',
     verificationToken,
     email: user.email,
     phoneNumber: `${user.countryCode}${user.phoneNumber}`,
