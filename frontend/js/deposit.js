@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const paymentProofText = document.getElementById("paymentProofText");
   const submitDepositBtn = document.getElementById("submitDepositBtn");
   const depositHistoryContainer = document.getElementById("depositHistoryContainer");
+  const pageLoader = document.getElementById("pageLoader");
 
   const MIN_DEPOSIT = 5000;
 
@@ -35,6 +36,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     USDT_ERC20: "USDT (ERC20)",
     BNB: "BNB",
   };
+
+  function showPageLoader() {
+    if (!pageLoader) return;
+    pageLoader.classList.remove("hidden", "opacity-0", "pointer-events-none");
+    pageLoader.classList.add("opacity-100");
+  }
+
+  function hidePageLoader() {
+    if (!pageLoader) return;
+    pageLoader.classList.remove("opacity-100");
+    pageLoader.classList.add("opacity-0", "pointer-events-none");
+
+    setTimeout(() => {
+      pageLoader.classList.add("hidden");
+    }, 300);
+  }
 
   function getPageUrl(page) {
     const isLocal =
@@ -392,8 +409,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  showPageLoader();
+
   const user = await guardDepositPage();
-  if (!user) return;
+  if (!user) {
+    hidePageLoader();
+    return;
+  }
 
   mobileSidebarToggle?.addEventListener("click", openSidebar);
   mobileSidebarClose?.addEventListener("click", closeSidebar);
@@ -413,5 +435,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   updateWalletAddress();
-  await loadDepositHistory();
+
+  try {
+    await loadDepositHistory();
+  } finally {
+    hidePageLoader();
+  }
 });
