@@ -21,8 +21,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     "withdrawalHistoryContainer"
   );
 
+  const pageLoader = document.getElementById("pageLoader");
+
   let currentUser = null;
   let availableProfit = 0;
+
+  function showPageLoader() {
+    if (!pageLoader) return;
+    pageLoader.classList.remove("hidden", "opacity-0", "pointer-events-none");
+    pageLoader.classList.add("opacity-100");
+  }
+
+  function hidePageLoader() {
+    if (!pageLoader) return;
+    pageLoader.classList.remove("opacity-100");
+    pageLoader.classList.add("opacity-0", "pointer-events-none");
+
+    setTimeout(() => {
+      pageLoader.classList.add("hidden");
+    }, 300);
+  }
 
   function getPageUrl(page) {
     const isLocal =
@@ -439,12 +457,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  showPageLoader();
+
   currentUser = await guardPage();
-  if (!currentUser) return;
+  if (!currentUser) {
+    hidePageLoader();
+    return;
+  }
 
   hydrateSidebar(currentUser);
   setWalletState(currentUser);
-  await loadWithdrawalData();
 
   mobileSidebarToggle?.addEventListener("click", openSidebar);
   mobileSidebarClose?.addEventListener("click", closeSidebar);
@@ -457,6 +479,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       closeSidebar();
     }
   });
+
+  try {
+    await loadWithdrawalData();
+  } finally {
+    hidePageLoader();
+  }
 
   if (window.lucide) {
     window.lucide.createIcons();
