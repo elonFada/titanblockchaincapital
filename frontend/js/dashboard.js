@@ -36,9 +36,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const performanceChartLine = document.getElementById("performanceChartLine");
   const performanceChartFill = document.getElementById("performanceChartFill");
+  const pageLoader = document.getElementById("pageLoader");
 
   let chatPollInterval = null;
   let selectedAttachment = null;
+
+  function showPageLoader() {
+    if (!pageLoader) return;
+    pageLoader.classList.remove("hidden", "opacity-0", "pointer-events-none");
+    pageLoader.classList.add("opacity-100");
+  }
+
+  function hidePageLoader() {
+    if (!pageLoader) return;
+    pageLoader.classList.remove("opacity-100");
+    pageLoader.classList.add("opacity-0", "pointer-events-none");
+
+    setTimeout(() => {
+      pageLoader.classList.add("hidden");
+    }, 300);
+  }
 
   function getPageUrl(page) {
     const isLocal =
@@ -642,6 +659,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       updateChart(0, 0);
       renderRecentTransactions([]);
+    } finally {
+      hidePageLoader();
     }
   }
 
@@ -836,8 +855,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     chatPollInterval = setInterval(loadChat, 5000);
   }
 
+  showPageLoader();
+
   const currentUser = await guardDashboard();
-  if (!currentUser) return;
+  if (!currentUser) {
+    hidePageLoader();
+    return;
+  }
 
   hydrateSidebar(currentUser);
   ensureChatAttachmentUI();
