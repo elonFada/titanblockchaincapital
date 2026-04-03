@@ -3,9 +3,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   const liveSignalsContainer = document.getElementById("liveSignalsContainer");
   const tradeHistoryContainer = document.getElementById("tradeHistoryContainer");
   const liveSignalCount = document.getElementById("liveSignalCount");
+  const pageLoader = document.getElementById("pageLoader");
 
   let refreshInterval = null;
   let isLoading = false;
+
+  function showPageLoader() {
+    if (!pageLoader) return;
+    pageLoader.classList.remove("hidden", "opacity-0", "pointer-events-none");
+    pageLoader.classList.add("opacity-100");
+  }
+
+  function hidePageLoader() {
+    if (!pageLoader) return;
+    pageLoader.classList.remove("opacity-100");
+    pageLoader.classList.add("opacity-0", "pointer-events-none");
+
+    setTimeout(() => {
+      pageLoader.classList.add("hidden");
+    }, 300);
+  }
 
   function getPageUrl(page) {
     const isLocal =
@@ -160,9 +177,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       `;
     }
 
-    return `
-
-    `;
+    return ``;
   }
 
   function getTradeMetaText(trade) {
@@ -396,7 +411,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  if (!guardUser()) return;
+  showPageLoader();
+
+  if (!guardUser()) {
+    hidePageLoader();
+    return;
+  }
 
   liveSignalsContainer?.addEventListener("click", handleAcceptSignalClick);
 
@@ -413,4 +433,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       startAutoRefresh();
     }
   });
+
+  hidePageLoader();
 });
