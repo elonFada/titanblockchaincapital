@@ -398,6 +398,119 @@ ${WEBSITE_URL}
   });
 };
 
+const sendPasswordResetOTPEmail = async (
+  email,
+  otp,
+  fullName = "",
+) => {
+  const subject = "Reset Your Titan Blockchain Capital Password";
+
+  const bodyHtml = `
+    <div style="font-size:16px;line-height:1.8;color:#334155;margin-bottom:18px;">
+      Hello <strong style="color:#0f172a;">${escapeHtml(fullName || "there")}</strong>,
+    </div>
+
+    <div style="font-size:15px;line-height:1.8;color:#475569;margin-bottom:22px;">
+      We received a request to reset your account password. Use the one-time code below to verify your email address.
+    </div>
+
+    <table
+      role="presentation"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      width="100%"
+      style="border-collapse:collapse;margin:24px 0;"
+    >
+      <tr>
+        <td
+          align="center"
+          style="padding:24px 16px;background:linear-gradient(180deg,#f8fafc 0%,#f1f5f9 100%);border:1px solid #e2e8f0;border-radius:20px;"
+        >
+          <div style="font-size:12px;line-height:1.7;letter-spacing:0.16em;text-transform:uppercase;color:#64748b;font-weight:800;margin-bottom:14px;">
+            Password Reset Code
+          </div>
+
+          <div
+            style="
+              display:block;
+              width:100%;
+              max-width:320px;
+              margin:0 auto;
+              background:#0b0f19;
+              border:1px solid #2b3342;
+              border-radius:18px;
+              padding:16px 10px;
+              box-sizing:border-box;
+            "
+          >
+            <div
+              style="
+                font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+                font-size:34px;
+                line-height:1.2;
+                font-weight:800;
+                letter-spacing:0.22em;
+                color:#ffffff;
+                text-align:center;
+                white-space:nowrap;
+              "
+            >
+              ${escapeHtml(otp).split("").join(" ")}
+            </div>
+          </div>
+
+          <div style="margin-top:14px;font-size:14px;line-height:1.7;color:#c97a1a;font-weight:700;">
+            Expires in 15 minutes
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    ${buildNotice({
+      color: "blue",
+      title: "Security Notice:",
+      text: "If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.",
+    })}
+
+    <div style="font-size:14px;line-height:1.8;color:#64748b;">
+      For your security, do not share this code with anyone.
+    </div>
+  `;
+
+  const html = buildShell({
+    title: subject,
+    eyebrow: "Password Reset",
+    heading: "Verify your password reset request",
+    intro:
+      "Use the code below to confirm ownership of your email address and continue resetting your password securely.",
+    bodyHtml,
+  });
+
+  const text = `
+${BRAND_NAME}
+
+Hello ${fullName || "there"},
+
+Your password reset code is: ${otp}
+
+This code expires in 15 minutes.
+
+If you did not request this, ignore this email.
+
+Need help? Contact ${SUPPORT_EMAIL}
+  `.trim();
+
+  return sendBrandedEmail({
+    from: FROM_VERIFY_EMAIL,
+    to: email,
+    subject,
+    html,
+    text,
+    mailer: "Titan Password Reset System",
+  });
+};
+
 // ==================== SMS OTP ====================
 const sendSMSOTP = async (phoneNumber, otp, countryCode = "+1") => {
   try {
@@ -941,6 +1054,7 @@ export {
   generateOTP,
   getOTPExpiry,
   sendEmailOTP,
+  sendPasswordResetOTPEmail,
   sendSMSOTP,
   sendPaymentEmail,
   sendDepositEmail,

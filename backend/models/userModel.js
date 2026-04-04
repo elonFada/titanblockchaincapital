@@ -216,6 +216,34 @@ tradingBotPaymentId: {
     type: Boolean,
     default: false,
   },
+  resetPasswordOTP: {
+    type: String,
+    select: false,
+  },
+
+  resetPasswordOTPExpiry: {
+    type: Date,
+    select: false,
+  },
+
+  resetPasswordToken: {
+    type: String,
+    select: false,
+  },
+
+  resetPasswordSessionToken: {
+    type: String,
+    select: false,
+  },
+
+  resetPasswordSessionExpiry: {
+    type: Date,
+    select: false,
+  },
+
+  lastPasswordResetRequest: {
+    type: Date,
+  },
 }, {
   timestamps: true
 });
@@ -310,6 +338,12 @@ userSchema.methods.toPublicJSON = function() {
   delete userObject.deviceInfo;
   delete userObject.isLocked;
   delete userObject.lockedUntil;
+  delete userObject.resetPasswordOTP;
+  delete userObject.resetPasswordOTPExpiry;
+  delete userObject.resetPasswordToken;
+  delete userObject.resetPasswordSessionToken;
+  delete userObject.resetPasswordSessionExpiry;
+  delete userObject.lastPasswordResetRequest;
   return userObject;
 };
 

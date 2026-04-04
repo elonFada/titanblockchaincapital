@@ -9,6 +9,9 @@ import {
   updateProfile,
   deleteProfileImage,
   changePassword,
+  forgotPassword,
+  verifyForgotPasswordOTP,
+  resetPassword,
   getUsers,
   getAdminUserById,
   updateUserById,
@@ -64,6 +67,15 @@ router.post('/resend-verification', resendOTP);
 
 // 🔐 Login
 router.post('/login', loginUser);
+
+// 🔐 Forgot password
+router.post('/forgot-password', forgotPassword);
+
+// ✅ Verify forgot password OTP
+router.post('/forgot-password/verify', verifyForgotPasswordOTP);
+
+// 🔁 Reset password
+router.post('/reset-password', resetPassword);
 
 
 // ==================== PROTECTED ROUTES ====================

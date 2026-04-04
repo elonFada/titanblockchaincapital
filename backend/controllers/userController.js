@@ -15,9 +15,27 @@ import {
   validatePassword,
   validatePasswordMatch,
 } from '../utils/validators.js';
+import { sendPasswordResetOTPEmail } from '../utils/emailService.js';
 
 const generateVerificationToken = () => {
   return crypto.randomBytes(24).toString('hex');
+};
+
+const generateResetSessionToken = () => {
+  return crypto.randomBytes(24).toString('hex');
+};
+
+const rollbackPasswordResetState = async (user) => {
+  try {
+    user.resetPasswordOTP = undefined;
+    user.resetPasswordOTPExpiry = undefined;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordSessionToken = undefined;
+    user.resetPasswordSessionExpiry = undefined;
+    await user.save();
+  } catch (error) {
+    console.error('❌ Failed to rollback password reset state:', error);
+  }
 };
 
 const sanitizeUserResponse = (user) => ({
@@ -278,6 +296,187 @@ const verifyOTP = asyncHandler(async (req, res) => {
       type: 'Bearer',
     },
     user: sanitizeUserResponse(user),
+  });
+});
+
+// @desc    Request forgot password OTP
+// @route   POST /api/user/forgot-password
+// @access  Public
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    res.status(400);
+    throw new Error('Email address is required');
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+
+  const user = await User.findOne({ email: normalizedEmail }).select(
+    '+resetPasswordOTP +resetPasswordOTPExpiry +resetPasswordToken +lastPasswordResetRequest'
+  );
+
+  if (!user) {
+    res.status(404);
+    throw new Error('No account associated with this email');
+  }
+
+  if (!user.isActive) {
+    res.status(403);
+    throw new Error('This account has been deactivated. Please contact support.');
+  }
+
+  const lastRequest = user.lastPasswordResetRequest;
+  if (
+    lastRequest &&
+    Date.now() - new Date(lastRequest).getTime() < 60 * 1000
+  ) {
+    res.status(429);
+    throw new Error('Please wait 60 seconds before requesting a new reset code');
+  }
+
+  const resetOTP = generateOTP();
+  const resetOTPExpiry = getOTPExpiry();
+  const resetPasswordToken = generateVerificationToken();
+
+  user.resetPasswordOTP = resetOTP;
+  user.resetPasswordOTPExpiry = resetOTPExpiry;
+  user.resetPasswordToken = resetPasswordToken;
+  user.resetPasswordSessionToken = undefined;
+  user.resetPasswordSessionExpiry = undefined;
+  user.lastPasswordResetRequest = new Date();
+
+  await user.save();
+
+  try {
+    await sendPasswordResetOTPEmail(user.email, resetOTP, user.fullName);
+  } catch (error) {
+    await rollbackPasswordResetState(user);
+    res.status(500);
+    throw new Error('Failed to send password reset email. Please try again.');
+  }
+
+  res.status(200).json({
+    status: 'reset_otp_sent',
+    message: 'Password reset code sent to your email',
+    resetToken: resetPasswordToken,
+    email: user.email,
+    expiresIn: '15 minutes',
+    nextRequestAvailable: '60 seconds',
+  });
+});
+
+// @desc    Verify forgot password OTP
+// @route   POST /api/user/forgot-password/verify
+// @access  Public
+const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
+  const { email, otp, resetToken } = req.body;
+
+  if (!email || !otp || !resetToken) {
+    res.status(400);
+    throw new Error('Email, OTP, and reset token are required');
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+
+  const user = await User.findOne({
+    email: normalizedEmail,
+    resetPasswordToken: resetToken,
+    resetPasswordOTPExpiry: { $gt: new Date() },
+  }).select(
+    '+resetPasswordOTP +resetPasswordOTPExpiry +resetPasswordToken +resetPasswordSessionToken +resetPasswordSessionExpiry'
+  );
+
+  if (!user) {
+    res.status(400);
+    throw new Error('Invalid or expired password reset request');
+  }
+
+  if (String(user.resetPasswordOTP) !== String(otp).trim()) {
+    res.status(400);
+    throw new Error('Invalid reset code');
+  }
+
+  const resetSessionToken = generateResetSessionToken();
+
+  user.resetPasswordOTP = undefined;
+  user.resetPasswordOTPExpiry = undefined;
+  user.resetPasswordSessionToken = resetSessionToken;
+  user.resetPasswordSessionExpiry = new Date(Date.now() + 15 * 60 * 1000);
+
+  await user.save();
+
+  res.status(200).json({
+    status: 'reset_verified',
+    message: 'Email verified successfully',
+    email: user.email,
+    resetSessionToken,
+    expiresIn: '15 minutes',
+  });
+});
+
+// @desc    Reset password after OTP verification
+// @route   POST /api/user/reset-password
+// @access  Public
+const resetPassword = asyncHandler(async (req, res) => {
+  const { email, resetSessionToken, newPassword, confirmNewPassword } = req.body;
+
+  if (!email || !resetSessionToken || !newPassword || !confirmNewPassword) {
+    res.status(400);
+    throw new Error('Email, reset session token, new password, and confirm password are required');
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+
+  const user = await User.findOne({
+    email: normalizedEmail,
+    resetPasswordSessionToken: resetSessionToken,
+    resetPasswordSessionExpiry: { $gt: new Date() },
+  }).select(
+    '+password +resetPasswordSessionToken +resetPasswordSessionExpiry +resetPasswordToken'
+  );
+
+  if (!user) {
+    res.status(400);
+    throw new Error('Invalid or expired password reset session');
+  }
+
+  if (!validatePasswordMatch(newPassword, confirmNewPassword)) {
+    res.status(400);
+    throw new Error('Passwords do not match');
+  }
+
+  const passwordValidation = validatePassword(newPassword);
+  if (!passwordValidation.isValid) {
+    const errorMessages = Object.values(passwordValidation.errors).filter(Boolean);
+    res.status(400);
+    throw new Error(errorMessages.join('. '));
+  }
+
+  const isSameAsCurrent = await user.comparePassword(newPassword);
+  if (isSameAsCurrent) {
+    res.status(400);
+    throw new Error('Try another password. You cannot use your current password again');
+  }
+
+  user.password = newPassword;
+  user.resetPasswordOTP = undefined;
+  user.resetPasswordOTPExpiry = undefined;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordSessionToken = undefined;
+  user.resetPasswordSessionExpiry = undefined;
+  user.lastPasswordResetRequest = undefined;
+  user.failedLoginAttempts = 0;
+  user.isLocked = false;
+  user.lockedUntil = undefined;
+
+  await user.save();
+
+  clearUserToken(res);
+
+  res.status(200).json({
+    status: 'password_reset_success',
+    message: 'Password reset successfully. Please log in with your new password.',
   });
 });
 
@@ -883,6 +1082,9 @@ export {
   updateProfile,
   deleteProfileImage,
   changePassword,
+  forgotPassword,
+  verifyForgotPasswordOTP,
+  resetPassword,
   getUsers,
   getAdminUserById,
   updateUserById,

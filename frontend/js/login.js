@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById("loginForm");
   const submitBtn = document.getElementById("loginSubmitBtn");
   const emailInput = document.getElementById("loginEmail");
@@ -19,26 +19,40 @@ document.addEventListener("DOMContentLoaded", () => {
     sessionStorage.removeItem("userInfo");
   }
 
-  function storePendingVerification(email) {
-    if (email) {
-      sessionStorage.setItem("pendingVerificationEmail", email.toLowerCase().trim());
+  function getStoredToken() {
+    return (
+      localStorage.getItem("token") || sessionStorage.getItem("token") || ""
+    );
+  }
+
+  function getStoredUser() {
+    const raw =
+      localStorage.getItem("userInfo") || sessionStorage.getItem("userInfo");
+
+    if (!raw) return null;
+
+    try {
+      return JSON.parse(raw);
+    } catch (error) {
+      console.error("Failed to parse stored user:", error);
+      return null;
     }
   }
 
-  async function tryRefreshProfileAndRedirect(user, token) {
-    try {
-      const profileResponse = await window.API.get("/user/profile");
-      const liveUser = profileResponse?.data || user;
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("userInfo", JSON.stringify(liveUser));
-
-      routeUser(liveUser);
-    } catch (error) {
-      localStorage.setItem("token", token);
-      localStorage.setItem("userInfo", JSON.stringify(user));
-      routeUser(user);
+  function storePendingVerification(email) {
+    if (email) {
+      sessionStorage.setItem(
+        "pendingVerificationEmail",
+        email.toLowerCase().trim()
+      );
     }
+  }
+
+  function persistAuth(token, user) {
+    localStorage.setItem("token", token);
+    localStorage.setItem("userInfo", JSON.stringify(user));
+    sessionStorage.setItem("token", token);
+    sessionStorage.setItem("userInfo", JSON.stringify(user));
   }
 
   function routeUser(user) {
@@ -72,6 +86,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.location.href = getPageUrl("registration-fee.html");
   }
+
+  async function tryRefreshProfileAndRedirect(user, token) {
+    try {
+      const profileResponse = await window.API.get("/user/profile");
+      const liveUser = profileResponse?.data || user;
+
+      persistAuth(token, liveUser);
+      routeUser(liveUser);
+    } catch (error) {
+      persistAuth(token, user);
+      routeUser(user);
+    }
+  }
+
+  async function autoLoginIfSessionExists() {
+    const token = getStoredToken();
+    const storedUser = getStoredUser();
+
+    if (!token) {
+      clearStoredAuth();
+      return;
+    }
+
+    try {
+      const profileResponse = await window.API.get("/user/profile");
+      const liveUser = profileResponse?.data || storedUser;
+
+      if (!liveUser) {
+        clearStoredAuth();
+        return;
+      }
+
+      persistAuth(token, liveUser);
+      routeUser(liveUser);
+    } catch (error) {
+      if (storedUser) {
+        persistAuth(token, storedUser);
+        routeUser(storedUser);
+        return;
+      }
+
+      clearStoredAuth();
+    }
+  }
+
+  await autoLoginIfSessionExists();
 
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
