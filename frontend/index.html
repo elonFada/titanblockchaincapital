@@ -93,6 +93,47 @@
         border: 1px solid rgba(255, 255, 255, 0.08);
       }
 
+      body.modal-open {
+        overflow: hidden;
+      }
+
+      .policy-modal-overlay {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition:
+          opacity 0.3s ease,
+          visibility 0.3s ease;
+      }
+
+      .policy-modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+
+      .policy-modal-card {
+        transform: translateY(48px);
+        opacity: 0;
+        transition:
+          transform 0.35s ease,
+          opacity 0.35s ease;
+      }
+
+      .policy-modal-overlay.active .policy-modal-card {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .policy-content::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .policy-content::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+      }
+
       .stats-single-card {
         min-height: 220px;
         display: flex;
@@ -1387,14 +1428,22 @@
             <h6 class="text-white font-bold mb-5">Legal</h6>
             <ul class="space-y-3 text-sm text-slate-500">
               <li>
-                <a href="#" class="hover:text-primary transition-colors"
-                  >Terms of Service</a
+                <a
+                  href="#"
+                  id="openTermsModal"
+                  class="hover:text-primary transition-colors"
                 >
+                  Terms of Service
+                </a>
               </li>
               <li>
-                <a href="#" class="hover:text-primary transition-colors"
-                  >Policy</a
+                <a
+                  href="#"
+                  id="openPolicyModal"
+                  class="hover:text-primary transition-colors"
                 >
+                  Policy
+                </a>
               </li>
             </ul>
           </div>
@@ -1408,90 +1457,425 @@
       </div>
     </footer>
 
-    <script>
-      const menuToggle = document.getElementById("menuToggle");
-      const mobileNav = document.getElementById("mobileNav");
+    <!-- Terms Modal -->
+    <div
+      id="termsModal"
+      class="policy-modal-overlay fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center px-4 py-4 sm:py-8"
+    >
+      <div
+        class="policy-modal-card premium-panel premium-border rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-hidden"
+      >
+        <div
+          class="flex items-center justify-between gap-4 px-5 sm:px-7 py-5 border-b border-white/10"
+        >
+          <div>
+            <p
+              class="text-primary text-[11px] font-bold uppercase tracking-widest"
+            >
+              Legal
+            </p>
+            <h3 class="text-white text-2xl sm:text-3xl font-black mt-2">
+              Terms of Service
+            </h3>
+          </div>
 
-      if (menuToggle && mobileNav) {
-        menuToggle.addEventListener("click", () => {
-          const isOpen = mobileNav.classList.contains("visible");
+          <button
+            id="closeTermsModal"
+            type="button"
+            class="h-11 w-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:bg-white/10 transition-all shrink-0"
+            aria-label="Close Terms"
+          >
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
 
-          if (isOpen) {
-            mobileNav.classList.remove(
-              "visible",
-              "opacity-100",
-              "translate-y-0",
-            );
-            mobileNav.classList.add(
-              "invisible",
-              "opacity-0",
-              "-translate-y-full",
-            );
-            document.body.classList.remove("mobile-menu-open");
-          } else {
-            mobileNav.classList.remove(
-              "invisible",
-              "opacity-0",
-              "-translate-y-full",
-            );
-            mobileNav.classList.add("visible", "opacity-100", "translate-y-0");
-            document.body.classList.add("mobile-menu-open");
-          }
-        });
+        <div
+          class="policy-content overflow-y-auto max-h-[calc(90vh-88px)] px-5 sm:px-7 py-6 sm:py-7 text-slate-300 text-sm sm:text-base leading-8 space-y-6"
+        >
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              1. Acceptance of Terms
+            </h4>
+            <p>
+              By accessing or using TitanBlockchainCapital, you agree to be
+              bound by these Terms of Service. If you do not agree with any part
+              of these terms, you should not use the platform or any related
+              services.
+            </p>
+          </section>
 
-        mobileNav.querySelectorAll("a").forEach((link) => {
-          link.addEventListener("click", () => {
-            mobileNav.classList.remove(
-              "visible",
-              "opacity-100",
-              "translate-y-0",
-            );
-            mobileNav.classList.add(
-              "invisible",
-              "opacity-0",
-              "-translate-y-full",
-            );
-            document.body.classList.remove("mobile-menu-open");
-          });
-        });
-      }
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              2. Platform Purpose
+            </h4>
+            <p>
+              TitanBlockchainCapital provides access to trading-related tools,
+              account services, onboarding workflows, market information, and
+              user dashboard functionality. The platform is intended for lawful
+              use only and must not be used in any manner that violates
+              applicable law or regulation.
+            </p>
+          </section>
 
-      lucide.createIcons();
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">3. Eligibility</h4>
+            <p>
+              You must provide accurate, complete, and truthful information when
+              creating an account. By using the platform, you confirm that the
+              information you submit is correct and that you are legally
+              permitted to use the services offered through the platform.
+            </p>
+          </section>
 
-      const revealItems = document.querySelectorAll(
-        ".reveal, .reveal-left, .reveal-right",
-      );
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("is-visible");
-              observer.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.14, rootMargin: "0px 0px -40px 0px" },
-      );
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              4. Account Registration and Verification
+            </h4>
+            <p>
+              Certain features of the platform may require account registration,
+              email verification, identity confirmation, payment review, or
+              other onboarding checks. TitanBlockchainCapital reserves the right
+              to approve, reject, suspend, or restrict any account where
+              submitted information cannot be verified or where misuse is
+              suspected.
+            </p>
+          </section>
 
-      revealItems.forEach((item) => observer.observe(item));
-    </script>
-    <script>
-      const statRows = document.querySelectorAll(".stats-stack .stat-row");
-      let activeIndex = 0;
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              5. User Responsibilities
+            </h4>
+            <p>
+              You are responsible for maintaining the confidentiality of your
+              account credentials, wallet details, and login information. You
+              agree not to impersonate another person, attempt unauthorized
+              access, disrupt the platform, upload fraudulent documents, or
+              misuse any payment or trading-related feature.
+            </p>
+          </section>
 
-      function rotateSingleStats() {
-        statRows.forEach((row) => {
-          row.classList.remove("active", "mid");
-        });
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              6. Deposits, Withdrawals, and Payment Review
+            </h4>
+            <p>
+              Deposits, withdrawals, registration payments, activation payments,
+              and related submissions may be subject to review, verification,
+              and approval. TitanBlockchainCapital may request additional
+              information before processing certain requests. Incomplete,
+              suspicious, or unverifiable submissions may be rejected.
+            </p>
+          </section>
 
-        statRows[activeIndex].classList.add("active");
-        statRows[(activeIndex + 1) % statRows.length].classList.add("mid");
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              7. Trading Risk Disclosure
+            </h4>
+            <p>
+              Trading involves risk. Market prices can move rapidly, and profits
+              are not guaranteed. You understand that any use of trading tools,
+              signals, automation features, or account functionality is done at
+              your own risk. Past results do not guarantee future outcomes.
+            </p>
+          </section>
 
-        activeIndex = (activeIndex + 1) % statRows.length;
-      }
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              8. Automated Trading Features
+            </h4>
+            <p>
+              If the platform provides access to automation or trading bot
+              features, such tools are offered as platform functionality and may
+              depend on account status, eligibility, approval, payment
+              confirmation, or technical availability. TitanBlockchainCapital
+              does not guarantee uninterrupted availability or any guaranteed
+              financial outcome from automation features.
+            </p>
+          </section>
 
-      rotateSingleStats();
-      setInterval(rotateSingleStats, 1800);
-    </script>
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">9. Acceptable Use</h4>
+            <p>
+              You agree not to reverse engineer, scrape, exploit
+              vulnerabilities, distribute malicious code, abuse support systems,
+              submit false payment proof, or interfere with the operation,
+              performance, or security of the platform.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              10. Suspension and Termination
+            </h4>
+            <p>
+              TitanBlockchainCapital reserves the right to suspend, restrict, or
+              terminate access to any account at its discretion where fraud,
+              abuse, suspicious activity, policy violations, or security
+              concerns are identified.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              11. Intellectual Property
+            </h4>
+            <p>
+              All platform branding, design, software, content, graphics,
+              interface elements, and related materials remain the property of
+              TitanBlockchainCapital unless otherwise stated. You may not copy,
+              reproduce, or redistribute platform materials without written
+              permission.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              12. Service Availability
+            </h4>
+            <p>
+              TitanBlockchainCapital may modify, pause, update, or discontinue
+              any part of the platform at any time. Access may occasionally be
+              interrupted for maintenance, upgrades, security review, or
+              technical reasons.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              13. Limitation of Liability
+            </h4>
+            <p>
+              To the maximum extent permitted by law, TitanBlockchainCapital
+              shall not be liable for any indirect, incidental, consequential,
+              or trading-related loss arising from platform use, interruption,
+              delay, error, account restriction, user mistake, market
+              volatility, or third-party dependency.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              14. Changes to Terms
+            </h4>
+            <p>
+              These Terms of Service may be updated from time to time. Continued
+              use of the platform after updates means you accept the revised
+              terms.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">15. Contact</h4>
+            <p>
+              For questions regarding these Terms of Service, users may contact
+              platform support through the official support channels available
+              on TitanBlockchainCapital.
+            </p>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- Policy Modal -->
+    <div
+      id="policyModal"
+      class="policy-modal-overlay fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center px-4 py-4 sm:py-8"
+    >
+      <div
+        class="policy-modal-card premium-panel premium-border rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-hidden"
+      >
+        <div
+          class="flex items-center justify-between gap-4 px-5 sm:px-7 py-5 border-b border-white/10"
+        >
+          <div>
+            <p
+              class="text-primary text-[11px] font-bold uppercase tracking-widest"
+            >
+              Legal
+            </p>
+            <h3 class="text-white text-2xl sm:text-3xl font-black mt-2">
+              Privacy Policy
+            </h3>
+          </div>
+
+          <button
+            id="closePolicyModal"
+            type="button"
+            class="h-11 w-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:bg-white/10 transition-all shrink-0"
+            aria-label="Close Policy"
+          >
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div
+          class="policy-content overflow-y-auto max-h-[calc(90vh-88px)] px-5 sm:px-7 py-6 sm:py-7 text-slate-300 text-sm sm:text-base leading-8 space-y-6"
+        >
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">1. Introduction</h4>
+            <p>
+              TitanBlockchainCapital values user privacy and is committed to
+              handling personal information responsibly. This Privacy Policy
+              explains how information may be collected, used, stored, and
+              protected when you use the platform.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              2. Information We Collect
+            </h4>
+            <p>
+              We may collect information such as your full name, email address,
+              phone number, login activity, verification data, uploaded
+              documents, transaction-related details, wallet information,
+              support messages, profile image, and account preferences.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              3. How Information Is Collected
+            </h4>
+            <p>
+              Information may be collected when you register, log in, verify
+              your account, submit payment proof, update your profile, contact
+              support, request withdrawals, activate services, or otherwise
+              interact with the platform.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              4. How We Use Your Information
+            </h4>
+            <p>
+              Your information may be used to create and manage your account,
+              verify identity, process submissions, send OTP or security emails,
+              provide support, improve platform operations, maintain service
+              integrity, detect suspicious activity, and communicate important
+              account updates.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              5. Verification and Security
+            </h4>
+            <p>
+              Information may be used for fraud prevention, account protection,
+              verification review, login security, suspicious activity
+              monitoring, and enforcement of platform rules. We may also retain
+              certain activity records to help secure the platform and
+              investigate abuse.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              6. Cookies and Session Data
+            </h4>
+            <p>
+              TitanBlockchainCapital may use cookies, tokens, and session-based
+              technologies to keep users signed in, maintain secure sessions,
+              remember preferences, and support account authentication.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              7. Uploaded Documents and Receipts
+            </h4>
+            <p>
+              Where users upload payment receipts, profile images, or
+              verification-related files, those files may be stored and used
+              strictly for account administration, payment review, service
+              approval, support, or security purposes.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              8. Sharing of Information
+            </h4>
+            <p>
+              TitanBlockchainCapital does not sell personal information.
+              Information may be shared only where reasonably necessary for
+              platform operation, security, service delivery, lawful compliance,
+              fraud prevention, technical infrastructure, or professional
+              support services.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">9. Data Retention</h4>
+            <p>
+              Information may be retained for as long as necessary to support
+              account operations, comply with security needs, resolve disputes,
+              enforce platform rules, or meet legal and operational
+              requirements.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              10. User Responsibilities
+            </h4>
+            <p>
+              Users are responsible for keeping login credentials secure,
+              providing accurate information, and notifying platform support if
+              they suspect unauthorized access or suspicious account activity.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              11. Third-Party Services
+            </h4>
+            <p>
+              The platform may rely on third-party providers for hosting,
+              storage, email delivery, authentication support, media handling,
+              analytics, or infrastructure. Such services may process limited
+              user information as needed to support platform functionality.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              12. Data Protection
+            </h4>
+            <p>
+              TitanBlockchainCapital takes reasonable technical and
+              administrative measures to protect account information. However,
+              no online system can guarantee absolute security, and users
+              acknowledge the inherent risks of internet-based services.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">
+              13. Changes to This Policy
+            </h4>
+            <p>
+              This Privacy Policy may be updated from time to time to reflect
+              platform, security, legal, or operational changes. Continued use
+              of the platform after an update means you accept the revised
+              policy.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="text-white text-lg font-bold mb-2">14. Contact</h4>
+            <p>
+              For questions about this Privacy Policy or how personal
+              information is handled, users may contact TitanBlockchainCapital
+              through the official support channels provided on the platform.
+            </p>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/index.js"></script>
   </body>
 </html>
