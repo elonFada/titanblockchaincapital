@@ -37,11 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const walletMap = {
-    BTC: "TBC-REG-BTC-WALLET-ADDRESS-HERE-1234567890",
-    ETH: "TBC-REG-ETH-WALLET-ADDRESS-HERE-1234567890",
-    USDT_TRC20: "TBC-REG-USDT-TRC20-WALLET-ADDRESS-HERE-1234567890",
-    USDT_ERC20: "TBC-REG-USDT-ERC20-WALLET-ADDRESS-HERE-1234567890",
-    BNB: "TBC-REG-BNB-WALLET-ADDRESS-HERE-1234567890",
+    BTC: "bc1pd85hycjm20v20jwqxg8s9sdla7vyjxz4948hz2eskdd9szehxz4s6atadq",
+    USDT_TRC20: "TVkUELxT7AYi6L56ajk6Ff6ijcPH9KWAQv",
+    BNB: "0x7f75bfb8f27dc34bd958ee5957a133e244bea056",
   };
 
   function updateWalletAddress() {
