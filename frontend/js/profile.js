@@ -215,10 +215,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!referralCode) return "";
 
     const origin = window.location.origin;
+
+    const isLocal =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
+
     const pathname = window.location.pathname || "";
     const folder = pathname.substring(0, pathname.lastIndexOf("/") + 1);
 
-    return `${origin}${folder}register.html?ref=${encodeURIComponent(referralCode)}`;
+    const registerPath = isLocal ? "register.html" : "register";
+
+    return `${origin}${folder}${registerPath}?ref=${encodeURIComponent(referralCode)}`;
   }
 
   function hydrateReferral(user) {
