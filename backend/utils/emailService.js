@@ -161,11 +161,11 @@ const buildInfoCard = (title, rows = []) => `
     </div>
     <div style="font-size:14px;line-height:1.9;color:#334155;">
       ${rows
-        .map(
-          (row) =>
-            `<div style="${row.breakWord ? "word-break:break-word;" : ""}"><strong>${escapeHtml(row.label)}:</strong> ${escapeHtml(row.value)}</div>`
-        )
-        .join("")}
+    .map(
+      (row) =>
+        `<div style="${row.breakWord ? "word-break:break-word;" : ""}"><strong>${escapeHtml(row.label)}:</strong> ${escapeHtml(row.value)}</div>`
+    )
+    .join("")}
     </div>
   </div>
 `;
@@ -357,10 +357,10 @@ const sendEmailOTP = async (email, otp, fullName = "", type = "verification") =>
     </table>
 
     ${buildNotice({
-      color: "gold",
-      title: "Security Notice:",
-      text: "Never share this code with anyone. Titan Blockchain Capital will never ask for your verification code by phone, email, or chat.",
-    })}
+    color: "gold",
+    title: "Security Notice:",
+    text: "Never share this code with anyone. Titan Blockchain Capital will never ask for your verification code by phone, email, or chat.",
+  })}
 
     <div style="font-size:14px;line-height:1.8;color:#64748b;">
       If you did not request this verification, you can safely ignore this email or contact support.
@@ -468,10 +468,10 @@ const sendPasswordResetOTPEmail = async (
     </table>
 
     ${buildNotice({
-      color: "blue",
-      title: "Security Notice:",
-      text: "If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.",
-    })}
+    color: "blue",
+    title: "Security Notice:",
+    text: "If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.",
+  })}
 
     <div style="font-size:14px;line-height:1.8;color:#64748b;">
       For your security, do not share this code with anyone.
@@ -578,9 +578,9 @@ const sendPaymentEmail = async ({
           We have received your registration payment receipt for <strong>$${escapeHtml(safeAmount)}</strong>.
         </div>
         ${buildNotice({
-          color: "gold",
-          text: "Your payment is currently under review by our team. You will be notified once the review is complete.",
-        })}
+        color: "gold",
+        text: "Your payment is currently under review by our team. You will be notified once the review is complete.",
+      })}
       `,
       text: `We have received your registration payment receipt for $${safeAmount}. Your payment is currently under review.`,
     },
@@ -620,10 +620,10 @@ const sendPaymentEmail = async ({
           Unfortunately, your registration payment of <strong>$${escapeHtml(safeAmount)}</strong> could not be verified.
         </div>
         ${buildNotice({
-          color: "red",
-          title: "Reason:",
-          text: reason || "Your payment could not be verified.",
-        })}
+        color: "red",
+        title: "Reason:",
+        text: reason || "Your payment could not be verified.",
+      })}
       `,
       text: `Your registration payment of $${safeAmount} could not be verified. Reason: ${reason || "Your payment could not be verified."}`,
     },
@@ -692,15 +692,15 @@ const sendDepositEmail = async ({
         </div>
 
         ${buildInfoCard("Deposit Details", [
-          { label: "Amount", value: `$${safeAmount}` },
-          { label: "Asset", value: safeCoinType },
-          { label: "Transaction ID", value: safeTransactionId, breakWord: true },
-        ])}
+        { label: "Amount", value: `$${safeAmount}` },
+        { label: "Asset", value: safeCoinType },
+        { label: "Transaction ID", value: safeTransactionId, breakWord: true },
+      ])}
 
         ${buildNotice({
-          color: "gold",
-          text: "Your deposit is currently under review by our team. You will receive another update once the review is completed.",
-        })}
+        color: "gold",
+        text: "Your deposit is currently under review by our team. You will receive another update once the review is completed.",
+      })}
       `,
       text: `We have received your deposit receipt for $${safeAmount} via ${safeCoinType}. Transaction ID: ${safeTransactionId}. Your deposit is currently under review.`,
     },
@@ -721,15 +721,15 @@ const sendDepositEmail = async ({
         </div>
 
         ${buildInfoCard("Deposit Details", [
-          { label: "Amount", value: `$${safeAmount}` },
-          { label: "Asset", value: safeCoinType },
-          { label: "Transaction ID", value: safeTransactionId, breakWord: true },
-        ])}
+        { label: "Amount", value: `$${safeAmount}` },
+        { label: "Asset", value: safeCoinType },
+        { label: "Transaction ID", value: safeTransactionId, breakWord: true },
+      ])}
 
         ${buildNotice({
-          color: "green",
-          text: "The funds have now been added to your account balance and are available in your dashboard.",
-        })}
+        color: "green",
+        text: "The funds have now been added to your account balance and are available in your dashboard.",
+      })}
 
         ${buildButton("Go to Dashboard", safeDashboardUrl)}
       `,
@@ -752,16 +752,16 @@ const sendDepositEmail = async ({
         </div>
 
         ${buildInfoCard("Deposit Details", [
-          { label: "Amount", value: `$${safeAmount}` },
-          { label: "Asset", value: safeCoinType },
-          { label: "Transaction ID", value: safeTransactionId, breakWord: true },
-        ])}
+        { label: "Amount", value: `$${safeAmount}` },
+        { label: "Asset", value: safeCoinType },
+        { label: "Transaction ID", value: safeTransactionId, breakWord: true },
+      ])}
 
         ${buildNotice({
-          color: "red",
-          title: "Reason:",
-          text: reason || "Your deposit could not be verified.",
-        })}
+        color: "red",
+        title: "Reason:",
+        text: reason || "Your deposit could not be verified.",
+      })}
       `,
       text: `Your deposit of $${safeAmount} via ${safeCoinType} could not be verified. Transaction ID: ${safeTransactionId}. Reason: ${reason || "Your deposit could not be verified."}`,
     },
@@ -811,9 +811,8 @@ const sendWithdrawalEmail = async ({
   const safeAmount =
     amount !== undefined && amount !== null ? Number(amount).toLocaleString() : "0";
 
-  const walletLine = `${
-    coinType || network || "Crypto"
-  }${walletAddress ? ` • ${walletAddress}` : ""}`;
+  const walletLine = `${coinType || network || "Crypto"
+    }${walletAddress ? ` • ${walletAddress}` : ""}`;
 
   const templates = {
     submitted: {
@@ -993,15 +992,15 @@ const sendReferralRewardEmail = async ({
     </div>
 
     ${buildInfoCard("Referral Reward Details", [
-      { label: "Referred User", value: referredUserName || "N/A" },
-      { label: "Reward Earned", value: `$${safeAmount}` },
-      { label: "Total Referral Earnings", value: `$${safeTotal}` },
-    ])}
+    { label: "Referred User", value: referredUserName || "N/A" },
+    { label: "Reward Earned", value: `$${safeAmount}` },
+    { label: "Total Referral Earnings", value: `$${safeTotal}` },
+  ])}
 
     ${buildNotice({
-      color: "green",
-      text: "Your referral reward has been credited successfully after your referred user completed and got approval for the registration payment.",
-    })}
+    color: "green",
+    text: "Your referral reward has been credited successfully after your referred user completed and got approval for the registration payment.",
+  })}
 
     ${buildButton("View Dashboard", safeDashboardUrl)}
   `;
@@ -1062,15 +1061,15 @@ const sendReferralWithdrawalEmail = async ({
         </div>
 
         ${buildInfoCard("Withdrawal Details", [
-          { label: "Amount", value: `$${safeAmount}` },
-          { label: "Wallet Type", value: walletType || "N/A" },
-          { label: "Wallet Address", value: walletAddress || "N/A", breakWord: true },
-        ])}
+        { label: "Amount", value: `$${safeAmount}` },
+        { label: "Wallet Type", value: walletType || "N/A" },
+        { label: "Wallet Address", value: walletAddress || "N/A", breakWord: true },
+      ])}
 
         ${buildNotice({
-          color: "gold",
-          text: "Your referral withdrawal request is pending review. You will receive another email once it is processed.",
-        })}
+        color: "gold",
+        text: "Your referral withdrawal request is pending review. You will receive another email once it is processed.",
+      })}
       `,
       text: `Your referral withdrawal request for $${safeAmount} has been submitted and is pending review.`,
     },
@@ -1087,15 +1086,15 @@ const sendReferralWithdrawalEmail = async ({
         </div>
 
         ${buildInfoCard("Withdrawal Details", [
-          { label: "Amount", value: `$${safeAmount}` },
-          { label: "Wallet Type", value: walletType || "N/A" },
-          { label: "Wallet Address", value: walletAddress || "N/A", breakWord: true },
-        ])}
+        { label: "Amount", value: `$${safeAmount}` },
+        { label: "Wallet Type", value: walletType || "N/A" },
+        { label: "Wallet Address", value: walletAddress || "N/A", breakWord: true },
+      ])}
 
         ${buildNotice({
-          color: "green",
-          text: "Your referral withdrawal has been paid successfully, please check your wallet.",
-        })}
+        color: "green",
+        text: "Your referral earnings withdrawal has been paid successfully, please check your wallet.",
+      })}
       `,
       text: `Your referral withdrawal of $${safeAmount} has been paid successfully.`,
     },
@@ -1112,16 +1111,16 @@ const sendReferralWithdrawalEmail = async ({
         </div>
 
         ${buildInfoCard("Withdrawal Details", [
-          { label: "Amount", value: `$${safeAmount}` },
-          { label: "Wallet Type", value: walletType || "N/A" },
-          { label: "Wallet Address", value: walletAddress || "N/A", breakWord: true },
-        ])}
+        { label: "Amount", value: `$${safeAmount}` },
+        { label: "Wallet Type", value: walletType || "N/A" },
+        { label: "Wallet Address", value: walletAddress || "N/A", breakWord: true },
+      ])}
 
         ${buildNotice({
-          color: "red",
-          title: "Reason:",
-          text: reason || "Your withdrawal request could not be approved.",
-        })}
+        color: "red",
+        title: "Reason:",
+        text: reason || "Your withdrawal request could not be approved.",
+      })}
       `,
       text: `Your referral withdrawal of $${safeAmount} was rejected. Reason: ${reason || "Your withdrawal request could not be approved."}`,
     },
@@ -1191,21 +1190,21 @@ const sendTradingSignalEmail = async ({
     </div>
 
     ${buildInfoCard("Trade Details", [
-      { label: "Symbol", value: signal?.symbol || "N/A" },
-      { label: "Entry Point", value: String(signal?.entryPoint ?? "N/A") },
-      { label: "Take Profit", value: String(signal?.takeProfit ?? "N/A") },
-      { label: "Stop Loss", value: String(signal?.stopLoss ?? "N/A") },
-    ])}
+    { label: "Symbol", value: signal?.symbol || "N/A" },
+    { label: "Entry Point", value: String(signal?.entryPoint ?? "N/A") },
+    { label: "Take Profit", value: String(signal?.takeProfit ?? "N/A") },
+    { label: "Stop Loss", value: String(signal?.stopLoss ?? "N/A") },
+  ])}
 
     ${buildNotice({
-      color: isProfit ? "green" : "red",
-      title: isProfit ? "Profit Earned:" : "Loss Incurred:",
-      text: `${isProfit ? "+" : "-"}$${formatMoney(isProfit ? profitAmount : lossAmount)}`,
-    })}
+    color: isProfit ? "green" : "red",
+    title: isProfit ? "Profit Earned:" : "Loss Incurred:",
+    text: `${isProfit ? "+" : "-"}$${formatMoney(isProfit ? profitAmount : lossAmount)}`,
+  })}
 
     ${buildInfoCard("Balance Update", [
-      { label: "New Balance", value: `$${formatMoney(newBalance)}` },
-    ])}
+    { label: "New Balance", value: `$${formatMoney(newBalance)}` },
+  ])}
 
     ${buildButton("View Dashboard", safeDashboardUrl)}
   `;
