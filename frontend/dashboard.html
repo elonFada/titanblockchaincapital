@@ -702,6 +702,47 @@
                 </div>
               </div>
 
+              <div
+                class="premium-panel premium-border rounded-3xl p-4 xs:p-5 sm:p-6 lg:p-7"
+              >
+                <div
+                  class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4"
+                >
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-3 mb-3">
+                      <i data-lucide="gift" class="w-5 h-5 text-primary"></i>
+                      <h3 class="text-white text-lg sm:text-xl font-black">
+                        Referral Earnings
+                      </h3>
+                    </div>
+
+                    <p
+                      id="referralBalanceValue"
+                      class="text-white text-3xl sm:text-4xl font-black tracking-tight"
+                    >
+                      $0.00
+                    </p>
+                  </div>
+
+                  <div class="flex flex-col gap-3 sm:min-w-[220px]">
+                    <button
+                      id="openReferralWithdrawModal"
+                      type="button"
+                      class="px-5 py-3 text-black font-bold rounded-2xl gold-gradient shadow-xl shadow-primary/20 text-center"
+                    >
+                      Withdraw Earnings
+                    </button>
+
+                    <a
+                      href="profile.html"
+                      class="px-5 py-3 bg-white/5 border border-white/10 text-white font-bold rounded-2xl hover:bg-white/10 transition-all text-center"
+                    >
+                      View Referral Link
+                    </a>
+                  </div>
+                </div>
+              </div>
+
               <div class="grid xl:grid-cols-[1.15fr_0.85fr] gap-4 sm:gap-6">
                 <!-- Trading Bot -->
                 <div
@@ -986,6 +1027,79 @@
             Yes, Logout
           </button>
         </div>
+      </div>
+    </div>
+
+    <div
+      id="referralWithdrawModal"
+      class="modal-overlay fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm flex items-center justify-center px-4"
+    >
+      <div
+        class="modal-card premium-panel premium-border rounded-3xl w-full max-w-md p-6 sm:p-7 shadow-2xl shadow-black/50"
+      >
+        <div class="flex items-start gap-4">
+          <div
+            class="h-12 w-12 rounded-2xl gold-gradient flex items-center justify-center shrink-0"
+          >
+            <i data-lucide="wallet" class="w-6 h-6 text-black"></i>
+          </div>
+
+          <div class="flex-1">
+            <h3 class="text-white text-xl font-bold">
+              Withdraw Referral Earnings
+            </h3>
+            <p class="text-slate-400 text-sm sm:text-base leading-7 mt-2">
+              Enter the amount you want to withdraw from your available referral
+              earnings.
+            </p>
+          </div>
+        </div>
+
+        <form id="referralWithdrawForm" class="mt-6 space-y-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-200 mb-2">
+              Available Balance
+            </label>
+            <div
+              id="referralAvailableBalanceDisplay"
+              class="w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-4 text-white font-bold"
+            >
+              $0.00
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-200 mb-2">
+              Withdrawal Amount
+            </label>
+            <input
+              id="referralWithdrawAmount"
+              type="number"
+              min="1"
+              step="0.01"
+              placeholder="Enter amount"
+              class="w-full rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 px-4 py-4 outline-none focus:border-primary/40 focus:ring-0"
+            />
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3">
+            <button
+              id="cancelReferralWithdrawBtn"
+              type="button"
+              class="w-full px-5 py-3 rounded-2xl border border-white/10 bg-white/5 text-white font-semibold hover:bg-white/10 transition-all"
+            >
+              Cancel
+            </button>
+
+            <button
+              id="submitReferralWithdrawBtn"
+              type="submit"
+              class="w-full px-5 py-3 rounded-2xl gold-gradient text-black font-bold hover:scale-[1.01] transition-all"
+            >
+              Submit Request
+            </button>
+          </div>
+        </form>
       </div>
     </div>
     <script>

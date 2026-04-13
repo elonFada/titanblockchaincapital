@@ -35,12 +35,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   const recentTransactionsContainer = document.getElementById("recentTransactionsContainer");
   const tradingBotActionBtn = document.getElementById("tradingBotActionBtn");
 
+  const referralBalanceValue = document.getElementById("referralBalanceValue");
+  const referralBalanceMeta = document.getElementById("referralBalanceMeta");
+  const openReferralWithdrawModalBtn = document.getElementById("openReferralWithdrawModal");
+  const referralWithdrawModal = document.getElementById("referralWithdrawModal");
+  const referralWithdrawForm = document.getElementById("referralWithdrawForm");
+  const referralAvailableBalanceDisplay = document.getElementById("referralAvailableBalanceDisplay");
+  const referralWithdrawAmountInput = document.getElementById("referralWithdrawAmount");
+  const cancelReferralWithdrawBtn = document.getElementById("cancelReferralWithdrawBtn");
+  const submitReferralWithdrawBtn = document.getElementById("submitReferralWithdrawBtn");
+
   const performanceChartLine = document.getElementById("performanceChartLine");
   const performanceChartFill = document.getElementById("performanceChartFill");
   const pageLoader = document.getElementById("pageLoader");
 
   let chatPollInterval = null;
   let selectedAttachment = null;
+  let referralStatsState = {
+    availableReferralBalance: 0,
+    commissionEarned: 0,
+    commissionPaid: 0,
+    pendingWithdrawalAmount: 0,
+  };
 
   function showPageLoader() {
     if (!pageLoader) return;
@@ -191,6 +207,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!logoutModal) return;
     logoutModal.classList.remove("active");
     document.body.classList.remove("modal-open");
+  }
+
+  function openReferralWithdrawModal() {
+    if (!referralWithdrawModal) return;
+    if (referralAvailableBalanceDisplay) {
+      referralAvailableBalanceDisplay.textContent = formatMoney(
+        referralStatsState.availableReferralBalance
+      );
+    }
+    referralWithdrawModal.classList.add("active");
+    document.body.classList.add("modal-open");
+  }
+
+  function closeReferralWithdrawModal() {
+    if (!referralWithdrawModal) return;
+    referralWithdrawModal.classList.remove("active");
+    document.body.classList.remove("modal-open");
+    if (referralWithdrawForm) referralWithdrawForm.reset();
   }
 
   async function logoutUser() {
@@ -447,15 +481,114 @@ document.addEventListener("DOMContentLoaded", async () => {
       .join("");
   }
 
+  function hydrateReferralCard(stats = {}) {
+    const available = Number(stats.availableReferralBalance || 0);
+    const earned = Number(stats.commissionEarned || 0);
+    const paid = Number(stats.commissionPaid || 0);
+    const pending = Number(stats.pendingWithdrawalAmount || 0);
+
+    referralStatsState = {
+      availableReferralBalance: available,
+      commissionEarned: earned,
+      commissionPaid: paid,
+      pendingWithdrawalAmount: pending,
+    };
+
+    if (referralBalanceValue) {
+      referralBalanceValue.textContent = formatMoney(available);
+    }
+
+    if (referralBalanceMeta) {
+      referralBalanceMeta.textContent = `Total earned: ${formatMoney(
+        earned
+      )} • Withdrawn: ${formatMoney(paid)} • Pending: ${formatMoney(pending)}`;
+    }
+
+    if (referralAvailableBalanceDisplay) {
+      referralAvailableBalanceDisplay.textContent = formatMoney(available);
+    }
+
+    if (openReferralWithdrawModalBtn) {
+      const disabled = available <= 0;
+      openReferralWithdrawModalBtn.disabled = disabled;
+      openReferralWithdrawModalBtn.classList.toggle("opacity-60", disabled);
+      openReferralWithdrawModalBtn.classList.toggle("cursor-not-allowed", disabled);
+    }
+  }
+
+  async function loadReferralStats() {
+    try {
+      const response = await window.API.get("/referral/stats");
+      const stats = response?.data?.stats || {};
+      hydrateReferralCard(stats);
+    } catch (error) {
+      console.error("Failed to load referral stats:", error);
+      hydrateReferralCard({});
+    }
+  }
+
+  async function submitReferralWithdrawal(event) {
+    event.preventDefault();
+
+    const amount = Number(referralWithdrawAmountInput?.value || 0);
+
+    if (!amount || Number.isNaN(amount) || amount <= 0) {
+      showToast("Please enter a valid withdrawal amount.", "error");
+      return;
+    }
+
+    if (amount > referralStatsState.availableReferralBalance) {
+      showToast("Withdrawal amount exceeds available referral balance.", "error");
+      return;
+    }
+
+    const originalText =
+      submitReferralWithdrawBtn?.textContent || "Submit Request";
+
+    if (submitReferralWithdrawBtn) {
+      submitReferralWithdrawBtn.disabled = true;
+      submitReferralWithdrawBtn.textContent = "Submitting...";
+    }
+
+    try {
+      const response = await window.API.post("/referral/withdraw", { amount });
+
+      showToast(
+        response?.message || "Referral withdrawal request submitted successfully.",
+        "success"
+      );
+
+      closeReferralWithdrawModal();
+      await loadReferralStats();
+    } catch (error) {
+      console.error("Referral withdrawal request failed:", error);
+      showToast(
+        error.message || "Failed to submit referral withdrawal request.",
+        "error"
+      );
+    } finally {
+      if (submitReferralWithdrawBtn) {
+        submitReferralWithdrawBtn.disabled = false;
+        submitReferralWithdrawBtn.textContent = originalText;
+      }
+    }
+  }
+
   async function loadDashboardData() {
     try {
-      const [profileResponse, depositsResponse, withdrawalsResponse, tradesResponse] =
-        await Promise.all([
-          window.API.get("/user/profile").catch(() => null),
-          window.API.get("/deposit/me").catch(() => null),
-          window.API.get("/withdrawal/me").catch(() => null),
-          window.API.get("/trading/my-trades").catch(() => null),
-        ]);
+      const [
+        profileResponse,
+        depositsResponse,
+        withdrawalsResponse,
+        tradesResponse,
+        referralStatsResponse,
+      ] = await Promise.all([
+        window.API.get("/user/profile").catch(() => null),
+        window.API.get("/deposit/me").catch(() => null),
+        window.API.get("/withdrawal/me").catch(() => null),
+        window.API.get("/trading/my-trades").catch(() => null),
+        window.API.get("/referral/stats").catch(() => null),
+      ]);
 
       const liveUser = profileResponse?.data || {};
       const deposits = Array.isArray(depositsResponse?.data)
@@ -467,6 +600,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const trades = Array.isArray(tradesResponse?.data)
         ? tradesResponse.data
         : [];
+      const referralStats = referralStatsResponse?.data?.stats || {};
 
       if (profileResponse?.data) {
         localStorage.setItem("userInfo", JSON.stringify(liveUser));
@@ -474,6 +608,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         hydrateSidebar(liveUser);
         updateTradingBotButton(liveUser);
       }
+
+      hydrateReferralCard(referralStats);
 
       const approvedDeposits = deposits.filter(
         (deposit) => deposit.status === "approved"
@@ -488,7 +624,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const totalDeposit = Number(liveUser.totalDeposit || 0);
       const totalWithdrawal = Number(liveUser.totalWithdrawal || 0);
-      const totalProfit = Number(liveUser.totalProfit || 0);
       const balance = Number(liveUser.balance || 0);
 
       const currentMonth = new Date().getMonth();
@@ -678,6 +813,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           "text-slate-400 text-sm mt-2 xl:mt-5 xl:leading-6";
       }
 
+      hydrateReferralCard({});
       updateChart(0, 0);
       renderRecentTransactions([]);
     } finally {
@@ -923,10 +1059,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
+  openReferralWithdrawModalBtn?.addEventListener("click", () => {
+    if (referralStatsState.availableReferralBalance <= 0) {
+      showToast("No available referral earnings to withdraw.", "error");
+      return;
+    }
+    openReferralWithdrawModal();
+  });
+
+  cancelReferralWithdrawBtn?.addEventListener("click", closeReferralWithdrawModal);
+
+  referralWithdrawModal?.addEventListener("click", (e) => {
+    if (e.target === referralWithdrawModal) {
+      closeReferralWithdrawModal();
+    }
+  });
+
+  referralWithdrawForm?.addEventListener("submit", submitReferralWithdrawal);
+
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeChatModal();
       closeLogoutModal();
+      closeReferralWithdrawModal();
     }
   });
 
