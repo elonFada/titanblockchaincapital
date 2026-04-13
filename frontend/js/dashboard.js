@@ -32,18 +32,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   const monthlyProfitValue = document.getElementById("monthlyProfitValue");
   const monthlyProfitMeta = document.getElementById("monthlyProfitMeta");
   const growthValue = document.getElementById("growthValue");
-  const recentTransactionsContainer = document.getElementById("recentTransactionsContainer");
+  const recentTransactionsContainer = document.getElementById(
+    "recentTransactionsContainer"
+  );
   const tradingBotActionBtn = document.getElementById("tradingBotActionBtn");
 
   const referralBalanceValue = document.getElementById("referralBalanceValue");
   const referralBalanceMeta = document.getElementById("referralBalanceMeta");
-  const openReferralWithdrawModalBtn = document.getElementById("openReferralWithdrawModal");
+  const openReferralWithdrawModalBtn = document.getElementById(
+    "openReferralWithdrawModal"
+  );
   const referralWithdrawModal = document.getElementById("referralWithdrawModal");
   const referralWithdrawForm = document.getElementById("referralWithdrawForm");
-  const referralAvailableBalanceDisplay = document.getElementById("referralAvailableBalanceDisplay");
-  const referralWithdrawAmountInput = document.getElementById("referralWithdrawAmount");
-  const cancelReferralWithdrawBtn = document.getElementById("cancelReferralWithdrawBtn");
-  const submitReferralWithdrawBtn = document.getElementById("submitReferralWithdrawBtn");
+  const referralAvailableBalanceDisplay = document.getElementById(
+    "referralAvailableBalanceDisplay"
+  );
+  const referralWalletSelect = document.getElementById("referralWalletSelect");
+  const referralWalletHelpText = document.getElementById("referralWalletHelpText");
+  const referralWithdrawAmountInput = document.getElementById(
+    "referralWithdrawAmount"
+  );
+  const cancelReferralWithdrawBtn = document.getElementById(
+    "cancelReferralWithdrawBtn"
+  );
+  const submitReferralWithdrawBtn = document.getElementById(
+    "submitReferralWithdrawBtn"
+  );
 
   const performanceChartLine = document.getElementById("performanceChartLine");
   const performanceChartFill = document.getElementById("performanceChartFill");
@@ -51,6 +65,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let chatPollInterval = null;
   let selectedAttachment = null;
+  let currentUserState = null;
   let referralStatsState = {
     availableReferralBalance: 0,
     commissionEarned: 0,
@@ -211,11 +226,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function openReferralWithdrawModal() {
     if (!referralWithdrawModal) return;
+
     if (referralAvailableBalanceDisplay) {
       referralAvailableBalanceDisplay.textContent = formatMoney(
         referralStatsState.availableReferralBalance
       );
     }
+
+    setReferralWalletState(currentUserState);
+
     referralWithdrawModal.classList.add("active");
     document.body.classList.add("modal-open");
   }
@@ -224,7 +243,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!referralWithdrawModal) return;
     referralWithdrawModal.classList.remove("active");
     document.body.classList.remove("modal-open");
-    if (referralWithdrawForm) referralWithdrawForm.reset();
+    referralWithdrawForm?.reset();
   }
 
   async function logoutUser() {
@@ -313,6 +332,56 @@ document.addEventListener("DOMContentLoaded", async () => {
       sidebarUserAvatar.src = user.profileImage || "images/logo.png";
       sidebarUserAvatar.alt = user.fullName || "User";
     }
+  }
+
+  function getWalletType(user) {
+    return user?.withdrawalWalletType || "";
+  }
+
+  function getWalletAddress(user) {
+    return user?.withdrawalWalletAddress || "";
+  }
+
+  function setReferralWalletState(user) {
+    if (!referralWalletSelect || !referralWalletHelpText || !submitReferralWithdrawBtn) {
+      return;
+    }
+
+    const walletType = user?.withdrawalWalletType || "";
+    const walletAddress = user?.withdrawalWalletAddress || "";
+    const walletLocked = Boolean(user?.withdrawalWalletLocked);
+
+    referralWalletSelect.innerHTML = "";
+
+    if (!walletType || !walletAddress || !walletLocked) {
+      const option = document.createElement("option");
+      option.value = "";
+      option.textContent = "No saved wallet address";
+      referralWalletSelect.appendChild(option);
+      referralWalletSelect.disabled = true;
+
+      referralWalletHelpText.textContent =
+        "Please go to your profile and add your one trusted withdrawal wallet address before submitting a referral withdrawal request.";
+
+      submitReferralWithdrawBtn.disabled = true;
+      submitReferralWithdrawBtn.classList.add("opacity-60", "cursor-not-allowed");
+      return;
+    }
+
+    const option = document.createElement("option");
+    option.value = JSON.stringify({
+      walletType,
+      walletAddress,
+    });
+    option.textContent = `${walletType} • ${walletAddress}`;
+    referralWalletSelect.appendChild(option);
+
+    referralWalletSelect.disabled = false;
+    submitReferralWithdrawBtn.disabled = false;
+    submitReferralWithdrawBtn.classList.remove(
+      "opacity-60",
+      "cursor-not-allowed"
+    );
   }
 
   function updateTradingBotButton(user) {
@@ -516,17 +585,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  async function loadReferralStats() {
-    try {
-      const response = await window.API.get("/referral/stats");
-      const stats = response?.data?.stats || {};
-      hydrateReferralCard(stats);
-    } catch (error) {
-      console.error("Failed to load referral stats:", error);
-      hydrateReferralCard({});
-    }
-  }
-
   async function submitReferralWithdrawal(event) {
     event.preventDefault();
 
@@ -539,6 +597,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (amount > referralStatsState.availableReferralBalance) {
       showToast("Withdrawal amount exceeds available referral balance.", "error");
+      return;
+    }
+
+    if (!referralWalletSelect?.value) {
+      showToast(
+        "Please go to your profile and add your withdrawal wallet address first.",
+        "error"
+      );
       return;
     }
 
@@ -559,7 +625,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       );
 
       closeReferralWithdrawModal();
-      await loadReferralStats();
+      await loadDashboardData();
     } catch (error) {
       console.error("Referral withdrawal request failed:", error);
       showToast(
@@ -567,6 +633,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         "error"
       );
     } finally {
+      setReferralWalletState(currentUserState);
       if (submitReferralWithdrawBtn) {
         submitReferralWithdrawBtn.disabled = false;
         submitReferralWithdrawBtn.textContent = originalText;
@@ -591,6 +658,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       ]);
 
       const liveUser = profileResponse?.data || {};
+      currentUserState = liveUser;
+
       const deposits = Array.isArray(depositsResponse?.data)
         ? depositsResponse.data
         : [];
@@ -610,6 +679,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       hydrateReferralCard(referralStats);
+      setReferralWalletState(liveUser);
 
       const approvedDeposits = deposits.filter(
         (deposit) => deposit.status === "approved"
@@ -1020,6 +1090,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+  currentUserState = currentUser;
   hydrateSidebar(currentUser);
   updateTradingBotButton(currentUser);
   ensureChatAttachmentUI();
@@ -1064,7 +1135,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       showToast("No available referral earnings to withdraw.", "error");
       return;
     }
+
     openReferralWithdrawModal();
+
+    const walletType = currentUserState?.withdrawalWalletType || "";
+    const walletAddress = currentUserState?.withdrawalWalletAddress || "";
+    const walletLocked = Boolean(currentUserState?.withdrawalWalletLocked);
+
+    if (!walletType || !walletAddress || !walletLocked) {
+      showToast(
+        "Please go to your profile and add your withdrawal wallet address first.",
+        "error"
+      );
+    }
   });
 
   cancelReferralWithdrawBtn?.addEventListener("click", closeReferralWithdrawModal);

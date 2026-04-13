@@ -1094,7 +1094,7 @@ const sendReferralWithdrawalEmail = async ({
 
         ${buildNotice({
           color: "green",
-          text: "Your referral withdrawal has been marked as paid successfully.",
+          text: "Your referral withdrawal has been paid successfully, please check your wallet.",
         })}
       `,
       text: `Your referral withdrawal of $${safeAmount} has been paid successfully.`,

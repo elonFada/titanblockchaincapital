@@ -278,13 +278,13 @@ const payReferralWithdrawal = asyncHandler(async (req, res) => {
 
   const user = await User.findById(withdrawal.user._id);
 
-    if (!user) {
-      res.status(404);
-      throw new Error("User not found");
-    }
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
 
-    const totalEarned = Number(user.referralEarnings || 0);
-    const totalWithdrawn = Number(user.referralCommissionPaid || 0);
+  const totalEarned = Number(user.referralEarnings || 0);
+  const totalWithdrawn = Number(user.referralCommissionPaid || 0);
 
   if (totalWithdrawn + withdrawal.amount > totalEarned) {
     res.status(400);
