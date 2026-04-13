@@ -2,6 +2,7 @@ import asyncHandler from 'express-async-handler';
 import RegistrationPayment from '../models/registrationPaymentModel.js';
 import User from '../models/userModel.js';
 import { sendPaymentEmail } from '../utils/emailService.js';
+import { processReferralCommission } from './referralController.js';
 
 
 // @desc    Submit registration payment
@@ -191,6 +192,8 @@ const getPaymentById = asyncHandler(async (req, res) => {
 });
 
 
+
+
 // @desc    Approve registration payment
 // @route   POST /api/payment/registration/:id/approve
 // @access  Private/Admin
@@ -213,16 +216,38 @@ const approvePayment = asyncHandler(async (req, res) => {
   }
 
   payment.status = 'approved';
-  payment.reviewedBy = req.admin._id;  // ✅ was req.user._id
+  payment.reviewedBy = req.admin._id;
   payment.reviewedAt = new Date();
   payment.rejectionReason = undefined;
   await payment.save();
 
   // Update user kycStatus to verified
-  await User.findByIdAndUpdate(payment.user._id, {
-    kycStatus: 'verified',
-    kycVerifiedAt: new Date(),
-  });
+  const user = await User.findByIdAndUpdate(
+    payment.user._id,
+    {
+      kycStatus: 'verified',
+      kycVerifiedAt: new Date(),
+    },
+    { new: true }
+  );
+
+  // Update the user's referral record to mark registration fee as paid
+  if (user.referredBy) {
+    const referrer = await User.findById(user.referredBy);
+    if (referrer) {
+      const referralRecord = referrer.referrals.find(
+        ref => ref.user.toString() === user._id.toString()
+      );
+      if (referralRecord) {
+        referralRecord.paidRegistrationFee = true;
+        referralRecord.approvedAt = new Date();
+        await referrer.save();
+        
+        // Process referral commission ($60 USD)
+        await processReferralCommission(user._id, payment.amount);
+      }
+    }
+  }
 
   // Send approval email to user
   const dashboardUrl = `${process.env.FRONTEND_URL}/dashboard.html`;

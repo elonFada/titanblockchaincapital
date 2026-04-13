@@ -241,6 +241,52 @@ tradingBotPaymentId: {
     select: false,
   },
 
+  // Add these fields to your existing userSchema
+referralCode: {
+  type: String,
+  unique: true,
+  sparse: true,
+  trim: true
+},
+referredBy: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'User',
+  default: null
+},
+referrals: [{
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  registeredAt: {
+    type: Date,
+    default: Date.now
+  },
+  paidRegistrationFee: {
+    type: Boolean,
+    default: false
+  },
+  approvedAt: {
+    type: Date
+  },
+  commissionPaid: {
+    type: Boolean,
+    default: false
+  },
+  commissionAmount: {
+    type: Number,
+    default: 0
+  }
+}],
+referralEarnings: {
+  type: Number,
+  default: 0
+},
+referralCommissionPaid: {
+  type: Number,
+  default: 0
+},
+
   lastPasswordResetRequest: {
     type: Date,
   },

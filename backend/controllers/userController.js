@@ -1,28 +1,25 @@
-import crypto from 'crypto';
-import asyncHandler from 'express-async-handler';
-import { v2 as cloudinary } from 'cloudinary';
-import User from '../models/userModel.js';
-import {
-  generateUserToken,
-  clearUserToken,
-} from '../utils/generateToken.js';
-import { generateOTP, getOTPExpiry } from '../utils/otpResend.js';
-import { sendEmailOTP } from '../utils/emailService.js';
+import crypto from "crypto";
+import asyncHandler from "express-async-handler";
+import { v2 as cloudinary } from "cloudinary";
+import User from "../models/userModel.js";
+import { generateUserToken, clearUserToken } from "../utils/generateToken.js";
+import { generateOTP, getOTPExpiry } from "../utils/otpResend.js";
+import { sendEmailOTP } from "../utils/emailService.js";
 import {
   validateFullName,
   validateEmail,
   validatePhoneNumber,
   validatePassword,
   validatePasswordMatch,
-} from '../utils/validators.js';
-import { sendPasswordResetOTPEmail } from '../utils/emailService.js';
+} from "../utils/validators.js";
+import { sendPasswordResetOTPEmail } from "../utils/emailService.js";
 
 const generateVerificationToken = () => {
-  return crypto.randomBytes(24).toString('hex');
+  return crypto.randomBytes(24).toString("hex");
 };
 
 const generateResetSessionToken = () => {
-  return crypto.randomBytes(24).toString('hex');
+  return crypto.randomBytes(24).toString("hex");
 };
 
 const rollbackPasswordResetState = async (user) => {
@@ -34,7 +31,7 @@ const rollbackPasswordResetState = async (user) => {
     user.resetPasswordSessionExpiry = undefined;
     await user.save();
   } catch (error) {
-    console.error('❌ Failed to rollback password reset state:', error);
+    console.error("❌ Failed to rollback password reset state:", error);
   }
 };
 
@@ -67,11 +64,11 @@ const rollbackVerificationState = async (user) => {
     user.lastOTPRequest = undefined;
     await user.save();
   } catch (error) {
-    console.error('❌ Failed to rollback verification state:', error);
+    console.error("❌ Failed to rollback verification state:", error);
   }
 };
 
-// @desc    Register new user
+/// @desc    Register new user with referral support
 // @route   POST /api/user/register
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
@@ -81,41 +78,44 @@ const registerUser = asyncHandler(async (req, res) => {
     phoneNumber,
     password,
     confirmPassword,
-    countryCode = '+1',
+    countryCode = "+1",
+    referralCode, // New field for referral code
   } = req.body;
 
   if (!fullName || !email || !phoneNumber || !password || !confirmPassword) {
     res.status(400);
     throw new Error(
-      'Please provide all required fields: full name, email, phone number, password, and confirm password'
+      "Please provide all required fields: full name, email, phone number, password, and confirm password",
     );
   }
 
   if (!validateFullName(fullName)) {
     res.status(400);
-    throw new Error('Full name must be between 2 and 50 characters');
+    throw new Error("Full name must be between 2 and 50 characters");
   }
 
   if (!validateEmail(email)) {
     res.status(400);
-    throw new Error('Please provide a valid email address');
+    throw new Error("Please provide a valid email address");
   }
 
   if (!validatePhoneNumber(phoneNumber)) {
     res.status(400);
-    throw new Error('Please provide a valid phone number (10-15 digits)');
+    throw new Error("Please provide a valid phone number (10-15 digits)");
   }
 
   const passwordValidation = validatePassword(password);
   if (!passwordValidation.isValid) {
-    const errorMessages = Object.values(passwordValidation.errors).filter(Boolean);
+    const errorMessages = Object.values(passwordValidation.errors).filter(
+      Boolean,
+    );
     res.status(400);
-    throw new Error(errorMessages.join('. '));
+    throw new Error(errorMessages.join(". "));
   }
 
   if (!validatePasswordMatch(password, confirmPassword)) {
     res.status(400);
-    throw new Error('Passwords do not match');
+    throw new Error("Passwords do not match");
   }
 
   const normalizedEmail = email.toLowerCase().trim();
@@ -128,7 +128,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (verifiedEmailUser) {
     res.status(409);
-    throw new Error('An account with this email already exists');
+    throw new Error("An account with this email already exists");
   }
 
   const verifiedPhoneUser = await User.findOne({
@@ -138,17 +138,57 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (verifiedPhoneUser) {
     res.status(409);
-    throw new Error('An account with this phone number already exists');
+    throw new Error("An account with this phone number already exists");
+  }
+
+  // Handle referral code if provided
+  let referredByUser = null;
+  let generatedReferralCode = null;
+
+  if (referralCode) {
+    // Find the referrer by their referral code
+    referredByUser = await User.findOne({ referralCode: referralCode });
+
+    if (!referredByUser) {
+      res.status(400);
+      throw new Error("Invalid referral code. Please check and try again.");
+    }
+
+    // Don't allow self-referral
+    if (referredByUser.email === normalizedEmail) {
+      res.status(400);
+      throw new Error("You cannot use your own referral code");
+    }
   }
 
   const emailOTP = generateOTP();
   const otpExpiry = getOTPExpiry();
   const verificationToken = generateVerificationToken();
 
+  // Generate a unique referral code for the new user
+  const generateUniqueReferralCode = async () => {
+    let code;
+    let isUnique = false;
+
+    while (!isUnique) {
+      code = crypto.randomBytes(4).toString("hex").toUpperCase();
+      const existingUser = await User.findOne({ referralCode: code });
+      if (!existingUser) {
+        isUnique = true;
+      }
+    }
+    return code;
+  };
+
+  generatedReferralCode = await generateUniqueReferralCode();
+
   let user = await User.findOne({ email: normalizedEmail, isVerified: false });
 
   if (!user) {
-    user = await User.findOne({ phoneNumber: normalizedPhone, isVerified: false });
+    user = await User.findOne({
+      phoneNumber: normalizedPhone,
+      isVerified: false,
+    });
   }
 
   if (user) {
@@ -160,7 +200,10 @@ const registerUser = asyncHandler(async (req, res) => {
       try {
         await cloudinary.uploader.destroy(user.profileImagePublicId);
       } catch (error) {
-        console.warn('⚠️ Failed to remove previous profile image:', error.message);
+        console.warn(
+          "⚠️ Failed to remove previous profile image:",
+          error.message,
+        );
       }
     }
 
@@ -174,9 +217,15 @@ const registerUser = asyncHandler(async (req, res) => {
     user.verificationToken = verificationToken;
     user.failedVerificationAttempts = 0;
     user.lastOTPRequest = new Date();
-    user.kycStatus = 'pending';
+    user.kycStatus = "pending";
     user.isVerified = false;
     user.isPhoneVerified = false;
+    user.referralCode = generatedReferralCode;
+
+    // Set referral information
+    if (referredByUser) {
+      user.referredBy = referredByUser._id;
+    }
 
     if (req.file) {
       user.profileImage = req.file.path;
@@ -184,6 +233,17 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     await user.save();
+
+    // Add user to referrer's referrals list
+    if (referredByUser) {
+      referredByUser.referrals.push({
+        user: user._id,
+        registeredAt: new Date(),
+        paidRegistrationFee: false,
+        commissionPaid: false,
+      });
+      await referredByUser.save();
+    }
   } else {
     user = await User.create({
       fullName: fullName.trim(),
@@ -198,30 +258,45 @@ const registerUser = asyncHandler(async (req, res) => {
       isPhoneVerified: false,
       failedVerificationAttempts: 0,
       lastOTPRequest: new Date(),
-      kycStatus: 'pending',
+      kycStatus: "pending",
       profileImage: req.file?.path || null,
       profileImagePublicId: req.file?.filename || null,
+      referralCode: generatedReferralCode,
+      referredBy: referredByUser ? referredByUser._id : null,
     });
+
+    // Add user to referrer's referrals list
+    if (referredByUser) {
+      referredByUser.referrals.push({
+        user: user._id,
+        registeredAt: new Date(),
+        paidRegistrationFee: false,
+        commissionPaid: false,
+      });
+      await referredByUser.save();
+    }
   }
 
   try {
-    await sendEmailOTP(user.email, emailOTP, user.fullName, 'verification');
+    await sendEmailOTP(user.email, emailOTP, user.fullName, "verification");
   } catch (error) {
     await rollbackVerificationState(user);
     res.status(500);
-    throw new Error('Failed to send verification email. Please try again.');
+    throw new Error("Failed to send verification email. Please try again.");
   }
 
   res.status(201).json({
-    status: 'pending',
-    message: 'Registration successful. Verification code sent to your email.',
+    status: "pending",
+    message: "Registration successful. Verification code sent to your email.",
     verificationToken,
     email: user.email,
     phoneNumber: `${user.countryCode}${user.phoneNumber}`,
-    expiresIn: '15 minutes',
+    referralCode: user.referralCode,
+    referredBy: referredByUser ? referredByUser.referralCode : null,
+    expiresIn: "15 minutes",
     nextSteps: {
-      email: 'Check your email for verification code',
-      verify: 'Use /api/user/verify to complete registration',
+      email: "Check your email for verification code",
+      verify: "Use /api/user/verify to complete registration",
     },
   });
 });
@@ -235,7 +310,7 @@ const verifyOTP = asyncHandler(async (req, res) => {
   if (!email || !emailOTP || !verificationToken) {
     res.status(400);
     throw new Error(
-      'Verification requires email, email OTP, and verification token'
+      "Verification requires email, email OTP, and verification token",
     );
   }
 
@@ -245,22 +320,22 @@ const verifyOTP = asyncHandler(async (req, res) => {
     email: normalizedEmail,
     verificationToken,
     otpExpiry: { $gt: new Date() },
-  }).select('+otp +failedVerificationAttempts');
+  }).select("+otp +failedVerificationAttempts");
 
   if (!user) {
     res.status(400);
-    throw new Error('Invalid or expired verification request');
+    throw new Error("Invalid or expired verification request");
   }
 
   if (user.isVerified) {
     res.status(400);
-    throw new Error('Account already verified');
+    throw new Error("Account already verified");
   }
 
   if (user.failedVerificationAttempts >= 5) {
     res.status(429);
     throw new Error(
-      'Too many failed attempts. Please request a new verification code.'
+      "Too many failed attempts. Please request a new verification code.",
     );
   }
 
@@ -268,7 +343,7 @@ const verifyOTP = asyncHandler(async (req, res) => {
     user.failedVerificationAttempts += 1;
     await user.save();
     res.status(400);
-    throw new Error('Invalid verification code');
+    throw new Error("Invalid verification code");
   }
 
   user.isVerified = true;
@@ -281,19 +356,19 @@ const verifyOTP = asyncHandler(async (req, res) => {
 
   const token = generateUserToken(res, user._id);
 
-  console.log('✅ User verified successfully:', {
+  console.log("✅ User verified successfully:", {
     userId: user._id,
     email: user.email,
     fullName: user.fullName,
   });
 
   res.status(200).json({
-    status: 'verified',
-    message: 'Account successfully verified',
+    status: "verified",
+    message: "Account successfully verified",
     session: {
       token,
-      expiresIn: '7 days',
-      type: 'Bearer',
+      expiresIn: "7 days",
+      type: "Bearer",
     },
     user: sanitizeUserResponse(user),
   });
@@ -307,32 +382,33 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
   if (!email) {
     res.status(400);
-    throw new Error('Email address is required');
+    throw new Error("Email address is required");
   }
 
   const normalizedEmail = email.toLowerCase().trim();
 
   const user = await User.findOne({ email: normalizedEmail }).select(
-    '+resetPasswordOTP +resetPasswordOTPExpiry +resetPasswordToken +lastPasswordResetRequest'
+    "+resetPasswordOTP +resetPasswordOTPExpiry +resetPasswordToken +lastPasswordResetRequest",
   );
 
   if (!user) {
     res.status(404);
-    throw new Error('No account associated with this email');
+    throw new Error("No account associated with this email");
   }
 
   if (!user.isActive) {
     res.status(403);
-    throw new Error('This account has been deactivated. Please contact support.');
+    throw new Error(
+      "This account has been deactivated. Please contact support.",
+    );
   }
 
   const lastRequest = user.lastPasswordResetRequest;
-  if (
-    lastRequest &&
-    Date.now() - new Date(lastRequest).getTime() < 60 * 1000
-  ) {
+  if (lastRequest && Date.now() - new Date(lastRequest).getTime() < 60 * 1000) {
     res.status(429);
-    throw new Error('Please wait 60 seconds before requesting a new reset code');
+    throw new Error(
+      "Please wait 60 seconds before requesting a new reset code",
+    );
   }
 
   const resetOTP = generateOTP();
@@ -353,16 +429,16 @@ const forgotPassword = asyncHandler(async (req, res) => {
   } catch (error) {
     await rollbackPasswordResetState(user);
     res.status(500);
-    throw new Error('Failed to send password reset email. Please try again.');
+    throw new Error("Failed to send password reset email. Please try again.");
   }
 
   res.status(200).json({
-    status: 'reset_otp_sent',
-    message: 'Password reset code sent to your email',
+    status: "reset_otp_sent",
+    message: "Password reset code sent to your email",
     resetToken: resetPasswordToken,
     email: user.email,
-    expiresIn: '15 minutes',
-    nextRequestAvailable: '60 seconds',
+    expiresIn: "15 minutes",
+    nextRequestAvailable: "60 seconds",
   });
 });
 
@@ -374,7 +450,7 @@ const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
 
   if (!email || !otp || !resetToken) {
     res.status(400);
-    throw new Error('Email, OTP, and reset token are required');
+    throw new Error("Email, OTP, and reset token are required");
   }
 
   const normalizedEmail = email.toLowerCase().trim();
@@ -384,17 +460,17 @@ const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
     resetPasswordToken: resetToken,
     resetPasswordOTPExpiry: { $gt: new Date() },
   }).select(
-    '+resetPasswordOTP +resetPasswordOTPExpiry +resetPasswordToken +resetPasswordSessionToken +resetPasswordSessionExpiry'
+    "+resetPasswordOTP +resetPasswordOTPExpiry +resetPasswordToken +resetPasswordSessionToken +resetPasswordSessionExpiry",
   );
 
   if (!user) {
     res.status(400);
-    throw new Error('Invalid or expired password reset request');
+    throw new Error("Invalid or expired password reset request");
   }
 
   if (String(user.resetPasswordOTP) !== String(otp).trim()) {
     res.status(400);
-    throw new Error('Invalid reset code');
+    throw new Error("Invalid reset code");
   }
 
   const resetSessionToken = generateResetSessionToken();
@@ -407,11 +483,11 @@ const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
   await user.save();
 
   res.status(200).json({
-    status: 'reset_verified',
-    message: 'Email verified successfully',
+    status: "reset_verified",
+    message: "Email verified successfully",
     email: user.email,
     resetSessionToken,
-    expiresIn: '15 minutes',
+    expiresIn: "15 minutes",
   });
 });
 
@@ -419,11 +495,14 @@ const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
 // @route   POST /api/user/reset-password
 // @access  Public
 const resetPassword = asyncHandler(async (req, res) => {
-  const { email, resetSessionToken, newPassword, confirmNewPassword } = req.body;
+  const { email, resetSessionToken, newPassword, confirmNewPassword } =
+    req.body;
 
   if (!email || !resetSessionToken || !newPassword || !confirmNewPassword) {
     res.status(400);
-    throw new Error('Email, reset session token, new password, and confirm password are required');
+    throw new Error(
+      "Email, reset session token, new password, and confirm password are required",
+    );
   }
 
   const normalizedEmail = email.toLowerCase().trim();
@@ -433,30 +512,34 @@ const resetPassword = asyncHandler(async (req, res) => {
     resetPasswordSessionToken: resetSessionToken,
     resetPasswordSessionExpiry: { $gt: new Date() },
   }).select(
-    '+password +resetPasswordSessionToken +resetPasswordSessionExpiry +resetPasswordToken'
+    "+password +resetPasswordSessionToken +resetPasswordSessionExpiry +resetPasswordToken",
   );
 
   if (!user) {
     res.status(400);
-    throw new Error('Invalid or expired password reset session');
+    throw new Error("Invalid or expired password reset session");
   }
 
   if (!validatePasswordMatch(newPassword, confirmNewPassword)) {
     res.status(400);
-    throw new Error('Passwords do not match');
+    throw new Error("Passwords do not match");
   }
 
   const passwordValidation = validatePassword(newPassword);
   if (!passwordValidation.isValid) {
-    const errorMessages = Object.values(passwordValidation.errors).filter(Boolean);
+    const errorMessages = Object.values(passwordValidation.errors).filter(
+      Boolean,
+    );
     res.status(400);
-    throw new Error(errorMessages.join('. '));
+    throw new Error(errorMessages.join(". "));
   }
 
   const isSameAsCurrent = await user.comparePassword(newPassword);
   if (isSameAsCurrent) {
     res.status(400);
-    throw new Error('Try another password. You cannot use your current password again');
+    throw new Error(
+      "Try another password. You cannot use your current password again",
+    );
   }
 
   user.password = newPassword;
@@ -475,8 +558,9 @@ const resetPassword = asyncHandler(async (req, res) => {
   clearUserToken(res);
 
   res.status(200).json({
-    status: 'password_reset_success',
-    message: 'Password reset successfully. Please log in with your new password.',
+    status: "password_reset_success",
+    message:
+      "Password reset successfully. Please log in with your new password.",
   });
 });
 
@@ -488,7 +572,7 @@ const resendOTP = asyncHandler(async (req, res) => {
 
   if (!email) {
     res.status(400);
-    throw new Error('Email address is required');
+    throw new Error("Email address is required");
   }
 
   const normalizedEmail = email.toLowerCase().trim();
@@ -497,18 +581,18 @@ const resendOTP = asyncHandler(async (req, res) => {
 
   if (!user) {
     res.status(404);
-    throw new Error('No account associated with this email');
+    throw new Error("No account associated with this email");
   }
 
   if (user.isVerified) {
     res.status(400);
-    throw new Error('Account already verified');
+    throw new Error("Account already verified");
   }
 
   const lastRequest = user.lastOTPRequest;
   if (lastRequest && Date.now() - new Date(lastRequest).getTime() < 60 * 1000) {
     res.status(429);
-    throw new Error('Please wait 60 seconds before requesting a new code');
+    throw new Error("Please wait 60 seconds before requesting a new code");
   }
 
   const emailOTP = generateOTP();
@@ -524,19 +608,19 @@ const resendOTP = asyncHandler(async (req, res) => {
   await user.save();
 
   try {
-    await sendEmailOTP(user.email, emailOTP, user.fullName, 'resend');
+    await sendEmailOTP(user.email, emailOTP, user.fullName, "resend");
   } catch (error) {
     await rollbackVerificationState(user);
     res.status(500);
-    throw new Error('Failed to resend verification email. Please try again.');
+    throw new Error("Failed to resend verification email. Please try again.");
   }
 
   res.status(200).json({
-    status: 'resent',
-    message: 'New verification code sent to your email',
+    status: "resent",
+    message: "New verification code sent to your email",
     verificationToken,
-    expiresIn: '15 minutes',
-    nextRequestAvailable: '60 seconds',
+    expiresIn: "15 minutes",
+    nextRequestAvailable: "60 seconds",
   });
 });
 
@@ -548,32 +632,34 @@ const loginUser = asyncHandler(async (req, res) => {
 
   if (!email || !password) {
     res.status(400);
-    throw new Error('Please provide email and password');
+    throw new Error("Please provide email and password");
   }
 
   const normalizedEmail = email.toLowerCase().trim();
 
   const user = await User.findOne({ email: normalizedEmail }).select(
-    '+password +failedLoginAttempts +isLocked +lockedUntil'
+    "+password +failedLoginAttempts +isLocked +lockedUntil",
   );
 
   if (!user) {
     res.status(401);
-    throw new Error('Invalid credentials');
+    throw new Error("Invalid credentials");
   }
 
   if (!user.isActive) {
     res.status(403);
-    throw new Error('This account has been deactivated. Please contact support.');
+    throw new Error(
+      "This account has been deactivated. Please contact support.",
+    );
   }
 
   if (user.isLocked && user.lockedUntil && new Date() < user.lockedUntil) {
     const remainingTime = Math.ceil(
-      (new Date(user.lockedUntil).getTime() - Date.now()) / 60000
+      (new Date(user.lockedUntil).getTime() - Date.now()) / 60000,
     );
     res.status(429);
     throw new Error(
-      `Account temporarily locked. Please try again in ${remainingTime} minutes`
+      `Account temporarily locked. Please try again in ${remainingTime} minutes`,
     );
   }
 
@@ -597,18 +683,18 @@ const loginUser = asyncHandler(async (req, res) => {
     await user.save();
 
     try {
-      await sendEmailOTP(user.email, emailOTP, user.fullName, 'resend');
+      await sendEmailOTP(user.email, emailOTP, user.fullName, "resend");
     } catch (error) {
       await rollbackVerificationState(user);
       res.status(500);
       throw new Error(
-        'Unable to send a new verification email right now. Please try again.'
+        "Unable to send a new verification email right now. Please try again.",
       );
     }
 
     res.status(403);
     throw new Error(
-      'Account not verified. A new verification code has been sent to your email.'
+      "Account not verified. A new verification code has been sent to your email.",
     );
   }
 
@@ -622,12 +708,14 @@ const loginUser = asyncHandler(async (req, res) => {
       user.lockedUntil = new Date(Date.now() + 30 * 60 * 1000);
       await user.save();
       res.status(429);
-      throw new Error('Too many failed attempts. Account locked for 30 minutes');
+      throw new Error(
+        "Too many failed attempts. Account locked for 30 minutes",
+      );
     }
 
     await user.save();
     res.status(401);
-    throw new Error('Invalid credentials');
+    throw new Error("Invalid credentials");
   }
 
   user.failedLoginAttempts = 0;
@@ -638,7 +726,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const token = generateUserToken(res, user._id);
 
-  console.log('✅ User logged in successfully:', {
+  console.log("✅ User logged in successfully:", {
     userId: user._id,
     email: user.email,
     fullName: user.fullName,
@@ -646,12 +734,12 @@ const loginUser = asyncHandler(async (req, res) => {
   });
 
   res.status(200).json({
-    status: 'authenticated',
-    message: 'Login successful',
+    status: "authenticated",
+    message: "Login successful",
     session: {
       token,
-      expiresIn: '7 days',
-      type: 'Bearer',
+      expiresIn: "7 days",
+      type: "Bearer",
     },
     user: sanitizeUserResponse(user),
   });
@@ -668,8 +756,8 @@ const logoutUser = asyncHandler(async (req, res) => {
   clearUserToken(res);
 
   res.status(200).json({
-    status: 'logged_out',
-    message: 'Logged out successfully',
+    status: "logged_out",
+    message: "Logged out successfully",
     timestamp: new Date().toISOString(),
   });
 });
@@ -678,7 +766,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 // @route   GET /api/user/profile
 // @access  Private
 const getProfile = asyncHandler(async (req, res) => {
-  res.status(200).json({ status: 'success', data: req.user });
+  res.status(200).json({ status: "success", data: req.user });
 });
 
 // @desc    Update user profile
@@ -722,7 +810,7 @@ const updateProfile = asyncHandler(async (req, res) => {
     if (user.withdrawalWalletLocked || user.withdrawalWalletAddress) {
       res.status(400);
       throw new Error(
-        "Withdrawal wallet has already been added and cannot be changed"
+        "Withdrawal wallet has already been added and cannot be changed",
       );
     }
 
@@ -764,7 +852,7 @@ const deleteProfileImage = asyncHandler(async (req, res) => {
 
   if (!user.profileImagePublicId) {
     res.status(400);
-    throw new Error('No profile image to delete');
+    throw new Error("No profile image to delete");
   }
 
   await cloudinary.uploader.destroy(user.profileImagePublicId);
@@ -774,8 +862,8 @@ const deleteProfileImage = asyncHandler(async (req, res) => {
   await user.save();
 
   res.status(200).json({
-    status: 'success',
-    message: 'Profile image deleted successfully',
+    status: "success",
+    message: "Profile image deleted successfully",
   });
 });
 
@@ -813,12 +901,16 @@ const changePassword = asyncHandler(async (req, res) => {
 
   if (isSameAsCurrent) {
     res.status(400);
-    throw new Error("Try another password. You cannot use your current password again");
+    throw new Error(
+      "Try another password. You cannot use your current password again",
+    );
   }
 
   const passwordValidation = validatePassword(newPassword);
   if (!passwordValidation.isValid) {
-    const errorMessages = Object.values(passwordValidation.errors).filter(Boolean);
+    const errorMessages = Object.values(passwordValidation.errors).filter(
+      Boolean,
+    );
     res.status(400);
     throw new Error(errorMessages.join(". "));
   }
@@ -838,22 +930,22 @@ const changePassword = asyncHandler(async (req, res) => {
 const getUsers = asyncHandler(async (req, res) => {
   const users = await User.find({})
     .select(
-      '-password -otp -otpExpiry -verificationToken -failedLoginAttempts -deviceInfo'
+      "-password -otp -otpExpiry -verificationToken -failedLoginAttempts -deviceInfo",
     )
-    .sort('-createdAt');
+    .sort("-createdAt");
 
   const stats = {
     total: users.length,
     verified: users.filter((u) => u.isVerified).length,
     pending: users.filter((u) => !u.isVerified).length,
-    kycPending: users.filter((u) => u.kycStatus === 'pending').length,
-    kycSubmitted: users.filter((u) => u.kycStatus === 'submitted').length,
-    kycVerified: users.filter((u) => u.kycStatus === 'verified').length,
-    kycRejected: users.filter((u) => u.kycStatus === 'rejected').length,
+    kycPending: users.filter((u) => u.kycStatus === "pending").length,
+    kycSubmitted: users.filter((u) => u.kycStatus === "submitted").length,
+    kycVerified: users.filter((u) => u.kycStatus === "verified").length,
+    kycRejected: users.filter((u) => u.kycStatus === "rejected").length,
   };
 
   res.status(200).json({
-    status: 'success',
+    status: "success",
     stats,
     count: users.length,
     data: users,
@@ -865,15 +957,15 @@ const getUsers = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const getAdminUserById = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id).select(
-    '-password -otp -otpExpiry -verificationToken'
+    "-password -otp -otpExpiry -verificationToken",
   );
 
   if (!user) {
     res.status(404);
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
-  res.status(200).json({ status: 'success', data: user });
+  res.status(200).json({ status: "success", data: user });
 });
 
 // @desc    Update user by ID (Admin)
@@ -884,7 +976,7 @@ const updateUserById = asyncHandler(async (req, res) => {
 
   if (!user) {
     res.status(404);
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   const { role, kycStatus, accountType, isVerified, isActive } = req.body;
@@ -892,14 +984,14 @@ const updateUserById = asyncHandler(async (req, res) => {
   if (role) user.role = role;
   if (kycStatus) user.kycStatus = kycStatus;
   if (accountType) user.accountType = accountType;
-  if (typeof isVerified !== 'undefined') user.isVerified = isVerified;
-  if (typeof isActive !== 'undefined') user.isActive = isActive;
+  if (typeof isVerified !== "undefined") user.isVerified = isVerified;
+  if (typeof isActive !== "undefined") user.isActive = isActive;
 
   await user.save();
 
   res.status(200).json({
-    status: 'success',
-    message: 'User updated successfully',
+    status: "success",
+    message: "User updated successfully",
     data: {
       id: user._id,
       fullName: user.fullName,
@@ -921,22 +1013,25 @@ const deleteUserById = asyncHandler(async (req, res) => {
 
   if (!user) {
     res.status(404);
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   if (user.profileImagePublicId) {
     try {
       await cloudinary.uploader.destroy(user.profileImagePublicId);
     } catch (error) {
-      console.warn('⚠️ Failed to delete Cloudinary image on user delete:', error.message);
+      console.warn(
+        "⚠️ Failed to delete Cloudinary image on user delete:",
+        error.message,
+      );
     }
   }
 
   await user.deleteOne();
 
   res.status(200).json({
-    status: 'success',
-    message: 'User deleted successfully',
+    status: "success",
+    message: "User deleted successfully",
   });
 });
 
@@ -948,21 +1043,21 @@ const adminVerifyUser = asyncHandler(async (req, res) => {
 
   if (!user) {
     res.status(404);
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
-  if (user.kycStatus !== 'submitted') {
+  if (user.kycStatus !== "submitted") {
     res.status(400);
-    throw new Error('User has not submitted registration payment yet');
+    throw new Error("User has not submitted registration payment yet");
   }
 
-  user.kycStatus = 'verified';
+  user.kycStatus = "verified";
   user.kycVerifiedAt = new Date();
   await user.save();
 
   res.status(200).json({
-    status: 'success',
-    message: 'User KYC verified successfully',
+    status: "success",
+    message: "User KYC verified successfully",
   });
 });
 
@@ -974,25 +1069,25 @@ const adminRejectUser = asyncHandler(async (req, res) => {
 
   if (!user) {
     res.status(404);
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
-  if (user.kycStatus !== 'submitted') {
+  if (user.kycStatus !== "submitted") {
     res.status(400);
-    throw new Error('User has not submitted registration payment yet');
+    throw new Error("User has not submitted registration payment yet");
   }
 
   const { reason } = req.body;
 
-  user.kycStatus = 'rejected';
+  user.kycStatus = "rejected";
   user.kycRejectedAt = new Date();
   user.kycRejectionReason =
-    reason || 'Your registration payment could not be verified';
+    reason || "Your registration payment could not be verified";
   await user.save();
 
   res.status(200).json({
-    status: 'success',
-    message: 'User KYC rejected',
+    status: "success",
+    message: "User KYC rejected",
     reason: user.kycRejectionReason,
   });
 });
@@ -1002,20 +1097,20 @@ const adminRejectUser = asyncHandler(async (req, res) => {
 // @access  Private
 const getUserById = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id).select(
-    '-password -otp -otpExpiry -verificationToken'
+    "-password -otp -otpExpiry -verificationToken",
   );
 
   if (!user) {
     res.status(404);
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
-  if (user._id.toString() !== req.user.id && req.user.role !== 'admin') {
+  if (user._id.toString() !== req.user.id && req.user.role !== "admin") {
     res.status(403);
-    throw new Error('Unauthorized to view this profile');
+    throw new Error("Unauthorized to view this profile");
   }
 
-  res.status(200).json({ status: 'success', data: user });
+  res.status(200).json({ status: "success", data: user });
 });
 
 // @desc    Deactivate account
@@ -1026,12 +1121,12 @@ const deactivateAccount = asyncHandler(async (req, res) => {
 
   if (!user) {
     res.status(404);
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   if (user._id.toString() !== req.user.id) {
     res.status(403);
-    throw new Error('You can only deactivate your own account');
+    throw new Error("You can only deactivate your own account");
   }
 
   user.isActive = false;
@@ -1041,8 +1136,8 @@ const deactivateAccount = asyncHandler(async (req, res) => {
   clearUserToken(res);
 
   res.status(200).json({
-    status: 'success',
-    message: 'Account deactivated successfully',
+    status: "success",
+    message: "Account deactivated successfully",
   });
 });
 
@@ -1054,12 +1149,12 @@ const reactivateAccount = asyncHandler(async (req, res) => {
 
   if (!user) {
     res.status(404);
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   if (user._id.toString() !== req.user.id) {
     res.status(403);
-    throw new Error('You can only reactivate your own account');
+    throw new Error("You can only reactivate your own account");
   }
 
   user.isActive = true;
@@ -1067,8 +1162,8 @@ const reactivateAccount = asyncHandler(async (req, res) => {
   await user.save();
 
   res.status(200).json({
-    status: 'success',
-    message: 'Account reactivated successfully',
+    status: "success",
+    message: "Account reactivated successfully",
   });
 });
 
