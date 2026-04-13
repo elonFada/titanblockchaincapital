@@ -969,6 +969,195 @@ Need help? Contact ${SUPPORT_EMAIL}
   }
 };
 
+const sendReferralRewardEmail = async ({
+  to,
+  fullName = "",
+  referredUserName = "",
+  amount = 50,
+  totalReferralEarnings = 0,
+  dashboardUrl,
+}) => {
+  const safeAmount = formatMoney(amount);
+  const safeTotal = formatMoney(totalReferralEarnings);
+  const safeDashboardUrl = dashboardUrl || `${FRONTEND_URL}/dashboard.html`;
+
+  const subject = "Referral Reward Earned – Titan Blockchain Capital";
+
+  const bodyHtml = `
+    <div style="font-size:16px;line-height:1.8;color:#334155;margin-bottom:18px;">
+      Hello <strong style="color:#0f172a;">${escapeHtml(fullName || "there")}</strong>,
+    </div>
+
+    <div style="font-size:15px;line-height:1.8;color:#475569;margin-bottom:20px;">
+      Great news. You have earned a <strong>$${escapeHtml(safeAmount)}</strong> referral reward.
+    </div>
+
+    ${buildInfoCard("Referral Reward Details", [
+      { label: "Referred User", value: referredUserName || "N/A" },
+      { label: "Reward Earned", value: `$${safeAmount}` },
+      { label: "Total Referral Earnings", value: `$${safeTotal}` },
+    ])}
+
+    ${buildNotice({
+      color: "green",
+      text: "Your referral reward has been credited successfully after your referred user completed and got approval for the registration payment.",
+    })}
+
+    ${buildButton("View Dashboard", safeDashboardUrl)}
+  `;
+
+  const html = buildShell({
+    title: subject,
+    eyebrow: "Referral Reward",
+    heading: "You earned a new referral reward",
+    intro:
+      "A new referral bonus has been credited to your account successfully.",
+    bodyHtml,
+  });
+
+  const text = `
+${BRAND_NAME}
+
+Hello ${fullName || "there"},
+
+You earned a referral reward of $${safeAmount}.
+Referred user: ${referredUserName || "N/A"}
+Total referral earnings: $${safeTotal}
+
+Dashboard: ${safeDashboardUrl}
+Need help? Contact ${SUPPORT_EMAIL}
+  `.trim();
+
+  return sendBrandedEmail({
+    from: FROM_NOTIFICATION_EMAIL,
+    to,
+    subject,
+    html,
+    text,
+    mailer: "Titan Referral System",
+  });
+};
+
+const sendReferralWithdrawalEmail = async ({
+  to,
+  fullName = "",
+  type,
+  amount,
+  walletType,
+  walletAddress,
+  reason,
+}) => {
+  const safeAmount = formatMoney(amount);
+
+  const templates = {
+    submitted: {
+      subject: "Referral Withdrawal Request Received – Titan Blockchain Capital",
+      eyebrow: "Referral Withdrawal",
+      heading: "Your referral withdrawal request has been received",
+      intro:
+        "Your request has been submitted successfully and is awaiting admin review.",
+      bodyHtml: `
+        <div style="font-size:16px;line-height:1.8;color:#334155;margin-bottom:18px;">
+          Hello <strong style="color:#0f172a;">${escapeHtml(fullName || "there")}</strong>,
+        </div>
+
+        ${buildInfoCard("Withdrawal Details", [
+          { label: "Amount", value: `$${safeAmount}` },
+          { label: "Wallet Type", value: walletType || "N/A" },
+          { label: "Wallet Address", value: walletAddress || "N/A", breakWord: true },
+        ])}
+
+        ${buildNotice({
+          color: "gold",
+          text: "Your referral withdrawal request is pending review. You will receive another email once it is processed.",
+        })}
+      `,
+      text: `Your referral withdrawal request for $${safeAmount} has been submitted and is pending review.`,
+    },
+
+    paid: {
+      subject: "Referral Withdrawal Paid – Titan Blockchain Capital",
+      eyebrow: "Referral Withdrawal Paid",
+      heading: "Your referral withdrawal has been paid",
+      intro:
+        "Your referral earnings withdrawal has been processed successfully.",
+      bodyHtml: `
+        <div style="font-size:16px;line-height:1.8;color:#334155;margin-bottom:18px;">
+          Hello <strong style="color:#0f172a;">${escapeHtml(fullName || "there")}</strong>,
+        </div>
+
+        ${buildInfoCard("Withdrawal Details", [
+          { label: "Amount", value: `$${safeAmount}` },
+          { label: "Wallet Type", value: walletType || "N/A" },
+          { label: "Wallet Address", value: walletAddress || "N/A", breakWord: true },
+        ])}
+
+        ${buildNotice({
+          color: "green",
+          text: "Your referral withdrawal has been marked as paid successfully.",
+        })}
+      `,
+      text: `Your referral withdrawal of $${safeAmount} has been paid successfully.`,
+    },
+
+    rejected: {
+      subject: "Referral Withdrawal Rejected – Titan Blockchain Capital",
+      eyebrow: "Referral Withdrawal Update",
+      heading: "Your referral withdrawal was rejected",
+      intro:
+        "We could not approve your referral withdrawal request at this time.",
+      bodyHtml: `
+        <div style="font-size:16px;line-height:1.8;color:#334155;margin-bottom:18px;">
+          Hello <strong style="color:#0f172a;">${escapeHtml(fullName || "there")}</strong>,
+        </div>
+
+        ${buildInfoCard("Withdrawal Details", [
+          { label: "Amount", value: `$${safeAmount}` },
+          { label: "Wallet Type", value: walletType || "N/A" },
+          { label: "Wallet Address", value: walletAddress || "N/A", breakWord: true },
+        ])}
+
+        ${buildNotice({
+          color: "red",
+          title: "Reason:",
+          text: reason || "Your withdrawal request could not be approved.",
+        })}
+      `,
+      text: `Your referral withdrawal of $${safeAmount} was rejected. Reason: ${reason || "Your withdrawal request could not be approved."}`,
+    },
+  };
+
+  const template = templates[type];
+  if (!template) throw new Error("Invalid referral withdrawal email type");
+
+  const html = buildShell({
+    title: template.subject,
+    eyebrow: template.eyebrow,
+    heading: template.heading,
+    intro: template.intro,
+    bodyHtml: template.bodyHtml,
+  });
+
+  const text = `
+${BRAND_NAME}
+
+Hello ${fullName || "there"},
+
+${template.text}
+
+Need help? Contact ${SUPPORT_EMAIL}
+  `.trim();
+
+  return sendBrandedEmail({
+    from: FROM_NOTIFICATION_EMAIL,
+    to,
+    subject: template.subject,
+    html,
+    text,
+    mailer: "Titan Referral Withdrawal System",
+  });
+};
+
 // ==================== TRADING SIGNAL EMAIL ====================
 const sendTradingSignalEmail = async ({
   to,
@@ -1060,4 +1249,6 @@ export {
   sendDepositEmail,
   sendWithdrawalEmail,
   sendTradingSignalEmail,
+  sendReferralRewardEmail,
+  sendReferralWithdrawalEmail,
 };

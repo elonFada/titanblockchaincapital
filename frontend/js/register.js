@@ -3,8 +3,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const submitBtn = document.getElementById("registerSubmitBtn");
   const fileInput = document.getElementById("profileInput");
   const fileText = document.getElementById("registerPhotoText");
+  const referralCodeInput = document.getElementById("referralCode");
 
   if (!form) return;
+
+  // Auto-fill referral code from URL: register.html?ref=ABC12345
+  const params = new URLSearchParams(window.location.search);
+  const referralFromUrl = params.get("ref");
+
+  if (referralCodeInput && referralFromUrl) {
+    referralCodeInput.value = referralFromUrl.trim().toUpperCase();
+  }
 
   if (fileInput && fileText) {
     fileInput.addEventListener("change", () => {
@@ -21,10 +30,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const fullName = document.getElementById("fullName")?.value.trim();
     const phoneNumber = document.getElementById("phoneNumber")?.value.trim();
     const email = document.getElementById("email")?.value.trim().toLowerCase();
-    const password = document.getElementById("registerPasswordInput")?.value || "";
+    const password =
+      document.getElementById("registerPasswordInput")?.value || "";
     const confirmPassword =
       document.getElementById("registerConfirmPasswordInput")?.value || "";
     const countryCode = document.getElementById("countryCode")?.value || "+1";
+    const referralCode =
+      document.getElementById("referralCode")?.value.trim().toUpperCase() || "";
     const profile = fileInput?.files?.[0] || null;
 
     if (!fullName || !phoneNumber || !email || !password || !confirmPassword) {
@@ -39,6 +51,10 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("password", password);
     formData.append("confirmPassword", confirmPassword);
     formData.append("countryCode", countryCode);
+
+    if (referralCode) {
+      formData.append("referralCode", referralCode);
+    }
 
     if (profile) {
       formData.append("profile", profile);
@@ -61,6 +77,14 @@ document.addEventListener("DOMContentLoaded", () => {
         res.phoneNumber || phoneNumber
       );
       sessionStorage.setItem("pendingCountryCode", countryCode);
+
+      if (res.referralCode) {
+        sessionStorage.setItem("myReferralCode", res.referralCode);
+      }
+
+      if (res.referredBy) {
+        sessionStorage.setItem("usedReferralCode", res.referredBy);
+      }
 
       showToast(
         res.message || "Verification code sent to your email.",

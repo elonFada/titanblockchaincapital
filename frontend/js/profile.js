@@ -14,6 +14,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const profileFullName = document.getElementById("profileFullName");
   const profileEmail = document.getElementById("profileEmail");
 
+  const referralCodeDisplay = document.getElementById("referralCodeDisplay");
+  const referralLinkDisplay = document.getElementById("referralLinkDisplay");
+  const copyReferralCodeBtn = document.getElementById("copyReferralCodeBtn");
+  const copyReferralLinkBtn = document.getElementById("copyReferralLinkBtn");
+
   const togglePasswordEdit = document.getElementById("togglePasswordEdit");
   const passwordPanel = document.getElementById("edit-password");
   const passwordForm = document.getElementById("passwordForm");
@@ -40,6 +45,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const passwordToggleButtons = document.querySelectorAll(".password-toggle");
   const pageLoader = document.getElementById("pageLoader");
+
+  const referralState = {
+    referralCode: "",
+    referralLink: "",
+  };
 
   function showPageLoader() {
     if (!pageLoader) return;
@@ -75,6 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   function getStoredUser() {
     const raw =
       localStorage.getItem("userInfo") || sessionStorage.getItem("userInfo");
+
     if (!raw) return null;
 
     try {
@@ -200,6 +211,46 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
   }
 
+  function buildReferralLink(referralCode) {
+    if (!referralCode) return "";
+
+    const origin = window.location.origin;
+    const pathname = window.location.pathname || "";
+    const folder = pathname.substring(0, pathname.lastIndexOf("/") + 1);
+
+    return `${origin}${folder}register.html?ref=${encodeURIComponent(referralCode)}`;
+  }
+
+  function hydrateReferral(user) {
+    referralState.referralCode = user?.referralCode || "";
+    referralState.referralLink = buildReferralLink(referralState.referralCode);
+
+    if (referralCodeDisplay) {
+      referralCodeDisplay.textContent =
+        referralState.referralCode || "Not available";
+    }
+
+    if (referralLinkDisplay) {
+      referralLinkDisplay.textContent =
+        referralState.referralLink || "Not available";
+    }
+  }
+
+  async function copyText(value, successMessage) {
+    if (!value) {
+      showToast("Nothing to copy.", "error");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(value);
+      showToast(successMessage, "success");
+    } catch (error) {
+      console.error("Copy failed:", error);
+      showToast("Failed to copy. Please copy manually.", "error");
+    }
+  }
+
   function hydrateProfile(user) {
     if (!user) return;
 
@@ -246,6 +297,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       walletActionCard?.classList.remove("hidden");
       walletLockedCard?.classList.add("hidden");
     }
+
+    hydrateReferral(user);
   }
 
   async function guardProfile() {
@@ -344,7 +397,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const existingWalletAddress = getWalletAddress(currentStoredUser);
 
     if (existingWalletType && existingWalletAddress) {
-      showToast("Withdrawal wallet is already locked and cannot be changed.", "error");
+      showToast(
+        "Withdrawal wallet is already locked and cannot be changed.",
+        "error"
+      );
       closeWalletModal();
       return;
     }
@@ -373,11 +429,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       saveStoredUser(mergedUser);
       hydrateProfile(mergedUser);
 
-      showToast(
-        response?.message ||
-          "Wallet saved on the frontend. Add the wallet fields in your backend model/controller for permanent database save.",
-        "success"
-      );
+      showToast(response?.message || "Wallet address saved successfully.", "success");
 
       walletForm?.reset();
       closeWalletModal();
@@ -422,6 +474,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   walletForm?.addEventListener("submit", handleWalletSave);
+
+  copyReferralCodeBtn?.addEventListener("click", () => {
+    copyText(referralState.referralCode, "Referral code copied successfully.");
+  });
+
+  copyReferralLinkBtn?.addEventListener("click", () => {
+    copyText(referralState.referralLink, "Referral link copied successfully.");
+  });
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {

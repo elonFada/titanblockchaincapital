@@ -198,71 +198,60 @@ const getPaymentById = asyncHandler(async (req, res) => {
 // @route   POST /api/payment/registration/:id/approve
 // @access  Private/Admin
 const approvePayment = asyncHandler(async (req, res) => {
-  const payment = await RegistrationPayment.findById(req.params.id).populate('user');
+  const payment = await RegistrationPayment.findById(req.params.id).populate("user");
 
   if (!payment) {
     res.status(404);
-    throw new Error('Payment not found');
+    throw new Error("Payment not found");
   }
 
-  if (payment.status === 'approved') {
+  if (payment.status === "approved") {
     res.status(400);
-    throw new Error('Payment has already been approved');
+    throw new Error("Payment has already been approved");
   }
 
-  if (payment.status === 'rejected') {
+  if (payment.status === "rejected") {
     res.status(400);
-    throw new Error('Payment was rejected. User must resubmit a new receipt.');
+    throw new Error("Payment was rejected. User must resubmit a new receipt.");
   }
 
-  payment.status = 'approved';
+  payment.status = "approved";
   payment.reviewedBy = req.admin._id;
   payment.reviewedAt = new Date();
   payment.rejectionReason = undefined;
   await payment.save();
 
-  // Update user kycStatus to verified
   const user = await User.findByIdAndUpdate(
     payment.user._id,
     {
-      kycStatus: 'verified',
+      kycStatus: "verified",
       kycVerifiedAt: new Date(),
     },
     { new: true }
   );
 
-  // Update the user's referral record to mark registration fee as paid
-  if (user.referredBy) {
-    const referrer = await User.findById(user.referredBy);
-    if (referrer) {
-      const referralRecord = referrer.referrals.find(
-        ref => ref.user.toString() === user._id.toString()
-      );
-      if (referralRecord) {
-        referralRecord.paidRegistrationFee = true;
-        referralRecord.approvedAt = new Date();
-        await referrer.save();
-        
-        // Process referral commission ($60 USD)
-        await processReferralCommission(user._id, payment.amount);
-      }
-    }
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
   }
 
-  // Send approval email to user
+  if (user.referredBy) {
+    await processReferralCommission(user._id);
+  }
+
   const dashboardUrl = `${process.env.FRONTEND_URL}/dashboard.html`;
 
   await sendPaymentEmail({
     to: payment.user.email,
     fullName: payment.user.fullName,
-    type: 'approved',
+    type: "approved",
     amount: payment.amount,
     dashboardUrl,
   });
 
   res.status(200).json({
-    status: 'success',
-    message: 'Payment approved. User KYC status updated to verified.',
+    status: "success",
+    message: "Payment approved. User KYC status updated to verified.",
     data: {
       id: payment._id,
       status: payment.status,
@@ -271,9 +260,9 @@ const approvePayment = asyncHandler(async (req, res) => {
         id: payment.user._id,
         fullName: payment.user.fullName,
         email: payment.user.email,
-        kycStatus: 'verified',
-      }
-    }
+        kycStatus: "verified",
+      },
+    },
   });
 });
 

@@ -11,6 +11,7 @@ import withdrawalRoutes from "./routes/withdrawalRoutes.js";
 import tradingRoutes from "./routes/tradingRoutes.js";
 import tradingBotRoutes from "./routes/tradingBotRoutes.js";
 import supportChatRoutes from "./routes/supportChatRoutes.js";
+import referralRoutes from "./routes/referralRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 dotenv.config();
@@ -65,6 +66,8 @@ app.use("/api/withdrawal", withdrawalRoutes);
 app.use("/api/trading", tradingRoutes);
 app.use("/api/trading-bot", tradingBotRoutes);
 app.use("/api/support-chat", supportChatRoutes);
+
+app.use("/api/referral", referralRoutes);
 
 // Error handlers
 app.use(notFound);

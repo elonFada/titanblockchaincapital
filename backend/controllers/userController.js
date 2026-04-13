@@ -51,6 +51,9 @@ const sanitizeUserResponse = (user) => ({
   withdrawalWalletType: user.withdrawalWalletType,
   withdrawalWalletAddress: user.withdrawalWalletAddress,
   withdrawalWalletLocked: user.withdrawalWalletLocked,
+  referralCode: user.referralCode,
+  referralEarnings: user.referralEarnings,
+  referralCommissionPaid: user.referralCommissionPaid,
   createdAt: user.createdAt,
   updatedAt: user.updatedAt,
   lastLoginAt: user.lastLoginAt,
@@ -147,7 +150,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (referralCode) {
     // Find the referrer by their referral code
-    referredByUser = await User.findOne({ referralCode: referralCode });
+    referredByUser = await User.findOne({referralCode: String(referralCode).trim().toUpperCase(),});
 
     if (!referredByUser) {
       res.status(400);
