@@ -613,7 +613,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (submitReferralWithdrawBtn) {
       submitReferralWithdrawBtn.disabled = true;
-      submitReferralWithdrawBtn.textContent = "Submitting...";
+      submitReferralWithdrawBtn.textContent = "Withdrawing...";
     }
 
     try {
