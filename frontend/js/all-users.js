@@ -146,6 +146,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function buildUserRow(user) {
+    const walletAddress = user.withdrawalWalletAddress || "";
+
     return `
       <tr>
         <td class="py-4 pr-4">
@@ -157,6 +159,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         <td class="py-4 pr-4 text-slate-300">
           ${escapeHtml(user.phoneNumber || "—")}
         </td>
+        <td class="py-4 pr-4 text-slate-300 max-w-[260px]">
+          ${
+            walletAddress
+              ? `
+                <div class="flex items-center gap-2 min-w-0">
+                  <span
+                    class="block truncate flex-1"
+                    title="${escapeHtml(walletAddress)}"
+                  >
+                    ${escapeHtml(walletAddress)}
+                  </span>
+
+                  <button
+                    type="button"
+                    class="copy-wallet-btn inline-flex items-center justify-center h-9 w-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-primary transition-all shrink-0"
+                    data-wallet-address="${escapeHtml(walletAddress)}"
+                    title="Copy wallet address"
+                    aria-label="Copy wallet address"
+                  >
+                    <i data-lucide="copy" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              `
+              : "—"
+          }
+        </td>
         <td class="py-4 pr-4">
           ${getUserStatusBadge(user.kycStatus)}
         </td>
@@ -166,6 +194,23 @@ document.addEventListener("DOMContentLoaded", async () => {
       </tr>
     `;
   }
+
+  function bindCopyButtons() {
+  document.querySelectorAll(".copy-wallet-btn").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const walletAddress = button.getAttribute("data-wallet-address");
+      if (!walletAddress) return;
+
+      try {
+        await navigator.clipboard.writeText(walletAddress);
+        showToast("Wallet address copied successfully.", "success");
+      } catch (error) {
+        console.error("Failed to copy wallet address:", error);
+        showToast("Unable to copy wallet address.", "error");
+      }
+    });
+  });
+}
 
   function renderCounts(users) {
     const verified = users.filter((user) => user.kycStatus === "verified").length;
@@ -197,6 +242,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         user.fullName,
         user.email,
         user.phoneNumber,
+        user.withdrawalWalletAddress,
         user._id,
         user.kycStatus,
       ]
@@ -227,7 +273,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (!filteredUsers.length) {
         allUsersTableBody.innerHTML = `
           <tr>
-            <td colspan="5" class="py-8 text-center text-slate-400">
+            <td colspan="6" class="py-8 text-center text-slate-400">
               No users found.
             </td>
           </tr>
@@ -238,6 +284,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     bindActionButtons();
+    bindCopyButtons();
+    lucide.createIcons();
   }
 
   function bindActionButtons() {
