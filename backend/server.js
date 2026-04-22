@@ -57,6 +57,10 @@ app.get("/api/health", (req, res) => {
   res.json({ ok: true, message: "Backend is reachable" });
 });
 
+app.get("/", (req, res) => {
+  res.send("API is running 🚀");
+});
+
 // Routes
 app.use('/api/user', userRoutes);
 app.use('/api/payment/registration', registrationPaymentRoutes);
