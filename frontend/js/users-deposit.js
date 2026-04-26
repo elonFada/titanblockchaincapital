@@ -112,9 +112,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   function coinLabel(coinType) {
     const map = {
       BTC: "BTC",
-      ETH: "ETH",
       USDT_TRC20: "USDT (TRC20)",
-      USDT_ERC20: "USDT (ERC20)",
       BNB: "BNB",
     };
 
