@@ -29,9 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const coinLabelMap = {
     BTC: "Bitcoin (BTC)",
-    ETH: "Ethereum (ETH)",
     USDT_TRC20: "USDT (TRC20)",
-    USDT_ERC20: "USDT (ERC20)",
     BNB: "BNB",
   };
 
