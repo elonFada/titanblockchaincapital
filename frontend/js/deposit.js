@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const MIN_DEPOSIT = 5000;
 
   const walletMap = {
-    BTC: "bc1pd85hycjm20v20jwqxg8s9sdla7vyjxz4948hz2eskdd9szehxz4s6atadq",
+    BTC: "bc1q29vfl6q5rc32mqsrk9lfr4keud4pfspf958u34",
     USDT_TRC20: "TVkUELxT7AYi6L56ajk6Ff6ijcPH9KWAQv",
     BNB: "0x7f75bfb8f27dc34bd958ee5957a133e244bea056",
   };
