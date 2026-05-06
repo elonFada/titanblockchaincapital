@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const walletMap = {
     BTC: "bc1q29vfl6q5rc32mqsrk9lfr4keud4pfspf958u34",
     USDT_TRC20: "TVkUELxT7AYi6L56ajk6Ff6ijcPH9KWAQv",
-    BNB: "0x7f75bfb8f27dc34bd958ee5957a133e244bea056",
+    BNB: "0xa93a7782a7af869506eA3C6df9ff86Fb9f43Daf4",
   };
 
   const coinLabelMap = {
