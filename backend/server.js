@@ -26,7 +26,8 @@ const allowedOrigins = [
   'http://localhost:8000',
   'http://127.0.0.1:8000',
   'https://titanblockchaincapital.vercel.app',
-  'https://titanblockchaincapital.com'
+  'https://titanblockchaincapital.com',
+  'https://www.titanblockchaincapital.com'
 ];
 
 app.use(cors({
