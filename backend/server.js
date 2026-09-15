@@ -3,6 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import dns from "dns";
 import userRoutes from './routes/userRoutes.js';
 import registrationPaymentRoutes from './routes/registrationPaymentRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
@@ -13,6 +14,10 @@ import tradingBotRoutes from "./routes/tradingBotRoutes.js";
 import supportChatRoutes from "./routes/supportChatRoutes.js";
 import referralRoutes from "./routes/referralRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+
+// ✅ Fix DNS resolution (important for MongoDB Atlas on some hosts like Render)
+dns.setDefaultResultOrder('ipv4first');
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 dotenv.config();
 const app = express();

@@ -692,12 +692,31 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const activeTrades = trades.filter((trade) => trade.status === "active");
 
-      const totalDeposit = Number(liveUser.totalDeposit || 0);
-      const totalWithdrawal = Number(liveUser.totalWithdrawal || 0);
-      const balance = Number(liveUser.balance || 0);
-
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
+
+      // 👈 DEBUG: Let's see what the browser is actually receiving
+      console.log("Total processed withdrawals received:", processedWithdrawals.length);
+      console.log("Current Month/Year:", currentMonth, currentYear);
+      console.log("Withdrawal dates:", processedWithdrawals.map(w => w.createdAt));
+
+      // 👈 NEW: Filter withdrawals to only include the current month
+      const monthlyWithdrawals = processedWithdrawals.filter((withdrawal) => {
+        const date = new Date(withdrawal.updatedAt || withdrawal.createdAt);
+        return (
+          date.getMonth() === currentMonth &&
+          date.getFullYear() === currentYear
+        );
+      });
+
+      // 👈 NEW: Sum only the monthly withdrawals
+      const totalWithdrawal = monthlyWithdrawals.reduce(
+        (sum, w) => sum + Number(w.amount || 0),
+        0
+      );
+
+      const totalDeposit = Number(liveUser.totalDeposit || 0);
+      const balance = Number(liveUser.balance || 0);
 
       const monthlyCompletedTrades = trades.filter((trade) => {
         if (trade.status !== "completed" || !trade.completedAt) return false;
@@ -716,7 +735,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         .filter((trade) => trade.result === "loss")
         .reduce((sum, trade) => sum + Number(trade.loss || 0), 0);
 
-      const monthlyNetProfit = monthlyProfitTotal - monthlyLossTotal;
+      // 👈 CHANGED: Show gross monthly profit instead of net
+      const monthlyNetProfit = monthlyProfitTotal;
 
       const monthlyPerformancePercent =
         balance > 0 ? (monthlyNetProfit / balance) * 100 : 0;
@@ -755,8 +775,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (totalWithdrawalMeta) {
         totalWithdrawalMeta.textContent =
           totalWithdrawal > 0
-            ? `${formatNumber(processedWithdrawals.length)} processed withdrawal(s)`
-            : "No processed withdrawals yet";
+            ? `${formatNumber(monthlyWithdrawals.length)} processed withdrawal(s) this month`
+            : "No processed withdrawals this month";
       }
 
       if (openPositionsValue) {
