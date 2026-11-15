@@ -229,6 +229,49 @@ const buildButton = (label, url) => `
   </div>
 `;
 
+// Renders a 6-digit OTP as individual cells (email-client safe, cannot clip).
+const buildOTPCells = (otp) => {
+  const digits = escapeHtml(otp).split("");
+  return `
+    <table
+      role="presentation"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      align="center"
+      style="border-collapse:separate;border-spacing:6px 0;margin:0 auto;"
+    >
+      <tr>
+        ${digits
+      .map(
+        (digit) => `
+          <td
+            align="center"
+            valign="middle"
+            width="34"
+            height="52"
+            style="
+              width:34px;
+              height:52px;
+              padding:0;
+              background:#0b0f19;
+              border:1px solid #2b3342;
+              border-radius:10px;
+              font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+              font-size:24px;
+              line-height:52px;
+              font-weight:800;
+              color:#ffffff;
+              text-align:center;
+            "
+          >${digit}</td>`
+      )
+      .join("")}
+      </tr>
+    </table>
+  `;
+};
+
 const sendBrandedEmail = async ({
   from,
   to,
@@ -316,41 +359,19 @@ const sendEmailOTP = async (email, otp, fullName = "", type = "verification") =>
           align="center"
           style="padding:24px 16px;background:linear-gradient(180deg,#f8fafc 0%,#f1f5f9 100%);border:1px solid #e2e8f0;border-radius:20px;"
         >
-          <div style="font-size:12px;line-height:1.7;letter-spacing:0.16em;text-transform:uppercase;color:#64748b;font-weight:800;margin-bottom:14px;">
+          <div style="font-size:12px;line-height:1.7;letter-spacing:0.16em;text-transform:uppercase;color:#64748b;font-weight:800;margin-bottom:16px;">
             One-Time Verification Code
           </div>
 
-          <div
-            style="
-              display:block;
-              width:100%;
-              max-width:320px;
-              margin:0 auto;
-              background:#0b0f19;
-              border:1px solid #2b3342;
-              border-radius:18px;
-              padding:16px 10px;
-              box-sizing:border-box;
-            "
-          >
-            <div
-              style="
-                font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-                font-size:34px;
-                line-height:1.2;
-                font-weight:800;
-                letter-spacing:0.22em;
-                color:#ffffff;
-                text-align:center;
-                white-space:nowrap;
-              "
-            >
-              ${escapeHtml(otp).split("").join(" ")}
-            </div>
-          </div>
+          ${buildOTPCells(otp)}
 
           <div style="margin-top:14px;font-size:14px;line-height:1.7;color:#c97a1a;font-weight:700;">
             Expires in 15 minutes
+          </div>
+
+          <div style="margin-top:10px;font-size:12px;line-height:1.7;color:#94a3b8;">
+            Having trouble reading the code? Copy it here:
+            <strong style="color:#0f172a;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;word-break:break-all;">${escapeHtml(otp)}</strong>
           </div>
         </td>
       </tr>
@@ -427,41 +448,19 @@ const sendPasswordResetOTPEmail = async (
           align="center"
           style="padding:24px 16px;background:linear-gradient(180deg,#f8fafc 0%,#f1f5f9 100%);border:1px solid #e2e8f0;border-radius:20px;"
         >
-          <div style="font-size:12px;line-height:1.7;letter-spacing:0.16em;text-transform:uppercase;color:#64748b;font-weight:800;margin-bottom:14px;">
+          <div style="font-size:12px;line-height:1.7;letter-spacing:0.16em;text-transform:uppercase;color:#64748b;font-weight:800;margin-bottom:16px;">
             Password Reset Code
           </div>
 
-          <div
-            style="
-              display:block;
-              width:100%;
-              max-width:320px;
-              margin:0 auto;
-              background:#0b0f19;
-              border:1px solid #2b3342;
-              border-radius:18px;
-              padding:16px 10px;
-              box-sizing:border-box;
-            "
-          >
-            <div
-              style="
-                font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-                font-size:34px;
-                line-height:1.2;
-                font-weight:800;
-                letter-spacing:0.22em;
-                color:#ffffff;
-                text-align:center;
-                white-space:nowrap;
-              "
-            >
-              ${escapeHtml(otp).split("").join(" ")}
-            </div>
-          </div>
+          ${buildOTPCells(otp)}
 
           <div style="margin-top:14px;font-size:14px;line-height:1.7;color:#c97a1a;font-weight:700;">
             Expires in 15 minutes
+          </div>
+
+          <div style="margin-top:10px;font-size:12px;line-height:1.7;color:#94a3b8;">
+            Having trouble reading the code? Copy it here:
+            <strong style="color:#0f172a;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;word-break:break-all;">${escapeHtml(otp)}</strong>
           </div>
         </td>
       </tr>
