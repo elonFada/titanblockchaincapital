@@ -17,7 +17,7 @@ const registrationPaymentSchema = new mongoose.Schema(
     amount: {
       type: Number,
       required: [true, 'Payment amount is required'],
-      default: 500,
+      default: 300,
     },
 
     coin: {

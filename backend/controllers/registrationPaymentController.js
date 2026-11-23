@@ -86,7 +86,7 @@ const makePayment = asyncHandler(async (req, res) => {
   const payment = await RegistrationPayment.create({
     user: user._id,
     feeType: 'registration',
-    amount: 500,
+    amount: 300,
     coin,
     walletAddress: cleanedWalletAddress,
     transactionId: cleanedTransactionId,
