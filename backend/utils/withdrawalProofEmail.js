@@ -14,7 +14,7 @@ const BRAND_NAME = "Titan Blockchain Capital";
 const FRONTEND_URL = "https://titanblockchaincapital.com";
 const SUPPORT_EMAIL = "support@titanblockchaincapital.com";
 const FROM_EMAIL = "Titan Blockchain Capital <notifications@titanblockchaincapital.com>";
-const LOGO_URL = "https://titanblockchaincapital.com/images/logo-dark.png";
+const LOGO_URL = "https://titanblockchaincapital.com/images/logo-dark.avif";
 const CTA_URL = new URL("/register.html", FRONTEND_URL).toString();
 
 const WITHDRAWALS = [
