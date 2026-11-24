@@ -24,7 +24,7 @@ const LOGO_URL = "https://titanblockchaincapital.com/images/logo.png";
 // ==================== OFFER CONFIG ====================
 const OLD_FEE_USD = 500;
 const NEW_FEE_USD = 300;
-const CTA_PATH = "/dashboard.html"; // 👈 where users go to pay
+const CTA_PATH = "/register.html";
 const CTA_URL = new URL(CTA_PATH, FRONTEND_URL).toString();
 
 // ==================== HELPERS ====================
@@ -176,7 +176,7 @@ export async function sendRegistrationFeeAnnouncement({
   }
 
   const subject =
-    "Special Offer: Your Titan Blockchain Capital Registration Fee is Now $300";
+    "Important Notice: Registration Fee Reduced to $300 for a Limited Period";
 
   const bodyHtml = `
     <div style="font-size:18px;line-height:1.7;color:#334155;margin-bottom:20px;">
@@ -184,40 +184,41 @@ export async function sendRegistrationFeeAnnouncement({
     </div>
 
     <div style="font-size:17px;line-height:1.75;color:#475569;margin-bottom:20px;">
-      We have a limited-time offer for you. For a short period, the one-time
+      We are pleased to inform you that, for a limited period, the one-time
       registration fee for <strong>${escapeHtml(BRAND_NAME)}</strong> has been
-      reduced from <strong>$${OLD_FEE_USD}</strong> to just
+      reduced from <strong>$${OLD_FEE_USD}</strong> to
       <strong>$${NEW_FEE_USD}</strong>.
     </div>
 
     ${buildPriceBadge()}
 
     <div style="font-size:17px;line-height:1.75;color:#0f172a;font-weight:700;margin-bottom:6px;">
-      Your $${NEW_FEE_USD} registration unlocks:
+      Your $${NEW_FEE_USD} registration provides access to:
     </div>
 
     ${buildBullet([
-      "A fully verified, secure account",
-      "Live trading signals at over 80% signal accuracy",
+      "A fully verified and secure account",
+      "Live trading signals with over 80% signal accuracy",
       "Real-time trade results and balance updates",
       "Deposit, withdrawal, and referral program access",
-      "The ability to withdraw profits anytime, anyday",
+      "The ability to withdraw profits at any time",
     ])}
 
     <div style="font-size:17px;line-height:1.75;color:#475569;margin-bottom:20px;">
-      This is the same full platform access, now at a lower entry point.
-      The reduced fee will only be available for a limited time.
+      This offer provides the same comprehensive platform access at a reduced
+      entry cost. The revised fee will remain available only for a limited
+      period.
     </div>
 
-    ${buildButton(`Complete Registration, $${NEW_FEE_USD}`, ctaUrl)}
+    ${buildButton("Complete Your Registration", ctaUrl)}
 
     <div style="font-size:16px;line-height:1.7;color:#64748b;">
-      Already registered? No action is needed, this offer applies to new
-      and pending registrations only.
+      If you have already completed your registration, no further action is
+      required. This offer applies to new and pending registrations only.
     </div>
 
     <div style="font-size:16px;line-height:1.7;color:#64748b;margin-top:14px;">
-      Questions? Contact
+      For further assistance, please contact
       <a href="mailto:${escapeHtml(SUPPORT_EMAIL)}" style="color:#0f172a;font-weight:700;text-decoration:none;">
         ${escapeHtml(SUPPORT_EMAIL)}
       </a>.
@@ -227,9 +228,9 @@ export async function sendRegistrationFeeAnnouncement({
   const html = buildShell({
     title: subject,
     eyebrow: "Limited-Time Offer",
-    heading: "Registration fee now $300",
+    heading: "Registration Fee Now $300",
     intro:
-      "For a limited time, join Titan Blockchain Capital at a reduced one-time registration fee, down from $500 to $300.",
+      "For a limited period, Titan Blockchain Capital is offering a reduced one-time registration fee, lowered from $500 to $300.",
     bodyHtml,
   });
 
@@ -238,23 +239,23 @@ ${BRAND_NAME}
 
 Dear ${fullName || "Valued Client"},
 
-We have a limited-time offer for you. The one-time registration fee for ${BRAND_NAME} has been reduced from $${OLD_FEE_USD} to just $${NEW_FEE_USD}.
+We are pleased to inform you that, for a limited period, the one-time registration fee for ${BRAND_NAME} has been reduced from $${OLD_FEE_USD} to $${NEW_FEE_USD}.
 
-Your $${NEW_FEE_USD} registration unlocks:
-- A fully verified, secure account
-- Live trading signals at over 80% signal accuracy
+Your $${NEW_FEE_USD} registration provides access to:
+- A fully verified and secure account
+- Live trading signals with over 80% signal accuracy
 - Real-time trade results and balance updates
 - Deposit, withdrawal, and referral program access
-- The ability to withdraw profits anytime, anyday
+- The ability to withdraw profits at any time
 
-This is the same full platform access, now at a lower entry point. The reduced fee is only available for a limited time.
+This offer provides the same comprehensive platform access at a reduced entry cost. The revised fee will remain available only for a limited period.
 
 Complete your registration here:
 ${ctaUrl}
 
-Already registered? No action is needed, this offer applies to new and pending registrations only.
+If you have already completed your registration, no further action is required. This offer applies to new and pending registrations only.
 
-Questions? Contact ${SUPPORT_EMAIL}.
+For further assistance, please contact ${SUPPORT_EMAIL}.
 
 ${BRAND_NAME}
   `.trim();
@@ -330,11 +331,11 @@ if (isDirectRun) {
     const fullName = rest.join(" ").trim();
     sendRegistrationFeeAnnouncement({ to: arg1, fullName })
       .then((result) => {
-        console.log("✅ Email sent successfully:", result);
+        console.log("Email sent successfully:", result);
         process.exitCode = 0;
       })
       .catch((error) => {
-        console.error("❌ Failed to send email:", error.message);
+        console.error("Failed to send email:", error.message);
         process.exitCode = 1;
       });
   }
@@ -359,10 +360,10 @@ async function runAll() {
     }
 
     await mongoose.connect(mongoUri);
-    console.log("🔌 Connected to MongoDB.");
+    console.log("Connected to MongoDB.");
 
-    // Audience: verified + active users who haven't completed the paid registration.
-    // Adjust this filter if you want to include/exclude different groups.
+    // Audience: verified and active users who have not completed the paid
+    // registration. Adjust this filter if a different group is required.
     const users = await User.find({
       isVerified: true,
       isActive: true,
@@ -371,10 +372,10 @@ async function runAll() {
       .select("email fullName")
       .lean();
 
-    console.log(`📨 Preparing to send to ${users.length} users...`);
+    console.log(`Preparing to send to ${users.length} users...`);
 
     if (users.length === 0) {
-      console.log("ℹ️  No matching users, nothing to send.");
+      console.log("No matching users found. Nothing to send.");
       await mongoose.disconnect();
       process.exitCode = 0;
       return;
@@ -383,11 +384,11 @@ async function runAll() {
     const results = await sendRegistrationFeeAnnouncementToAll({
       users,
       onProgress: ({ index, total }) => {
-        process.stdout.write(`\r  → ${index}/${total} processed`);
+        process.stdout.write(`\r  Progress: ${index}/${total}`);
       },
     });
 
-    console.log(`\n✅ Sent: ${results.sent} | ❌ Failed: ${results.failed}`);
+    console.log(`\nSent: ${results.sent} | Failed: ${results.failed}`);
 
     if (results.errors.length) {
       console.table(results.errors);
@@ -396,7 +397,7 @@ async function runAll() {
     await mongoose.disconnect();
     process.exitCode = results.failed > 0 ? 1 : 0;
   } catch (err) {
-    console.error("\n❌ Bulk send failed:", err.message);
+    console.error("\nBulk send failed:", err.message);
     if (mongoose && mongoose.connection.readyState === 1) {
       await mongoose.disconnect().catch(() => {});
     }
